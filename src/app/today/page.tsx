@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -9,8 +10,7 @@ import { ThrowingCard } from "@/components/core/ThrowingCard";
 
 export default function TodayPage() {
   return (
-    <div className="mx-auto w-full max-w-[720px] space-y-5 pb-28 pt-6 px-4">
-      {/* 1. Header with dynamic greeting */}
+    <div className="mx-auto w-full max-w-[720px] space-y-6 pb-28 pt-10 px-6">
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -19,18 +19,15 @@ export default function TodayPage() {
         <GreetingHeader />
       </motion.div>
 
-      <div className="space-y-6">
-        {/* 2. Quick action grid */}
+      <div className="space-y-8">
         <ThrowingCard index={0}>
           <ActionShortcutBar />
         </ThrowingCard>
 
-        {/* 3. Sacred Anchor (Verse of the day) */}
         <ThrowingCard index={1}>
           <DailyVerseHeroCard />
         </ThrowingCard>
 
-        {/* 4. Content placeholder */}
         <ThrowingCard index={2}>
           <div className="rounded-[44px] border border-dashed border-white/10 p-12 flex flex-col items-center justify-center text-center space-y-4 bg-white/5 backdrop-blur-sm">
             <div className="w-16 h-16 rounded-3xl bg-brand/10 flex items-center justify-center text-brand shadow-lg">
@@ -46,14 +43,9 @@ export default function TodayPage() {
         </ThrowingCard>
       </div>
 
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.3 }}
-        transition={{ delay: 1.5 }}
-        className="text-[10px] font-black uppercase tracking-[0.4em] text-center mt-20 text-white/50"
-      >
+      <p className="text-[10px] font-black uppercase tracking-[0.4em] text-center mt-20 text-white/20">
         Terpilih • Terhubung • Bertumbuh
-      </motion.p>
+      </p>
     </div>
   );
 }
