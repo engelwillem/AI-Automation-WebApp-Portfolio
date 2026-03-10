@@ -12,8 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CommunityComment } from "../types";
-import { MOCK_USERS } from "../mock";
+import { CommunityComment, CommunityUser } from "../types";
 import { Send } from "lucide-react";
 
 interface CommentsSheetProps {
@@ -21,9 +20,10 @@ interface CommentsSheetProps {
   onOpenChange: (open: boolean) => void;
   comments: CommunityComment[];
   onAddComment: (text: string) => void;
+  currentUser?: CommunityUser;
 }
 
-export function CommentsSheet({ isOpen, onOpenChange, comments, onAddComment }: CommentsSheetProps) {
+export function CommentsSheet({ isOpen, onOpenChange, comments, onAddComment, currentUser }: CommentsSheetProps) {
   const [newComment, setNewComment] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {

@@ -4,16 +4,18 @@ import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostComposer } from "../components/PostComposer";
 import { PostCard } from "../components/PostCard";
-import { CommunityPost, CommunityComment } from "../types";
+import { CommunityPost, CommunityComment, CommunityUser } from "../types";
 import { Inbox, Loader2 } from "lucide-react";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { CommunityService } from "@/services/community.service";
+import { MOCK_USERS } from "../mock";
 
 export function CommunityPage() {
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [comments, setComments] = useState<CommunityComment[]>([]);
   const [activeTab, setActiveTab] = useState("today");
   const [isLoading, setIsLoading] = useState(true);
+  const currentUser: CommunityUser = MOCK_USERS.me;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +40,7 @@ export function CommunityPage() {
   const handlePost = async (text: string) => {
     try {
       const newPost = await CommunityService.createPost(text);
-      setPosts([newPost, ...posts]);
+      setPosts((prev) => [newPost, ...prev.filter((post) => post.id !== newPost.id)]);
     } catch (error) {
       console.error("Failed to create post", error);
     }
@@ -47,8 +49,8 @@ export function CommunityPage() {
   const handleAddComment = async (postId: string, text: string) => {
     try {
       const newComment = await CommunityService.addComment(postId, text);
-      setComments([...comments, newComment]);
-      setPosts(posts.map(p => p.id === postId ? { ...p, counts: { ...p.counts, comments: p.counts.comments + 1 } } : p));
+      setComments((prev) => [...prev, newComment]);
+      setPosts((prev) => prev.map((p) => (p.id === postId ? { ...p, counts: { ...p.counts, comments: p.counts.comments + 1 } } : p)));
     } catch (error) {
       console.error("Failed to add comment", error);
     }
@@ -98,7 +100,7 @@ export function CommunityPage() {
         </TabsList>
 
         <TabsContent value="today" className="m-0 space-y-6 pb-10">
-          <PostComposer onPost={handlePost} />
+          <PostComposer onPost={handlePost} currentUser={currentUser} />
           
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
@@ -115,6 +117,7 @@ export function CommunityPage() {
                   onAddComment={handleAddComment}
                   onLike={toggleLike}
                   onBookmark={toggleBookmark}
+                  currentUser={currentUser}
                 />
               ))}
             </div>

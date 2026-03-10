@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Heart, MessageCircle, Bookmark, Share2, MoreHorizontal } from "lucide-react";
-import { CommunityPost, CommunityComment } from "../types";
+import { CommunityPost, CommunityComment, CommunityUser } from "../types";
 import { cn } from "@/lib/utils";
 import { CommentsSheet } from "./CommentsSheet";
 
@@ -16,10 +16,12 @@ interface PostCardProps {
   onAddComment: (postId: string, text: string) => void;
   onLike: (postId: string) => void;
   onBookmark: (postId: string) => void;
+  currentUser?: CommunityUser;
 }
 
-export function PostCard({ post, comments, onAddComment, onLike, onBookmark }: PostCardProps) {
+export function PostCard({ post, comments, onAddComment, onLike, onBookmark, currentUser }: PostCardProps) {
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+  const commentsCount = Math.max(post.counts.comments, comments.length);
 
   return (
     <>
@@ -65,14 +67,14 @@ export function PostCard({ post, comments, onAddComment, onLike, onBookmark }: P
               )}
             >
               <Heart size={20} className={cn(post.isLiked && "fill-current animate-in zoom-in-50")} />
-              <span className="text-[11px] font-bold">{post.counts.likes + (post.isLiked ? 1 : 0)}</span>
+              <span className="text-[11px] font-bold">{post.counts.likes}</span>
             </button>
             <button 
               onClick={() => setIsCommentsOpen(true)}
               className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors"
             >
               <MessageCircle size={20} />
-              <span className="text-[11px] font-bold">{post.counts.comments + comments.length}</span>
+              <span className="text-[11px] font-bold">{commentsCount}</span>
             </button>
           </div>
           <div className="flex items-center gap-2">
@@ -97,6 +99,7 @@ export function PostCard({ post, comments, onAddComment, onLike, onBookmark }: P
         onOpenChange={setIsCommentsOpen}
         comments={comments}
         onAddComment={(text) => onAddComment(post.id, text)}
+        currentUser={currentUser}
       />
     </>
   );
