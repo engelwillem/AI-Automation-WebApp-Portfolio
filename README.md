@@ -1,115 +1,45 @@
-# TheChosenTalks
+# TheChoosenTalks
 
-Platform konten rohani berbasis Laravel + Inertia + React, dengan 4 area utama:
-- Today feed
-- Channels (termasuk Sabbath School)
-- Community
-- VerseHub Bible Reader
+Platform konten rohani premium berbasis Next.js 15, React 19, dan Tailwind CSS v4. Dirancang dengan estetika "Deep Space Glassmorphism" untuk pengalaman iman yang imersif.
 
-## Tech Stack
+## Tech Stack Utama
 
-- Backend: Laravel 12 (PHP 8.2+)
-- Frontend: Inertia.js + React 18 + TypeScript
-- Styling: Tailwind CSS + komponen internal
-- Auth: Laravel Breeze
-- Admin Panel: Filament
+- **Framework**: Next.js 15 (App Router)
+- **Frontend**: React 19 + TypeScript
+- **Styling**: Tailwind CSS v4
+- **Animations**: Framer Motion
+- **UI Components**: Shadcn UI + Lucide Icons
+- **Generative AI**: Google Genkit 1.x
 
-## Status Fitur Saat Ini
+## Struktur Aplikasi
 
-### User App
-- `/today`
-  - Welcome verse card
-  - Activity quote card
-  - Feed komunitas aktif
-- `/channels`
-  - Daftar channel utama
-  - Sabbath School index + lesson/day view
-- `/community`
-  - Feed diskusi + archive
-  - Reaction/comment/bookmark flow
-- `/profile`
-  - Edit profil, avatar, password
-  - Shortcut ke VerseHub activity
+- `/` -> Landing Page Premium (Hero & Sticky Features)
+- `/today` -> Dashboard Harian (Quick Access & Inspiration)
+- `/community` -> Feed Komunitas & Interaksi
+- `/versehub` -> Bible Reader Modern
+- `/channels` -> Program Pembinaan Iman (Sabbath School, dll.)
 
-### VerseHub
-- Reader home: `/versehub/id`
-- Chapter reader: `/versehub/id/{book_code}-{chapter}`
-- Verse detail: `/versehub/{lang}/{book_code}-{chapter}-{verse}`
-- OG image: `/versehub/{lang}/{ref}/og.png`
-- My Activity: `/versehub/id/my-activity`
-- Aksi ayat tersimpan (favorite/bookmark/note) + summary card “My Spiritual Journey”
+## Desain & Estetika
 
-### Admin (Filament)
-- Login: `/admintalk/login`
-- Dashboard: `/admintalk`
-- Resources:
-  - Channels
-  - Posts
-  - Sabbath School: `ss-quarters`, `ss-lessons`, `ss-days`
-  - Community moderation:
-    - `member-posts`
-    - `member-post-comments`
-  - Today legacy data:
-    - `legacy-quarters`
-    - `legacy-lessons`
+- **Theme**: Deep Space (Slate-950)
+- **Visual**: Glassmorphism, Animated Glow Orbs, Radial Gradients.
+- **Typography**: 
+  - Headings: `Instrument Serif`
+  - Body: `Inter`
 
-> Backward-compat route:
-> `/admin` dan `/admin/login` diarahkan ke `/admintalk/login`.
-
-## Struktur Penting
-
-- `app/Http/Controllers` -> backend logic per domain
-- `app/Filament/Resources` -> admin CRUD & moderasi
-- `resources/js` -> halaman Inertia React
-- `resources/views/versehub` -> Blade untuk VerseHub reader/show
-- `config/versehub_books.php` -> single source of truth `book_code`
-- `routes/web.php` -> route utama aplikasi
-
-## Setup Lokal
+## Pengembangan Lokal
 
 ```bash
-composer install
 npm install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate
-```
-
-Jalankan dev:
-```bash
-composer dev
-```
-
-Atau terpisah:
-```bash
-php artisan serve
 npm run dev
 ```
 
-## Build & Verification
+Aplikasi akan berjalan di `http://localhost:9002`.
 
-```bash
-npm run build
-php artisan test
-```
+## Deployment
 
-## Catatan Deploy (Git/cPanel)
+Aplikasi dikonfigurasi untuk Firebase App Hosting (`apphosting.yaml`).
 
-- Jangan commit:
-  - `.env`, `vendor/`, `node_modules/`
-  - `public/build/*` (artefak build)
-  - runtime `storage/*` (kecuali `.gitignore`)
-  - file tmp/audit lokal
-- Build asset di server deploy (`npm run build`) atau upload artefak build terpisah sesuai strategi Anda.
-- sudah pasang deploy.sh tahap konfigurasi sudah mendekati stabil
-
-## Roadmap Internal (Ringkas)
-
-- Konsolidasi penuh sumber data Today (legacy vs non-legacy)
-- Panel audit admin untuk data completeness lintas halaman
-- Hardening performa & observability untuk shared hosting
-
-## License
+## Lisensi
 
 MIT
-# TCT--Laravel
