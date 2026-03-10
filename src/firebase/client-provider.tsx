@@ -5,10 +5,14 @@ import React, { useMemo } from 'react';
 import { initializeApp, getApps } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import { firebaseConfig } from './config';
+import { firebaseConfig, hasFirebaseClientConfig } from './config';
 import { FirebaseProvider } from './provider';
 
 export function FirebaseClientProvider({ children }: { children: React.ReactNode }) {
+  if (!hasFirebaseClientConfig) {
+    return <>{children}</>;
+  }
+
   const services = useMemo(() => {
     const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
     const db = getFirestore(app);

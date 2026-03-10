@@ -4,6 +4,8 @@ import React from 'react';
 import './globals.css';
 import { AppShell } from '@/layouts/AppShell';
 import { Toaster } from '@/components/ui/toaster';
+import { FirebaseClientProvider } from '@/firebase/client-provider';
+import { FirebaseAuthSync } from '@/components/FirebaseAuthSync';
 
 export const metadata: Metadata = {
   title: 'TheChoosenTalks',
@@ -23,10 +25,13 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@100..900&display=swap" rel="stylesheet" />
       </head>
       <body className="antialiased">
-        <AppShell>
-          {children}
-        </AppShell>
-        <Toaster />
+        <FirebaseClientProvider>
+          <FirebaseAuthSync />
+          <AppShell>
+            {children}
+          </AppShell>
+          <Toaster />
+        </FirebaseClientProvider>
       </body>
     </html>
   );
