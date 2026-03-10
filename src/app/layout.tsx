@@ -1,10 +1,24 @@
 import type { Metadata } from 'next';
 import React from 'react';
+import { Instrument_Serif, Inter } from 'next/font/google';
 import './globals.css';
 import { AppShell } from '@/layouts/AppShell';
 import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { FirebaseAuthSync } from '@/components/FirebaseAuthSync';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+const instrumentSerif = Instrument_Serif({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-instrument-serif',
+});
 
 export const metadata: Metadata = {
   title: 'TheChoosenTalks',
@@ -17,12 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@100..900&display=swap" rel="stylesheet" />
-      </head>
+    <html lang="id" className={`${inter.variable} ${instrumentSerif.variable}`} suppressHydrationWarning>
       <body className="antialiased" suppressHydrationWarning>
         <FirebaseClientProvider>
           <FirebaseAuthSync />
