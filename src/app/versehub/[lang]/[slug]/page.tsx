@@ -23,16 +23,22 @@ export default function UnifiedVerseHubPage() {
     const lang = params?.lang as string || 'id';
     const slug = params?.slug as string;
     
-    // Logic to distinguish between Chapter Reader and Verse Show
-    // Chapter Reader: mat-1, mat.1, mat1
-    // Verse Show: mat-1-1, mat-1-1-15, flm-1-15
-    // A simple heuristic: if there are 2 or more delimiters, it's a verse.
-    const isVerse = slug && (slug.split('-').length > 2 || slug.split('.').length > 2 || slug.split('_').length > 2 || (slug.match(/\d+-\d+/) !== null));
+    // Intelligent Route Differentiation:
+    // 1. Verse Share (e.g., yoh-3-16, mat-1-1-15, flm-1-15)
+    // 2. Chapter Reader (e.g., yoh-3, mat-1, mat1)
     
-    // Explicit check based on Laravel's regex: [a-z0-9]+(?:[-_.]\d+){1,3}
-    // We'll treat anything that looks like a full reference as a Verse Show page.
-    // If it looks like a chapter (e.g., mat-1), we show the Reader.
-    const isChapter = slug && /^[a-z0-9]+([-_.]\d+)?$/i.test(slug);
+    // Heuristic: Verse refs always have more segments or specifically match verse patterns
+    const segments = slug ? slug.split(/[-_.]/) : [];
+    
+    // A verse usually has: [book, chapter, verse] -> length 3
+    // A chapter usually has: [book, chapter] -> length 2
+    const isVerse = segments.length >= 3;
+    
+    // If it's not a verse, we check if it's a chapter reader
+    const isChapter = !isVerse && slug && (
+        segments.length === 2 || // e.g. yoh-3
+        /^[a-z]+\d+$/i.test(slug) // e.g. mat1
+    );
 
     const [verse, setVerse] = useState<VerseData | null>(null);
     const [loading, setLoading] = useState(true);
