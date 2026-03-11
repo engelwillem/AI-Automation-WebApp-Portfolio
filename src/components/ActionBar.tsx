@@ -64,7 +64,7 @@ export default function ActionBar({
     const showSave = true;
 
     return (
-        <div className={cn('flex items-center gap-2 text-sm', splitSave ? 'w-full' : '', className)}>
+        <div className={cn('flex items-center gap-1.5 md:gap-2 text-sm', splitSave ? 'w-full' : '', className)}>
             {showPray && onPray && (
                 <motion.button
                     whileTap={{ scale: 0.95 }}
@@ -78,7 +78,7 @@ export default function ActionBar({
                     onClick={() => onPray && runMemberAction(onPray, 'medium')}
                 >
                     <AppIcon icon={Hand} variant="action" active={prayed} className={prayed ? 'text-emerald-600' : 'opacity-70'} />
-                    <span className="text-[12px] font-medium tabular-nums">{prayLabel}</span>
+                    <span className="text-[12px] font-medium tabular-nums whitespace-nowrap">{prayLabel}</span>
                 </motion.button>
             )}
 
@@ -92,7 +92,7 @@ export default function ActionBar({
                 >
                     <AppIcon icon={MessageCircle} variant="action" className="opacity-70" />
                     {commentsCount > 0 ? (
-                        <span className="text-[12px] font-medium tabular-nums">
+                        <span className="text-[12px] font-medium tabular-nums whitespace-nowrap">
                             {commentsCount}
                         </span>
                     ) : null}
@@ -125,7 +125,7 @@ export default function ActionBar({
                     onClick={() => runMemberAction(onBookmark, 'medium')}
                 >
                     <AppIcon icon={Bookmark} variant="action" active={bookmarked} className={bookmarked ? 'text-brand' : 'opacity-70'} />
-                    <span className="text-[12px] font-medium tabular-nums">
+                    <span className="text-[12px] font-medium tabular-nums whitespace-nowrap">
                         {bookmarkLabel}
                     </span>
                 </motion.button>

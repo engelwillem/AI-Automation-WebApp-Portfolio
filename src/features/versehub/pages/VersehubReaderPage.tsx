@@ -270,10 +270,8 @@ export function VersehubReaderPage({ lang: initialLang }: VersehubReaderPageProp
     return (
         <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-[#FAFAF8] text-slate-900'}`}>
             <div className="mx-auto w-full max-w-6xl px-4 py-4 md:py-6">
-                <div className="flex items-start gap-8">
-                    {!isFocusMode && <DesktopSidebarNav activeId="bible" navItems={navItems} />}
-
-                    <div className="w-full md:flex-1">
+                <div className="flex w-full">
+                    <div className="w-full flex-1">
                         {/* Sticky Header parity */}
                         <div className={`sticky top-0 z-30 border-b backdrop-blur transition-all ${isDarkMode ? 'border-slate-700 bg-slate-900/92' : 'border-slate-200/70 bg-[#FAFAF8]/92'}`}>
                             <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-3.5">
@@ -464,11 +462,6 @@ export function VersehubReaderPage({ lang: initialLang }: VersehubReaderPageProp
                     lang={lang}
                 />
             )}
-
-            {/* Bottom Nav parity */}
-            <div className="fixed inset-x-0 bottom-6 z-40 flex justify-center md:hidden">
-                <FloatingBottomNav items={navItems} activeId="bible" onChange={() => {}} />
-            </div>
 
             {/* Verse Context Menu */}
             {toolsOpen && selectedVerse && (

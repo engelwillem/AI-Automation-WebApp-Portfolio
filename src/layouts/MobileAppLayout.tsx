@@ -65,36 +65,18 @@ export default function MobileAppLayout({
     }, []);
 
     return (
-        <div className="relative min-h-screen bg-[#fafafa] dark:bg-[#050505]">
-            {/* Ambient Background Layers - 100% Parity */}
-            <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-                <div className="absolute -left-[10%] -top-[10%] h-[60%] w-[60%] rounded-full bg-indigo-200/20 blur-[120px] dark:bg-indigo-900/10" />
-                <div className="absolute -right-[5%] top-[10%] h-[50%] w-[50%] rounded-full bg-sky-200/20 blur-[100px] dark:bg-sky-900/10" />
-                <div className="absolute bottom-[10%] left-[20%] h-[40%] w-[40%] rounded-full bg-rose-200/10 blur-[110px] dark:bg-rose-900/5" />
-            </div>
+        <div className="relative w-full">
 
             <div
                 className={cn(
-                    'relative z-10 mx-auto w-full max-w-6xl px-4',
-                    density === 'reader' ? 'py-4 md:py-6' : 'py-8',
+                    'relative z-10 w-full',
+                    density === 'reader' ? 'py-4 md:py-6' : 'py-2',
                 )}
             >
-                <div className="flex items-start gap-8">
-                    {/* Placeholder for DesktopSidebarNav (to be migrated) */}
-                    {activeNavId && (
-                        <div className="hidden md:flex md:w-72 md:flex-col md:gap-4 sticky top-8 h-fit self-start">
-                            <div className="bg-surface p-4 rounded-3xl shadow-soft">
-                                <p className="text-xs uppercase tracking-widest text-muted-foreground font-medium mb-4">Menu</p>
-                                {/* Sidebar items will go here */}
-                            </div>
-                            {desktopSidebarExtra}
-                        </div>
-                    )}
-
+                <div className="flex flex-col w-full">
                     <div
                         className={cn(
-                            'w-full md:flex-1',
-                            'mx-auto max-w-[420px] md:mx-0 md:max-w-none',
+                            'w-full mx-auto md:mx-0 md:max-w-none',
                             className,
                         )}
                         style={{
@@ -143,13 +125,6 @@ export default function MobileAppLayout({
                     </div>
                 </div>
             </div>
-
-            {/* Placeholder for FloatingBottomNav (to be migrated) */}
-            {activeNavId && (
-                <div className="fixed inset-x-0 z-50 flex justify-center md:hidden bottom-[calc(24px+env(safe-area-inset-bottom))]">
-                   {/* Bottom Nav will go here */}
-                </div>
-            )}
         </div>
     );
 }

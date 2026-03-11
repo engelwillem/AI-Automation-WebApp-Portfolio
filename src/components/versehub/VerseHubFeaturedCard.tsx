@@ -137,16 +137,24 @@ export default function VerseHubFeaturedCard({
                 </a>
             </div>
 
-            <Card className="rounded-3xl bg-surface p-5 shadow-soft ring-1 ring-black/5 dark:ring-white/10 backdrop-blur">
-                <a href={verseHref} className="mt-1 block overflow-hidden rounded-2xl ring-1 ring-white/10" aria-label={`Buka OG ayat ${verse.reference}`}>
-                    <img
-                        src={ogImageUrl ?? `/versehub/id/${verse.ref}/og.png`}
-                        alt={`OG image ${verse.reference}`}
-                        className="aspect-[1200/630] w-full object-cover"
-                        loading="lazy"
-                    />
+            {/* Decorative Verse Image Thumbnail Fallback */}
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-500/10 via-brand/5 to-rose-500/10 p-5 shadow-soft ring-1 ring-black/5 dark:ring-white/10 backdrop-blur">
+                <a href={verseHref} className="block overflow-hidden rounded-2xl ring-1 ring-white/10 relative" aria-label={`Buka OG ayat ${verse.reference}`}>
+                    <div className="aspect-[1200/630] w-full bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center p-8 text-center relative z-0">
+                        <span className="text-3xl font-bold opacity-30 tracking-widest uppercase">{verse.reference}</span>
+                        <img
+                            src={ogImageUrl ?? `/versehub/id/${verse.ref}/og.png`}
+                            alt={`OG image ${verse.reference}`}
+                            className="absolute inset-0 h-full w-full object-cover z-10 transition-opacity duration-300"
+                            loading="lazy"
+                            onError={(e) => {
+                                // Hide broken image on error so fallback displays
+                                (e.target as HTMLImageElement).style.opacity = '0';
+                            }}
+                        />
+                    </div>
                 </a>
-            </Card>
+            </div>
 
             <Card className="rounded-3xl bg-surface shadow-card ring-1 ring-black/5 dark:ring-white/10 backdrop-blur">
                 <CardContent className="p-7 md:p-9">
