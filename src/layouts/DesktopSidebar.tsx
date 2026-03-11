@@ -62,15 +62,14 @@ export default function DesktopSidebarNav({
                 {navItems.map((item) => {
                     const isActive = item.id === activeId;
                     
-                    // Route mapping (simplified for component parity)
                     const routeMap: Record<string, string> = {
                         home: '/today',
                         channels: '/channels',
-                        library: '/community',
+                        community: '/community',
                         bible: '/versehub/id',
-                        settings: '/profile',
+                        profile: '/profile',
                     };
-                    const href = routeMap[item.id] || '/';
+                    const href = (item as any).href || routeMap[item.id] || '/';
 
                     const baseClass = cn(
                         'group flex items-center gap-3 rounded-full px-4 py-3 text-sm font-medium transition-all duration-200',
