@@ -11,7 +11,7 @@ KEEP_RELEASES="${KEEP_RELEASES:-5}"
 REQUIRED_BIBLE_AYT_ID_MIN="${REQUIRED_BIBLE_AYT_ID_MIN:-1}"
 ENABLE_POST_HTTP_HEALTHCHECK="${ENABLE_POST_HTTP_HEALTHCHECK:-1}"
 HEALTHCHECK_URLS="${HEALTHCHECK_URLS:-/ /today /versehub/id}"
-BASE_URL="${BASE_URL:-https://thechoosentalks.org}"
+BASE_URL="${BASE_URL:-}"
 
 TIMESTAMP="$(date +%Y%m%d%H%M%S)"
 NEW_RELEASE="$RELEASES_DIR/$TIMESTAMP"
@@ -142,6 +142,12 @@ cd "$NEW_RELEASE"
 
 DB_CONNECTION_VALUE="$(grep -E '^DB_CONNECTION=' .env | tail -n 1 | cut -d '=' -f2- | tr -d '\r' | tr -d '"' | tr -d "'" | xargs || true)"
 DB_DATABASE_VALUE="$(grep -E '^DB_DATABASE=' .env | tail -n 1 | cut -d '=' -f2- | tr -d '\r' | tr -d '"' | tr -d "'" | xargs || true)"
+HEALTHCHECK_BASE_URL_VALUE="$(grep -E '^HEALTHCHECK_BASE_URL=' .env | tail -n 1 | cut -d '=' -f2- | tr -d '\r' | tr -d '"' | tr -d "'" | xargs || true)"
+APP_URL_VALUE="$(grep -E '^APP_URL=' .env | tail -n 1 | cut -d '=' -f2- | tr -d '\r' | tr -d '"' | tr -d "'" | xargs || true)"
+
+if [[ -z "$BASE_URL" ]]; then
+    BASE_URL="${HEALTHCHECK_BASE_URL_VALUE:-${APP_URL_VALUE:-http://127.0.0.1}}"
+fi
 
 if [[ "$DB_CONNECTION_VALUE" == "mysql" || "$DB_CONNECTION_VALUE" == "mariadb" ]]; then
     [[ -n "$DB_DATABASE_VALUE" ]] || fail "DB_DATABASE is empty for $DB_CONNECTION_VALUE"

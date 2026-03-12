@@ -2,7 +2,7 @@
 set -euo pipefail
 
 RELEASE_PATH=""
-BASE_URL="https://thechoosentalks.org"
+BASE_URL=""
 URLS="/ /today /versehub/id"
 REQUIRED_BIBLE_MIN="1"
 SKIP_HTTP="0"
@@ -42,6 +42,20 @@ if [[ -z "$RELEASE_PATH" ]]; then
 fi
 
 cd "$RELEASE_PATH"
+
+if [[ -z "$BASE_URL" && -f ".env" ]]; then
+    BASE_URL="$(
+        grep -E '^(HEALTHCHECK_BASE_URL|APP_URL)=' .env \
+        | tail -n 1 \
+        | cut -d '=' -f2- \
+        | tr -d '\r' \
+        | tr -d '"' \
+        | tr -d "'" \
+        | xargs || true
+    )"
+fi
+
+BASE_URL="${BASE_URL:-http://127.0.0.1}"
 
 [[ -f artisan ]] || { echo "artisan missing in release"; exit 1; }
 [[ -f vendor/autoload.php ]] || { echo "vendor/autoload.php missing"; exit 1; }
