@@ -1,0 +1,59 @@
+name: Frontend Monorepo Checks
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.idx/**'
+      - 'src/**'
+      - 'public/**'
+      - 'apphosting.yaml'
+      - 'components.json'
+      - 'next.config.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'postcss.config.mjs'
+      - 'tsconfig.json'
+      - '.github/workflows/frontend-monorepo-checks.yml'
+  pull_request:
+    paths:
+      - '.idx/**'
+      - 'src/**'
+      - 'public/**'
+      - 'apphosting.yaml'
+      - 'components.json'
+      - 'next.config.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'postcss.config.mjs'
+      - 'tsconfig.json'
+      - '.github/workflows/frontend-monorepo-checks.yml'
+
+concurrency:
+  group: frontend-monorepo-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Typecheck frontend
+        run: npm run typecheck
+
+      - name: Build frontend
+        run: npm run build
