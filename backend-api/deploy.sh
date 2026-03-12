@@ -142,8 +142,18 @@ cd "$NEW_RELEASE"
 
 DB_CONNECTION_VALUE="$(grep -E '^DB_CONNECTION=' .env | tail -n 1 | cut -d '=' -f2- | tr -d '\r' | tr -d '"' | tr -d "'" | xargs || true)"
 DB_DATABASE_VALUE="$(grep -E '^DB_DATABASE=' .env | tail -n 1 | cut -d '=' -f2- | tr -d '\r' | tr -d '"' | tr -d "'" | xargs || true)"
+ENABLE_POST_HTTP_HEALTHCHECK_VALUE="$(grep -E '^ENABLE_POST_HTTP_HEALTHCHECK=' .env | tail -n 1 | cut -d '=' -f2- | tr -d '\r' | tr -d '"' | tr -d "'" | xargs || true)"
+HEALTHCHECK_URLS_VALUE="$(grep -E '^HEALTHCHECK_URLS=' .env | tail -n 1 | cut -d '=' -f2- | tr -d '\r' | tr -d '"' | tr -d "'" | xargs || true)"
 HEALTHCHECK_BASE_URL_VALUE="$(grep -E '^HEALTHCHECK_BASE_URL=' .env | tail -n 1 | cut -d '=' -f2- | tr -d '\r' | tr -d '"' | tr -d "'" | xargs || true)"
 APP_URL_VALUE="$(grep -E '^APP_URL=' .env | tail -n 1 | cut -d '=' -f2- | tr -d '\r' | tr -d '"' | tr -d "'" | xargs || true)"
+
+if [[ -n "$ENABLE_POST_HTTP_HEALTHCHECK_VALUE" ]]; then
+    ENABLE_POST_HTTP_HEALTHCHECK="$ENABLE_POST_HTTP_HEALTHCHECK_VALUE"
+fi
+
+if [[ -n "$HEALTHCHECK_URLS_VALUE" ]]; then
+    HEALTHCHECK_URLS="$HEALTHCHECK_URLS_VALUE"
+fi
 
 if [[ -z "$BASE_URL" ]]; then
     BASE_URL="${HEALTHCHECK_BASE_URL_VALUE:-${APP_URL_VALUE:-http://127.0.0.1}}"
