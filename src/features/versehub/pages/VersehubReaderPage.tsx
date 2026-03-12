@@ -8,6 +8,7 @@ import {
     StickyNote, Highlighter, Network, ArrowRight, X, Scroll 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 // Layout & UI Components
 import DesktopSidebarNav from '@/components/core/DesktopSidebarNav';
@@ -268,34 +269,34 @@ export function VersehubReaderPage({ lang: initialLang }: VersehubReaderPageProp
     ];
 
     return (
-        <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-[#FAFAF8] text-slate-900'}`}>
+        <div className={`min-h-screen transition-all duration-500 bg-slate-950 text-white`}>
             <div className="mx-auto w-full max-w-6xl px-4 py-4 md:py-6">
                 <div className="flex w-full">
                     <div className="w-full flex-1">
                         {/* Sticky Header parity */}
-                        <div className={`sticky top-0 z-30 border-b backdrop-blur transition-all ${isDarkMode ? 'border-slate-700 bg-slate-900/92' : 'border-slate-200/70 bg-[#FAFAF8]/92'}`}>
+                        <div className={`sticky top-0 z-30 border-b backdrop-blur-xl transition-all border-white/5 bg-slate-950/80`}>
                             <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-3.5">
                                 <button
                                     onClick={handleBack}
-                                    className={`inline-flex h-10 w-10 items-center justify-center rounded-full transition-all active:scale-95 ring-1 ${isDarkMode ? 'bg-slate-800 ring-slate-700 hover:bg-slate-700' : 'bg-white ring-slate-200 shadow-sm hover:ring-slate-300'}`}
+                                    className={`inline-flex h-10 w-10 items-center justify-center rounded-full transition-all active:scale-95 border border-white/10 bg-white/5 text-white/50 hover:text-white hover:bg-white/10`}
                                 >
                                     <X className="h-4 w-4" />
                                 </button>
                                 <h1 className="tct-brand-gradient text-xl font-bold tracking-tight">{chapter_label || 'VerseHub'}</h1>
                                 <button
                                     onClick={() => setPickerOpen(true)}
-                                    className={`inline-flex items-center gap-1.5 rounded-2xl px-3.5 py-2 text-xs font-bold transition-all active:scale-95 ring-1 ${isDarkMode ? 'bg-slate-800 ring-slate-700 hover:bg-slate-700' : 'bg-white ring-slate-200 shadow-sm hover:ring-slate-300'}`}
+                                    className={`inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-[10px] font-bold transition-all active:scale-95 border border-white/10 bg-white/5 text-white/50 hover:text-white hover:bg-white/10`}
                                 >
-                                    <Library className="h-3.5 w-3.5 text-amber-500" />
+                                    <Library className="h-3.5 w-3.5 text-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.3)]" />
                                     Library
                                 </button>
                             </div>
                             
                             {isChapter && (
-                                <div className="mx-auto flex w-full max-w-3xl items-center gap-2 px-4 pb-2 text-[11px] text-slate-500">
-                                    <span>Ayat {progressVerse} dari {progressTotal}</span>
-                                    <div className={`h-0.5 flex-1 overflow-hidden rounded-full ${isDarkMode ? 'bg-slate-700' : 'bg-slate-200'}`}>
-                                        <div className={`h-full rounded-full ${isDarkMode ? 'bg-slate-300' : 'bg-slate-600'}`} style={{ width: `${scrollProgressPercent}%` }} />
+                                <div className="mx-auto flex w-full max-w-3xl items-center gap-3 px-4 pb-3 text-[10px] uppercase tracking-[0.1em] text-white/30 font-bold">
+                                    <span>Ayat {progressVerse} / {progressTotal}</span>
+                                    <div className={`h-1 flex-1 overflow-hidden rounded-full bg-white/5`}>
+                                        <div className={`h-full rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)]`} style={{ width: `${scrollProgressPercent}%` }} />
                                     </div>
                                 </div>
                             )}
@@ -307,17 +308,17 @@ export function VersehubReaderPage({ lang: initialLang }: VersehubReaderPageProp
                                 <div ref={searchWrapRef} className="relative group">
                                     <form onSubmit={submitSearch} className="flex items-center gap-2">
                                         <div className="relative flex-1">
-                                            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 group-focus-within:text-amber-500" />
+                                            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/20 group-focus-within:text-amber-500" />
                                             <input
                                                 ref={searchInputRef}
                                                 type="text"
                                                 value={query}
                                                 onChange={(e) => setQuery(e.target.value)}
                                                 placeholder="Cari referensi: yoh 3:16"
-                                                className="h-11 w-full rounded-2xl border border-slate-200 bg-white pl-10 pr-4 text-sm outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-400/5 shadow-sm"
+                                                className="h-12 w-full rounded-2xl border border-white/10 bg-white/5 pl-12 pr-4 text-sm text-white placeholder:text-white/20 outline-none focus:border-amber-500/30 focus:bg-white/10 transition-all shadow-2xl"
                                             />
                                         </div>
-                                        <button type="submit" className="h-11 rounded-2xl bg-slate-900 px-5 text-sm font-bold text-white transition-all hover:bg-slate-800 active:scale-95">
+                                        <button type="submit" className="h-12 rounded-2xl bg-white text-slate-950 px-6 text-[11px] font-bold tracking-widest uppercase transition-all hover:bg-slate-200 active:scale-95 shadow-xl">
                                             Cari
                                         </button>
                                     </form>
@@ -328,15 +329,16 @@ export function VersehubReaderPage({ lang: initialLang }: VersehubReaderPageProp
                                 {!isChapter ? (
                                     <div className="mt-7 space-y-4">
                                         {/* Landing State Hero */}
-                                        <section className="relative overflow-hidden rounded-[2rem] p-7 text-white shadow-xl bg-slate-900">
+                                        <section className="relative overflow-hidden rounded-[3rem] p-10 text-white shadow-2xl border border-white/5 bg-slate-900">
+                                            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl -mr-32 -mt-32" />
                                             <div className="relative z-10 max-w-2xl">
-                                                <div className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-bold tracking-widest backdrop-blur-md">
+                                                <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[10px] font-bold tracking-[0.2em] backdrop-blur-md text-amber-500">
                                                     {personaCopy.badge}
                                                 </div>
-                                                <h2 className="mt-4 text-3xl font-bold leading-tight sm:text-[2.2rem]">{personaCopy.heroTitle}</h2>
-                                                <p className="mt-3 text-base text-white/90">{personaCopy.heroBody}</p>
-                                                <div className="mt-6 flex flex-wrap gap-3">
-                                                    <button className="flex items-center gap-2.5 rounded-2xl bg-white px-5 py-3 text-sm font-bold text-slate-950">
+                                                <h2 className="mt-6 text-4xl font-bold leading-tight tracking-tight sm:text-[2.5rem]">{personaCopy.heroTitle}</h2>
+                                                <p className="mt-4 text-base text-white/50 font-medium leading-relaxed">{personaCopy.heroBody}</p>
+                                                <div className="mt-10 flex flex-wrap gap-4">
+                                                    <button className="flex items-center gap-3 rounded-2xl bg-white px-7 py-4 text-xs font-bold uppercase tracking-widest text-slate-950 transition-all hover:bg-slate-200 active:scale-95 shadow-xl">
                                                         <Zap className="h-5 w-5 text-amber-500" fill="currentColor" />
                                                         {personaCopy.continueButtonLabel}
                                                     </button>
@@ -345,20 +347,20 @@ export function VersehubReaderPage({ lang: initialLang }: VersehubReaderPageProp
                                         </section>
 
                                         {/* Paths Layout */}
-                                        <section className="rounded-[2.25rem] border border-slate-200 bg-white p-7 shadow-soft">
-                                            <h3 className="flex items-center gap-2.5 text-base font-bold text-slate-900">
-                                                <Compass className="h-5.5 w-5.5 text-amber-500" />
+                                        <section className="rounded-[3rem] border border-white/5 bg-white/[0.02] p-10 shadow-2xl backdrop-blur-md">
+                                            <h3 className="flex items-center gap-3 text-lg font-bold text-white tracking-tight">
+                                                <Compass className="h-6 w-6 text-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.3)]" />
                                                 {personaCopy.exploreTitle}
                                             </h3>
-                                            <p className="mt-3 text-xs text-slate-500">{personaCopy.exploreBody}</p>
-                                            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                                <button onClick={() => {setTab('ot'); setPickerOpen(true);}} className="group relative overflow-hidden rounded-2xl border border-amber-200 bg-amber-50/50 p-5 text-left transition-all hover:shadow-lg">
-                                                    <p className="text-[10px] font-bold uppercase text-amber-700">Old Testament</p>
-                                                    <p className="mt-1.5 font-bold">Mulai dari Kejadian 1</p>
+                                            <p className="mt-3 text-sm text-white/40 font-medium">{personaCopy.exploreBody}</p>
+                                            <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
+                                                <button onClick={() => {setTab('ot'); setPickerOpen(true);}} className="group relative overflow-hidden rounded-[24px] border border-white/5 bg-white/[0.03] p-6 text-left transition-all hover:bg-white/[0.08] hover:border-amber-500/20 hover:shadow-2xl">
+                                                    <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-amber-500/70">Old Testament</p>
+                                                    <p className="mt-2 text-base font-bold text-white/90">Mulai dari Kejadian 1</p>
                                                 </button>
-                                                <button onClick={() => {setTab('nt'); setPickerOpen(true);}} className="group relative overflow-hidden rounded-2xl border border-sky-200 bg-sky-50/50 p-5 text-left transition-all hover:shadow-lg">
-                                                    <p className="text-[10px] font-bold uppercase text-sky-700">New Testament</p>
-                                                    <p className="mt-1.5 font-bold">Mulai dari Matius 1</p>
+                                                <button onClick={() => {setTab('nt'); setPickerOpen(true);}} className="group relative overflow-hidden rounded-[24px] border border-white/5 bg-white/[0.03] p-6 text-left transition-all hover:bg-white/[0.08] hover:border-sky-500/20 hover:shadow-2xl">
+                                                    <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-sky-400/70">New Testament</p>
+                                                    <p className="mt-2 text-base font-bold text-white/90">Mulai dari Matius 1</p>
                                                 </button>
                                             </div>
                                         </section>
@@ -366,16 +368,20 @@ export function VersehubReaderPage({ lang: initialLang }: VersehubReaderPageProp
                                 ) : (
                                     <div className="mt-6 space-y-6">
                                         {verses.map(v => (
-                                            <div key={v.key} className={`rounded-xl px-2 py-1 leading-relaxed ${activeVerseKey === v.key ? (isDarkMode ? 'bg-slate-800' : 'bg-slate-100') : ''} ${getHighlightClass(stateFor(v.key))}`}>
+                                            <div key={v.key} className={cn(
+                                                "rounded-2xl px-4 py-3 leading-relaxed transition-all duration-300 border border-transparent",
+                                                activeVerseKey === v.key ? "bg-white/[0.08] border-white/10 shadow-xl scale-[1.01]" : "hover:bg-white/[0.03]",
+                                                getHighlightClass(stateFor(v.key))
+                                            )}>
                                                 <button
                                                     onClick={() => openVerseTools(v.key)}
-                                                    className={`w-full text-left transition-colors ${textSizeClass}`}
+                                                    className={`w-full text-left transition-colors font-medium text-white/90 ${textSizeClass}`}
                                                 >
-                                                    <sup className="mr-2 text-xs opacity-50">{v.verse}</sup>
+                                                    <sup className="mr-3 text-xs font-bold text-amber-500/50">{v.verse}</sup>
                                                     {v.text}
                                                 </button>
                                                 {stateFor(v.key).note && (
-                                                    <p className="mt-2 text-sm italic border-l-2 pl-3 border-amber-300 opacity-70">
+                                                    <p className="mt-3 text-sm italic border-l-2 pl-4 border-amber-500/50 text-white/50 leading-relaxed">
                                                         {stateFor(v.key).note}
                                                     </p>
                                                 )}
@@ -402,27 +408,27 @@ export function VersehubReaderPage({ lang: initialLang }: VersehubReaderPageProp
                 {pickerOpen && (
                     <motion.div 
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-end justify-center sm:items-center bg-black/40 backdrop-blur-sm"
+                        className="fixed inset-0 z-50 flex items-end justify-center sm:items-center bg-black/80 backdrop-blur-md"
                     >
-                        <div className="relative w-full max-h-[88vh] bg-white rounded-t-[2.5rem] sm:rounded-[2.5rem] sm:max-w-xl overflow-hidden shadow-2xl">
+                        <div className="relative w-full max-h-[88vh] bg-slate-900 border border-white/10 rounded-t-[3rem] sm:rounded-[3rem] sm:max-w-xl overflow-hidden shadow-2xl">
                             <div className="flex flex-col h-full p-6">
-                                <div className="flex justify-between items-center mb-6">
-                                    <h3 className="text-xl font-bold">Jelajahi Alkitab</h3>
-                                    <button onClick={() => setPickerOpen(false)}><X /></button>
+                                <div className="flex justify-between items-center mb-8">
+                                    <h3 className="text-2xl font-bold tracking-tight text-white">Jelajahi Alkitab</h3>
+                                    <button onClick={() => setPickerOpen(false)} className="h-10 w-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10"><X className="h-5 w-5" /></button>
                                 </div>
-                                <div className="grid grid-cols-2 gap-2 mb-6 bg-slate-100 p-1 rounded-2xl">
-                                    <button onClick={() => setTab('ot')} className={`py-2 rounded-xl text-sm font-bold ${tab === 'ot' ? 'bg-amber-500 text-white shadow-md' : 'text-slate-500'}`}>Old Testament</button>
-                                    <button onClick={() => setTab('nt')} className={`py-2 rounded-xl text-sm font-bold ${tab === 'nt' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-500'}`}>New Testament</button>
+                                <div className="grid grid-cols-2 gap-2 mb-8 bg-white/5 p-1.5 rounded-[20px] border border-white/5">
+                                    <button onClick={() => setTab('ot')} className={`py-2.5 rounded-2xl text-[11px] font-bold tracking-widest uppercase transition-all ${tab === 'ot' ? 'bg-white text-slate-900 shadow-xl' : 'text-white/40 hover:text-white'}`}>Old Testament</button>
+                                    <button onClick={() => setTab('nt')} className={`py-2.5 rounded-2xl text-[11px] font-bold tracking-widest uppercase transition-all ${tab === 'nt' ? 'bg-white text-slate-900 shadow-xl' : 'text-white/40 hover:text-white'}`}>New Testament</button>
                                 </div>
-                                <div className="flex gap-6 h-[400px]">
-                                    <div className="w-1/3 overflow-y-auto space-y-1">
+                                <div className="flex gap-8 h-[450px]">
+                                    <div className="w-1/3 overflow-y-auto space-y-1.5 pr-2 scrollbar-premium">
                                         {byTab.map(b => (
-                                            <button key={b.code} onClick={() => setActiveBook(b.code)} className={`w-full text-left px-3 py-2 rounded-xl text-sm font-medium ${activeBook === b.code ? 'bg-amber-50 text-amber-700' : 'hover:bg-slate-50'}`}>{b.label}</button>
+                                            <button key={b.code} onClick={() => setActiveBook(b.code)} className={`w-full text-left px-5 py-3 rounded-2xl text-xs font-bold transition-all ${activeBook === b.code ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-xl' : 'text-white/40 hover:bg-white/5'}`}>{b.label}</button>
                                         ))}
                                     </div>
-                                    <div className="flex-1 overflow-y-auto grid grid-cols-4 gap-2">
+                                    <div className="flex-1 overflow-y-auto grid grid-cols-4 gap-3 pr-2 scrollbar-premium">
                                         {bookChapters.map(ch => (
-                                            <button key={ch} onClick={() => handlePickChapter(activeBook!, ch)} className="aspect-square border rounded-xl flex items-center justify-center font-bold hover:bg-slate-50">{ch}</button>
+                                            <button key={ch} onClick={() => handlePickChapter(activeBook!, ch)} className="aspect-square border border-white/5 bg-white/[0.03] rounded-2xl flex items-center justify-center font-bold text-sm hover:bg-white/10 hover:border-white/10 transition-all">{ch}</button>
                                         ))}
                                     </div>
                                 </div>
@@ -466,8 +472,9 @@ export function VersehubReaderPage({ lang: initialLang }: VersehubReaderPageProp
             {/* Verse Context Menu */}
             {toolsOpen && selectedVerse && (
                 <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center">
-                    <div className="absolute inset-0 bg-black/20" onClick={() => setToolsOpen(false)} />
-                    <div className="relative w-full sm:w-[360px] bg-white rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setToolsOpen(false)} />
+                    <div className="relative w-full sm:w-[400px] bg-slate-900 border border-white/10 rounded-t-[2.5rem] sm:rounded-[2.5rem] p-8 shadow-2xl overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500/0 via-amber-500/50 to-amber-500/0" />
                         <div className="flex justify-between items-start mb-4">
                             <div>
                                 <p className="font-bold">{chapter_label}:{selectedVerse.verse}</p>

@@ -36,11 +36,11 @@ export default function ReflectionsJournalPage() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-[#FAFAF8] text-slate-900 pb-20">
+        <div className="min-h-screen bg-slate-950 text-white pb-20">
             {/* Header Parity with MobileAppLayout style */}
-            <div className="sticky top-0 z-40 bg-[#FAFAF8]/80 backdrop-blur-md border-b border-slate-200/60">
+            <div className="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-md border-b border-white/5">
                 <div className="mx-auto max-w-2xl px-4 py-4 flex items-center justify-between">
-                    <button onClick={() => router.back()} className="h-10 w-10 flex items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-200 active:scale-95">
+                    <button onClick={() => router.back()} className="h-10 w-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 active:scale-95 transition-all hover:bg-white/10">
                         <X className="h-4 w-4" />
                     </button>
                     <h1 className="font-bold text-lg">{isId ? 'Jurnal Refleksi' : 'Reflection Journal'}</h1>
@@ -50,10 +50,10 @@ export default function ReflectionsJournalPage() {
 
             <div className="mx-auto max-w-2xl px-4 py-8">
                 <header className="mb-10 text-center">
-                    <h2 className="mb-2 text-3xl font-bold text-slate-900">
+                    <h2 className="mb-2 text-3xl font-bold text-white tracking-tight">
                         {isId ? 'Percakapan Hati' : 'Heart Conversations'}
                     </h2>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-white/40 font-medium">
                         {isId
                             ? 'Kumpulan percakapanmu dengan Firman Tuhan.'
                             : 'A collection of your conversations with God’s Word.'}
@@ -67,8 +67,8 @@ export default function ReflectionsJournalPage() {
                         ))}
                     </div>
                 ) : reflections.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center rounded-[32px] bg-slate-50 py-16 text-center border border-dashed border-slate-200">
-                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-slate-300 shadow-sm">
+                    <div className="flex flex-col items-center justify-center rounded-[40px] bg-white/[0.02] py-20 text-center border border-dashed border-white/10 backdrop-blur-sm">
+                        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-[24px] bg-white/5 text-white/20 border border-white/10 shadow-xl">
                             <MessageSquareQuote className="h-8 w-8" />
                         </div>
                         <p className="max-w-[200px] text-sm font-medium text-slate-400">
@@ -85,18 +85,18 @@ export default function ReflectionsJournalPage() {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: idx * 0.05 }}
-                                className="group relative overflow-hidden rounded-[32px] border border-slate-100 bg-white p-6 shadow-soft transition-all hover:shadow-md ring-1 ring-black/[0.02]"
+                                className="group relative overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.02] p-8 shadow-2xl backdrop-blur-md transition-all hover:bg-white/[0.04] hover:shadow-cyan-900/10"
                             >
                                 <div className="mb-4 flex items-center justify-between">
                                     <div className="flex items-center gap-2">
-                                        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                                        <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
                                             <MessageSquareQuote className="h-4 w-4" />
                                         </span>
                                         <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                             {item.verse_ref.toUpperCase()}
                                         </p>
                                     </div>
-                                    <div className="flex items-center gap-1.5 rounded-full bg-slate-50 px-2.5 py-1 text-[10px] font-bold text-slate-400">
+                                    <div className="flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-3 py-1.5 text-[10px] font-bold text-white/40">
                                         <Calendar className="h-3 w-3" />
                                         {new Date(item.created_at).toLocaleDateString(isId ? 'id-ID' : 'en-US', {
                                             month: 'short',
@@ -107,10 +107,10 @@ export default function ReflectionsJournalPage() {
                                 </div>
 
                                 <div className="mb-4 space-y-3">
-                                    <p className="font-serif text-lg italic leading-relaxed text-slate-700">
+                                    <p className="font-serif text-2xl italic leading-relaxed text-white/90">
                                         "{item.question_text}"
                                     </p>
-                                    <div className="rounded-2xl bg-slate-50 p-4 text-sm leading-relaxed text-slate-600 border border-slate-100">
+                                    <div className="rounded-2xl bg-white/5 p-6 text-sm leading-relaxed text-white/60 border border-white/10 shadow-inner">
                                         {item.answer_text}
                                     </div>
                                 </div>

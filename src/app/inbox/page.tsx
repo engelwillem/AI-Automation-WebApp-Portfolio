@@ -55,16 +55,16 @@ export default function InboxPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
+            <div className="min-h-screen bg-slate-950 flex items-center justify-center">
                 <div className="h-10 w-10 border-4 border-slate-900 border-t-transparent rounded-full animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#FAFAF8] text-slate-900 pb-20">
+        <div className="min-h-screen bg-slate-950 text-slate-900 pb-20">
             {/* Header Parity */}
-            <header className="sticky top-0 z-50 bg-[#FAFAF8]/80 backdrop-blur-md border-b border-slate-200/60 px-4 py-4">
+            <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-200/60 px-4 py-4">
                 <div className="mx-auto max-w-2xl flex items-center justify-between">
                     <button onClick={() => router.push('/today')} className="h-10 w-10 flex items-center justify-center rounded-full hover:bg-white active:scale-95 transition-all">
                         <ArrowLeft className="h-5 w-5" />

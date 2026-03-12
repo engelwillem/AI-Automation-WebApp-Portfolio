@@ -201,14 +201,14 @@ export default function SpiritualJourneyPage() {
     const localGroups = useMemo(() => groupByTimeline(localItems), [localItems]);
 
     return (
-        <div className="min-h-screen bg-[#FAFAF8] text-slate-900 pb-20">
+        <div className="min-h-screen bg-slate-950 text-white pb-20">
             {/* Header Parity */}
-            <div className="sticky top-0 z-40 bg-[#FAFAF8]/80 backdrop-blur-md border-b border-slate-200/60 transition-all">
+            <div className="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-md border-b border-white/5 transition-all">
                 <div className="mx-auto max-w-2xl px-4 py-4 flex items-center justify-between">
-                    <button onClick={() => router.back()} className="h-10 w-10 flex items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-200 active:scale-95">
+                    <button onClick={() => router.back()} className="h-10 w-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 active:scale-95 transition-all hover:bg-white/10">
                         <X className="h-4 w-4" />
                     </button>
-                    <h1 className="font-bold text-lg">Perjalanan Rohani</h1>
+                    <h1 className="font-bold text-lg text-white">Perjalanan Rohani</h1>
                     <div className="w-10" /> {/* Spacer */}
                 </div>
             </div>
@@ -224,22 +224,23 @@ export default function SpiritualJourneyPage() {
                         <p className="text-4xl font-bold">{stats.streak}<span className="text-lg opacity-50 ml-1">Hari</span></p>
                         <p className="mt-2 text-xs text-white/40 font-medium">Lanjutkan konsistensi Anda.</p>
                     </div>
-                    <div className="bg-white rounded-[32px] p-6 shadow-soft ring-1 ring-slate-200/60">
-                        <div className="flex items-center gap-2 mb-2">
-                            <Sparkles className="h-5 w-5 text-sky-500" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Saved</span>
+                    <div className="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-[40px] p-8 shadow-2xl transition-all hover:bg-white/[0.05]">
+                        <div className="flex items-center gap-3 mb-3">
+                            <Sparkles className="h-6 w-6 text-sky-400 shadow-[0_0_15px_rgba(56,189,248,0.3)]" />
+                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30">Total Saved</span>
                         </div>
-                        <p className="text-4xl font-bold text-slate-900">{stats.total_saved}</p>
-                        <p className="mt-2 text-xs text-slate-400 font-medium">+ {stats.growth_percent}% vs last week</p>
+                        <p className="text-5xl font-bold text-white tracking-tighter">{stats.total_saved}</p>
+                        <p className="mt-3 text-xs text-sky-400/60 font-medium">+ {stats.growth_percent}% vs last week</p>
                     </div>
                 </div>
 
                 {/* Quote of the Week Parity */}
                 {stats.quote_of_week && (
-                    <div className="bg-amber-100/50 rounded-[32px] p-8 mb-8 ring-1 ring-amber-200/50">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-amber-600 mb-4 text-center">Quote of the Week</p>
-                        <p className="font-serif text-xl italic text-center text-slate-800 leading-relaxed">"{stats.quote_of_week}"</p>
-                        <p className="mt-4 text-xs font-bold text-center text-amber-600/80">{stats.quote_ref}</p>
+                    <div className="bg-amber-500/5 rounded-[40px] p-10 mb-8 border border-amber-500/10 backdrop-blur-sm shadow-xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl -mr-16 -mt-16" />
+                        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-amber-500/50 mb-6 text-center">Quote of the Week</p>
+                        <p className="font-serif text-2xl italic text-center text-white/90 leading-relaxed">"{stats.quote_of_week}"</p>
+                        <p className="mt-6 text-xs font-bold text-center text-amber-500/60 tracking-widest">{stats.quote_ref}</p>
                     </div>
                 )}
 
@@ -251,8 +252,8 @@ export default function SpiritualJourneyPage() {
                                 key={t}
                                 onClick={() => setActiveTab(t)}
                                 className={cn(
-                                    "px-5 py-2.5 rounded-full text-xs font-bold transition-all whitespace-nowrap",
-                                    activeTab === t ? "bg-slate-900 text-white" : "bg-white text-slate-500 ring-1 ring-slate-200"
+                                    "px-6 py-2.5 rounded-full text-[11px] font-bold tracking-widest transition-all whitespace-nowrap border",
+                                    activeTab === t ? "bg-white text-slate-950 border-white shadow-lg" : "bg-white/5 text-white/40 border-white/5 hover:bg-white/10"
                                 )}
                             >
                                 {t.toUpperCase()}
@@ -261,13 +262,13 @@ export default function SpiritualJourneyPage() {
                     </div>
 
                     <div className="relative">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/20" />
                         <input
                             type="text"
                             placeholder="Cari dalam riwayat..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full h-12 bg-white rounded-2xl pl-10 pr-4 text-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-amber-500/20 outline-none"
+                            className="w-full h-13 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 text-sm text-white placeholder:text-white/20 focus:ring-2 focus:ring-white/10 focus:bg-white/10 outline-none transition-all"
                         />
                     </div>
                 </div>
@@ -292,8 +293,8 @@ export default function SpiritualJourneyPage() {
                                             key={row.id}
                                             layout
                                             className={cn(
-                                                "rounded-[28px] bg-white shadow-soft ring-1 ring-black/[0.04] overflow-hidden transition-all duration-300",
-                                                expanded[row.id] ? "ring-amber-400/30" : ""
+                                                "rounded-[32px] bg-white/[0.02] border border-white/10 shadow-xl overflow-hidden backdrop-blur-md transition-all duration-300",
+                                                expanded[row.id] ? "ring-2 ring-amber-500/20 bg-white/[0.04]" : "hover:bg-white/[0.04]"
                                             )}
                                         >
                                             <button 
@@ -302,8 +303,8 @@ export default function SpiritualJourneyPage() {
                                             >
                                                 <div className="flex items-center justify-between">
                                                     <div>
-                                                        <p className="font-bold text-slate-900">{row.book_label} {row.chapter}:{row.verse}</p>
-                                                        <p className="text-[10px] text-slate-400 font-medium mt-1">{formatRelativeDate(row.updated_at)}</p>
+                                                        <p className="font-bold text-white text-base tracking-tight">{row.book_label} {row.chapter}:{row.verse}</p>
+                                                        <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest mt-1.5">{formatRelativeDate(row.updated_at)}</p>
                                                     </div>
                                                     <div className="flex gap-1.5">
                                                         {row.is_favorite && <Heart className="h-3.5 w-3.5 text-rose-500 fill-rose-500" />}
@@ -314,26 +315,25 @@ export default function SpiritualJourneyPage() {
                                                     <p className="mt-3 text-sm text-slate-500 italic line-clamp-1">"{row.note}"</p>
                                                 )}
                                             </button>
-                                            
                                             <AnimatePresence>
                                                 {expanded[row.id] && (
                                                     <motion.div 
                                                         initial={{ opacity: 0, height: 0 }}
                                                         animate={{ opacity: 1, height: 'auto' }}
                                                         exit={{ opacity: 0, height: 0 }}
-                                                        className="px-5 pb-5 pt-1 border-t border-slate-50"
+                                                        className="px-6 pb-6 pt-2 border-t border-white/5 bg-white/[0.01]"
                                                     >
                                                         <div className="flex flex-wrap gap-2 mt-2">
-                                                            <a href={row.chapter_href} className="flex items-center gap-1.5 px-4 h-9 rounded-full bg-slate-900 text-[11px] font-bold text-white">
+                                                            <a href={row.chapter_href} className="flex items-center gap-1.5 px-4 h-9 rounded-full bg-white text-slate-950 text-[11px] font-bold hover:bg-white/90">
                                                                 <ExternalLink className="h-3 w-3" /> Reader
                                                             </a>
-                                                            <button className="flex items-center gap-1.5 px-4 h-9 rounded-full bg-slate-100 text-[11px] font-bold text-slate-600">
+                                                            <button className="flex items-center gap-1.5 px-4 h-9 rounded-full bg-white/5 border border-white/10 text-[11px] font-bold text-white/60 hover:bg-white/10">
                                                                 <PenLine className="h-3 w-3" /> Edit Note
                                                             </button>
-                                                            <button className="flex items-center gap-1.5 px-4 h-9 rounded-full bg-slate-100 text-[11px] font-bold text-slate-600">
+                                                            <button className="flex items-center gap-1.5 px-4 h-9 rounded-full bg-white/5 border border-white/10 text-[11px] font-bold text-white/60 hover:bg-white/10">
                                                                 <Share2 className="h-3 w-3" /> Share
                                                             </button>
-                                                            <button className="flex items-center gap-1.5 px-4 h-9 rounded-full bg-emerald-500 text-[11px] font-bold text-white">
+                                                            <button className="flex items-center gap-1.5 px-4 h-9 rounded-full bg-amber-500 text-[11px] font-bold text-white shadow-lg shadow-amber-500/20">
                                                                 ✨ Post to Today
                                                             </button>
                                                         </div>

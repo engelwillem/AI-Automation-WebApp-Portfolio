@@ -84,8 +84,8 @@ export default function UnifiedVerseHubPage() {
 
     if (loading || !verse) {
         return (
-            <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
-                <div className="h-10 w-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
+            <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+                <div className="h-10 w-10 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin" />
             </div>
         );
     }
@@ -93,7 +93,7 @@ export default function UnifiedVerseHubPage() {
     const isId = lang === 'id';
 
     return (
-        <div className="min-h-screen bg-[#FAFAF8] text-slate-900 pb-20">
+        <div className="min-h-screen bg-slate-950 text-white pb-20">
             {/* Ambient background glow Parity */}
             <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden">
                 <div className="absolute -top-24 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-amber-500/10 blur-3xl opacity-50"></div>
@@ -106,9 +106,9 @@ export default function UnifiedVerseHubPage() {
                         <div className="flex items-center justify-between">
                             <button
                                 onClick={() => router.push(`/versehub/${lang}`)}
-                                className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-slate-500 shadow-soft ring-1 ring-black/[0.04] transition hover:text-slate-900 active:scale-95"
+                                className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 text-[10px] font-bold text-white/50 border border-white/10 transition hover:text-white hover:bg-white/10 active:scale-95"
                             >
-                                <span className="h-1.5 w-1.5 rounded-full bg-amber-500" aria-hidden></span>
+                                <span className="h-1.5 w-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]" aria-hidden></span>
                                 VerseHub
                             </button>
                             <div className="flex items-center gap-3">
@@ -131,12 +131,12 @@ export default function UnifiedVerseHubPage() {
                     </header>
 
                     {/* OG Preview Section Parity */}
-                    <section className="group relative overflow-hidden rounded-[32px] bg-white p-5 shadow-soft ring-1 ring-black/[0.04] backdrop-blur-sm">
-                        <div className="overflow-hidden rounded-2xl ring-1 ring-black/[0.02]">
+                    <section className="group relative overflow-hidden rounded-[40px] bg-white/[0.02] p-4 shadow-2xl border border-white/5 backdrop-blur-md">
+                        <div className="overflow-hidden rounded-[28px] border border-white/10">
                             <img
                                 src={verse.og_image_url}
                                 alt="Shared Verse"
-                                className="aspect-[1200/630] w-full cursor-zoom-in object-cover transition-transform duration-500 group-hover:scale-105"
+                                className="aspect-[1200/630] w-full cursor-zoom-in object-cover transition-transform duration-700 group-hover:scale-105"
                                 onClick={() => setOgOpen(true)}
                                 loading="lazy"
                             />
@@ -144,12 +144,12 @@ export default function UnifiedVerseHubPage() {
                     </section>
 
                     {/* Verse Quote Section Parity */}
-                    <section className="rounded-[40px] bg-white shadow-xl ring-1 ring-black/[0.04] backdrop-blur-sm overflow-hidden">
-                        <div className="p-8 md:p-12">
+                    <section className="rounded-[40px] bg-white/[0.03] border border-white/10 shadow-2xl backdrop-blur-xl overflow-hidden">
+                        <div className="p-8 md:p-14">
                             <blockquote className="relative">
                                 {/* Quote mark parity */}
-                                <div className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 text-slate-200" aria-hidden>
-                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <div className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 text-white/5" aria-hidden>
+                                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M10 11H6V7a4 4 0 0 1 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                                         <path d="M18 11h-4V7a4 4 0 0 1 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                                         <path d="M10 11v6H6v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -157,17 +157,17 @@ export default function UnifiedVerseHubPage() {
                                     </svg>
                                 </div>
 
-                                <div className="pl-8">
-                                    <div className="text-xl leading-relaxed text-slate-800 font-medium md:text-2xl md:leading-loose">
+                                <div className="pl-6 md:pl-10">
+                                    <div className="text-xl leading-relaxed text-white/90 font-medium md:text-3xl md:leading-relaxed">
                                         {verse.text}
                                     </div>
 
-                                    <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-bold text-slate-400">
-                                        <span className="uppercase tracking-widest">{verse.provider ?? 'versehub'}</span>
+                                    <div className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] font-bold text-white/30">
+                                        <span className="uppercase tracking-[0.2em]">{verse.provider ?? 'versehub'}</span>
                                         {verse.translation_name && (
                                             <>
-                                                <span className="opacity-40">•</span>
-                                                <span className="font-bold">{verse.translation_name}</span>
+                                                <span className="opacity-20">•</span>
+                                                <span className="tracking-widest">{verse.translation_name}</span>
                                             </>
                                         )}
                                     </div>
