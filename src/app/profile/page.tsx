@@ -322,6 +322,7 @@ export default function ProfilePage() {
                             </button>
                         </div>
 
+                        
                         <h2 className="mt-6 text-2xl font-bold tracking-tight text-sky-400">{user.name}</h2>
                         <p className="text-amber-500/80 text-sm font-bold tracking-wide">{user.email}</p>
                         <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
@@ -385,6 +386,7 @@ export default function ProfilePage() {
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold text-amber-500/50 uppercase tracking-[0.2em] ml-1">Nama Lengkap</label>
                                 <Input
+                                <Input 
                                     value={profileData.name}
                                     onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
                                     className="h-12 bg-white/5 border-white/10 rounded-xl focus:ring-cyan-400/50"
@@ -393,6 +395,7 @@ export default function ProfilePage() {
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold text-amber-500/50 uppercase tracking-[0.2em] ml-1">Alamat Email</label>
                                 <Input
+                                <Input 
                                     value={profileData.email}
                                     onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
                                     className="h-12 bg-white/5 border-white/10 rounded-xl focus:ring-cyan-400/50"
