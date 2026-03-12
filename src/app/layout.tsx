@@ -85,8 +85,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className={`${inter.variable} ${dmSerifDisplay.variable}`} suppressHydrationWarning>
-      <body className="antialiased bg-slate-950" suppressHydrationWarning>
+    <html lang="id" className={`${inter.variable} ${dmSerifDisplay.variable} dark`} suppressHydrationWarning>
+      <body className="antialiased bg-slate-950 text-white" suppressHydrationWarning>
         <FirebaseClientProvider>
           <FirebaseAuthSync />
           <AppShell>

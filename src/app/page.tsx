@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import Link from "next/link";
 import {
@@ -50,9 +50,105 @@ function Badge({ children, className }: { children: React.ReactNode; className?:
     );
 }
 
-/* ─────────────────────────── Feature Card ─────────────────────────── */
+/* ─────────────────────────── Types ─────────────────────────── */
 type Accent = 'cyan' | 'violet' | 'emerald' | 'blue';
 
+interface CardState {
+    opacity: number;
+    scale: number;
+    translateY: number;
+    blur: number;
+    zIndex: number;
+    pointerEvents: 'auto' | 'none';
+}
+
+/* ─────────────────────────── Motion helpers (from docs) ─────────────────────────── */
+const CENTERS = [0.15, 0.40, 0.65, 0.90];
+const RADIUS = 0.16;
+
+/**
+ * Linearly interpolate between two values.
+ */
+function lerp(a: number, b: number, t: number) {
+    return a + (b - a) * Math.max(0, Math.min(1, t));
+}
+
+/**
+ * Compute per-card visual state from scroll progress.
+ * Matches the motion model in docs/UI-UX/sticky-card-interactive.md:
+ *   incoming:  translateY(80)  scale(0.94) opacity(0.12) blur(4)
+ *   active:    translateY(0)   scale(1.00) opacity(1.00) blur(0)
+ *   receding:  translateY(-36) scale(0.96) opacity(0.16) blur(2)
+ *
+ * Cards fully outside their window (> radius * 2 from center) are hidden (opacity 0).
+ */
+function computeCardState(progress: number, center: number): CardState {
+    const delta = progress - center;
+    const abs   = Math.abs(delta);
+    const outer = RADIUS * 1.8;      // beyond this → fully invisible
+    const inner = RADIUS;             // within this → transitions active
+
+    // Fully outside window → hidden, no interaction
+    if (abs >= outer) {
+        return { opacity: 0, scale: delta < 0 ? 0.94 : 0.96, translateY: delta < 0 ? 80 : -36, blur: delta < 0 ? 4 : 2, zIndex: 0, pointerEvents: 'none' };
+    }
+
+    if (delta < 0) {
+        // Incoming: card hasn't reached center yet
+        const t = (delta + outer) / (outer - inner); // 0 at edge, 1 at inner boundary
+        if (abs > inner) {
+            // Fade-in zone: 0 → 0.12
+            const ft = (delta + outer) / (outer - inner);
+            return {
+                opacity:      lerp(0, 0.12, ft),
+                scale:        0.94,
+                translateY:   80,
+                blur:         4,
+                zIndex:       5,
+                pointerEvents:'none',
+            };
+        } else {
+            // Active approach: incoming → active
+            const ft = (delta + inner) / inner; // -1 at inner edge, 0 at center
+            const at = ft + 1; // 0 → 1
+            return {
+                opacity:      lerp(0.12, 1, at),
+                scale:        lerp(0.94, 1, at),
+                translateY:   lerp(80, 0, at),
+                blur:         lerp(4, 0, at),
+                zIndex:       Math.round(10 + at * 10),
+                pointerEvents: at > 0.5 ? 'auto' : 'none',
+            };
+        }
+    } else {
+        // Receding: card has passed center
+        if (abs > inner) {
+            // Fade-out zone: 0.16 → 0
+            const ft = (outer - abs) / (outer - inner); // 1 at inner, 0 at outer
+            return {
+                opacity:      lerp(0, 0.16, ft),
+                scale:        0.96,
+                translateY:   -36,
+                blur:         2,
+                zIndex:       5,
+                pointerEvents:'none',
+            };
+        } else {
+            // Active to receding
+            const at = delta / inner; // 0 → 1
+            return {
+                opacity:      lerp(1, 0.16, at),
+                scale:        lerp(1, 0.96, at),
+                translateY:   lerp(0, -36, at),
+                blur:         lerp(0, 2, at),
+                zIndex:       Math.round(20 - at * 15),
+                pointerEvents: at < 0.5 ? 'auto' : 'none',
+            };
+        }
+    }
+}
+
+/* ─────────────────────────── Feature Card ─────────────────────────── */
 function FeatureCard({ icon: Icon, title, description, href, ctaLabel = 'Buka', accent = 'cyan' }: {
     icon: React.ElementType;
     title: string;
@@ -70,7 +166,7 @@ function FeatureCard({ icon: Icon, title, description, href, ctaLabel = 'Buka', 
     const { icon: iconCls, glow } = accentMap[accent];
 
     return (
-        <article className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-all duration-300 hover:border-white/20">
+        <article className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl hover:border-white/20 transition-all duration-300">
             <div
                 className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                 style={{ background: `radial-gradient(400px circle at 0% 0%, ${glow}, transparent 60%)` }}
@@ -129,7 +225,6 @@ function QuickAccessLauncher() {
                     </motion.div>
                 )}
             </AnimatePresence>
-
             <button
                 type="button"
                 onClick={() => setOpen(v => !v)}
@@ -147,7 +242,6 @@ function QuickAccessLauncher() {
     );
 }
 
-/* ─────────────────────────── Hero Icon Row ─────────────────────────── */
 function HeroIconRow() {
     const items = [
         { icon: BookOpen, label: 'Read' },
@@ -185,7 +279,7 @@ function DotIndicator({ count, active }: { count: number; active: number }) {
     );
 }
 
-/* ─────────────────────────── Feature Items ─────────────────────────── */
+/* ─────────────────────────── Feature Items Data ─────────────────────────── */
 const featureItems = [
     { icon: BookOpen,   title: 'Channels',   description: 'Pelajaran terstruktur termasuk Sabbath School untuk pendalaman iman yang sistematis.', href: '/channels',    accent: 'violet'  as Accent },
     { icon: BookMarked, title: 'Bible',       description: 'Alkitab reader modern dengan pelacakan perjalanan rohani dan refleksi pribadi.',        href: '/versehub/id', accent: 'blue'    as Accent },
@@ -193,9 +287,20 @@ const featureItems = [
     { icon: Users,      title: 'Community',   description: 'Berbagi berkat, berdiskusi, dan bertumbuh bersama saudara seiman.',                      href: '/community',   accent: 'emerald' as Accent },
 ];
 
-/* ─────────────────────────── Landing Page ─────────────────────────── */
-export default function LandingPage() {
+/* ─────────────────────────── Sticky Card Stage ─────────────────────────── */
+/**
+ * Renders all cards simultaneously with scroll-driven transforms.
+ * Implements the motion model from docs/UI-UX/sticky-card-interactive.md:
+ *   - section height: 450vh
+ *   - centers: [0.15, 0.40, 0.65, 0.90]
+ *   - radius: 0.16
+ *   - transforms: incoming → active → receding
+ */
+function StickyCardStage() {
     const containerRef = useRef<HTMLDivElement>(null);
+    const [cardStates, setCardStates] = useState<CardState[]>(
+        CENTERS.map(c => computeCardState(0, c))
+    );
     const [activeIndex, setActiveIndex] = useState(0);
 
     const { scrollYProgress } = useScroll({
@@ -203,11 +308,81 @@ export default function LandingPage() {
         offset: ["start start", "end end"],
     });
 
-    // Map scroll 0→1 into 4 equal segments — one card per segment
     useMotionValueEvent(scrollYProgress, "change", (latest) => {
-        const idx = Math.min(Math.floor(latest * featureItems.length), featureItems.length - 1);
-        setActiveIndex(idx);
+        const states = CENTERS.map(c => computeCardState(latest, c));
+        setCardStates(states);
+
+        // Determine the most-active card for the dot indicator
+        let best = 0;
+        let bestScore = Infinity;
+        CENTERS.forEach((c, i) => {
+            const d = Math.abs(latest - c);
+            if (d < bestScore) { bestScore = d; best = i; }
+        });
+        setActiveIndex(best);
     });
+
+    return (
+        <section ref={containerRef} className="relative h-[450vh]">
+            <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+                <div className="mx-auto w-full max-w-6xl px-5 sm:px-8 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+                    {/* Left: Fixed sticky title */}
+                    <div className="space-y-6">
+                        <Badge><Sparkles size={12} /> Platform Fitur</Badge>
+                        <h2 className="tct-serif text-4xl sm:text-6xl leading-[1.1] tracking-tight">
+                            Satu Platform,<br />
+                            <span className="text-white/40">Banyak Cara</span><br />
+                            <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Bertumbuh.</span>
+                        </h2>
+                        <p className="text-lg text-white/45 max-w-md leading-relaxed">
+                            Didesain untuk membantu setiap Chosen People menemukan ritme spiritualnya melalui ekosistem yang terintegrasi.
+                        </p>
+                        <DotIndicator count={featureItems.length} active={activeIndex} />
+                    </div>
+
+                    {/* Right: Stacked card stage — all cards rendered, transforms driven by scroll */}
+                    <div className="relative h-[400px] w-full max-w-xl mx-auto">
+                        {featureItems.map((item, i) => {
+                            const s = cardStates[i];
+                            return (
+                                <div
+                                    key={item.title}
+                                    style={{
+                                        position:     'absolute',
+                                        inset:        0,
+                                        zIndex:        s.zIndex,
+                                        opacity:       s.opacity,
+                                        transform:     `translateY(${s.translateY}px) scale(${s.scale})`,
+                                        filter:        `blur(${s.blur}px)`,
+                                        pointerEvents: s.pointerEvents,
+                                        willChange:    'transform, opacity, filter',
+                                        transition:   'none',
+                                    }}
+                                >
+                                    <FeatureCard {...item} />
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    );
+}
+
+/* ─────────────────────────── Landing Page ─────────────────────────── */
+export default function LandingPage() {
+    // Reduced motion support (as specified in docs)
+    const [reducedMotion, setReducedMotion] = useState(false);
+    useEffect(() => {
+        const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+        setReducedMotion(mq.matches);
+        const h = () => setReducedMotion(mq.matches);
+        mq.addEventListener('change', h);
+        return () => mq.removeEventListener('change', h);
+    }, []);
 
     return (
         <div className="relative min-h-screen scroll-smooth text-white selection:bg-cyan-400/30 overflow-x-hidden">
@@ -225,7 +400,7 @@ export default function LandingPage() {
 
             <main className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-16 pt-4 sm:px-8">
 
-                {/* ── Hero Section ── */}
+                {/* ── Hero ── */}
                 <section className="flex min-h-[85dvh] flex-col items-center justify-center pb-10 pt-6">
                     <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="w-full max-w-[500px]">
                         <div className="w-full rounded-[44px] border border-white/10 bg-white/[0.04] px-8 py-12 text-center backdrop-blur-2xl sm:px-12 sm:py-14 shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
@@ -252,48 +427,20 @@ export default function LandingPage() {
                     </motion.div>
                 </section>
 
-                {/* ── Features Sticky Section ──
-                    Strategy: tall scroll container (400vh) + sticky inner panel.
-                    scrollYProgress 0→1 maps to card index 0→3.
-                    AnimatePresence mode="wait" ensures only ONE card renders at a time.
-                    This eliminates all overlapping/stacking visual bugs.
-                */}
-                <section ref={containerRef} className="relative h-[400vh]">
-                    <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
-                        <div className="mx-auto w-full max-w-6xl px-5 sm:px-8 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-
-                            {/* Left column: fixed heading + dots */}
-                            <div className="space-y-6">
-                                <Badge><Sparkles size={12} /> Platform Fitur</Badge>
-                                <h2 className="tct-serif text-4xl sm:text-6xl leading-[1.1] tracking-tight">
-                                    Satu Platform,<br />
-                                    <span className="text-white/40">Banyak Cara</span><br />
-                                    <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Bertumbuh.</span>
-                                </h2>
-                                <p className="text-lg text-white/45 max-w-md leading-relaxed">
-                                    Didesain untuk membantu setiap Chosen People menemukan ritme spiritualnya melalui ekosistem yang terintegrasi.
-                                </p>
-                                <DotIndicator count={featureItems.length} active={activeIndex} />
-                            </div>
-
-                            {/* Right column: ONE card at a time via AnimatePresence */}
-                            <div className="w-full max-w-xl mx-auto">
-                                <AnimatePresence mode="wait">
-                                    <motion.div
-                                        key={activeIndex}
-                                        initial={{ opacity: 0, y: 48, scale: 0.96 }}
-                                        animate={{ opacity: 1, y: 0,  scale: 1    }}
-                                        exit={{    opacity: 0, y: -48, scale: 0.96 }}
-                                        transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
-                                    >
-                                        <FeatureCard {...featureItems[activeIndex]} />
-                                    </motion.div>
-                                </AnimatePresence>
-                            </div>
-
+                {/* ── Sticky Cards (from docs) OR vertical fallback when reduced motion ── */}
+                {reducedMotion ? (
+                    <section className="py-16 space-y-6">
+                        <div className="space-y-4 mb-10">
+                            <Badge><Sparkles size={12} /> Platform Fitur</Badge>
+                            <h2 className="tct-serif text-4xl leading-tight">Satu Platform, Banyak Cara Bertumbuh.</h2>
                         </div>
-                    </div>
-                </section>
+                        <div className="grid sm:grid-cols-2 gap-4">
+                            {featureItems.map(item => <FeatureCard key={item.title} {...item} />)}
+                        </div>
+                    </section>
+                ) : (
+                    <StickyCardStage />
+                )}
 
                 {/* ── Footer ── */}
                 <footer className="border-t border-white/5 pb-32 pt-16 text-center">
