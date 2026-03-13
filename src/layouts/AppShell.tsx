@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
@@ -16,7 +17,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const isAuthenticated = Boolean(user);
   const navItems = getUiNavItems(isAuthenticated);
 
-  // Identify active nav item based on pathname for parity
   const activeNavId = navItems.find(item => pathname.startsWith(item.href))?.id || 'home';
 
   const [mounted, setMounted] = useState(false);
@@ -40,23 +40,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleBack = () => {
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      router.push('/today');
-    }
-  };
-
   if (!mounted) return <div className="min-h-screen bg-slate-950" />;
 
   const isLanding = pathname === "/";
-  // Logic to determine page title from pathname (Parity with app.blade.php logic)
-  // Removed unused getPageTitle logic to clean up file.
 
   return (
     <div className="relative min-h-screen bg-slate-950 overflow-x-hidden">
-      {/* Ambient Background Layers (Parity with Laravel app.blade.php / MobileAppLayout) */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
         <div className="absolute -left-[10%] -top-[10%] h-[60%] w-[60%] rounded-full bg-indigo-200/20 blur-[120px] dark:bg-indigo-900/10" />
         <div className="absolute -right-[5%] top-[10%] h-[50%] w-[50%] rounded-full bg-sky-200/20 blur-[100px] dark:bg-sky-900/10" />
@@ -65,7 +54,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <div className="relative z-10 mx-auto w-full max-w-6xl px-4 py-8">
         <div className="flex items-start gap-8">
-          {/* Desktop Sidebar (Parity with DesktopSidebarNav.tsx) */}
           {!isLanding && (
             <div className="hidden md:flex md:w-72 md:flex-col md:gap-4 sticky top-8 h-fit align-start">
               <DesktopSidebarNav
@@ -79,7 +67,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
           )}
 
-          {/* Main Content Column */}
           <div className={cn("w-full md:flex-1 mx-auto", isLanding || pathname.startsWith('/versehub') ? "max-w-none" : "max-w-[420px] md:mx-0 md:max-w-none")}>
             <main className={cn("relative min-h-[calc(100vh-200px)]")}>
               <AnimatePresence mode="wait">
@@ -99,7 +86,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
-      {/* Floating Mobile Nav (Parity with FloatingBottomNav.tsx) */}
       {!isLanding && (
         <div className="fixed inset-x-0 z-50 flex justify-center md:hidden bottom-[calc(24px+env(safe-area-inset-bottom))]">
           <FloatingBottomNav

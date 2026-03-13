@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
@@ -49,7 +50,6 @@ type TodayTarget = {
 export default function ChannelsPage() {
     const router = useRouter();
     
-    // State management for parity
     const [channels, setChannels] = useState<Channel[]>([]);
     const [sabbathSchool, setSabbathSchool] = useState<{
         channel?: Channel | null;
@@ -60,10 +60,8 @@ export default function ChannelsPage() {
     } | null>(null);
     
     const [seriesTab, setSeriesTab] = useState<'current' | 'past' | 'upcoming'>('current');
-    const [lessonView, setLessonView] = useState<'active' | 'archived'>('active');
     const [selectedQuarterId, setSelectedQuarterId] = useState<number>(0);
     const [loading, setLoading] = useState(true);
-    const [heroLoaded, setHeroLoaded] = useState(false);
 
     useEffect(() => {
         let isActive = true;
@@ -123,7 +121,7 @@ export default function ChannelsPage() {
                 };
             }));
         } catch {
-            // Keep UI responsive on transient network errors.
+            // Keep UI responsive
         }
     };
 
@@ -136,12 +134,18 @@ export default function ChannelsPage() {
         isCurrent: l.lesson_number === 1
     })) ?? [];
 
-    const progressPct = 0; // Simplified for parity demo
     const filteredLessons = lessonStates;
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+                <div className="h-10 w-10 border-4 border-white border-t-transparent rounded-full animate-spin" />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-slate-950 text-white pb-20">
-            {/* App Head Overlay Parity */}
             <div className="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-md border-b border-white/5 transition-all">
                 <div className="mx-auto max-w-2xl px-4 py-4 flex items-center justify-between">
                     <h1 className="font-bold text-lg">Channels</h1>
@@ -150,11 +154,10 @@ export default function ChannelsPage() {
             </div>
 
             <main className="mx-auto max-w-2xl px-4 py-8 space-y-8">
-                {/* Sabbath School Section Parity */}
                 <motion.section 
                     initial={{ opacity: 0, y: 16 }} 
                     animate={{ opacity: 1, y: 0 }} 
-                    className="overflow-hidden rounded-[32px] bg-slate-800/60 ring-1 ring-white/10 backdrop-blur-sm"
+                    className="overflow-hidden rounded-[32px] bg-white/[0.02] border border-white/5 ring-1 ring-white/5 backdrop-blur-sm"
                 >
                     <div className="relative h-48 md:h-56">
                         <img
@@ -168,7 +171,7 @@ export default function ChannelsPage() {
                                 SabbathSchool
                             </div>
                             <h2 className="mt-2 text-2xl font-bold text-white">{selectedQuarter?.title ?? 'Quarter Study'}</h2>
-                            <p className="mt-1 text-xs text-white/80 font-medium">Jan - Mar 2024</p>
+                            <p className="mt-1 text-xs text-white/80 font-medium">Q1 2026</p>
                         </div>
                     </div>
 
@@ -185,15 +188,14 @@ export default function ChannelsPage() {
                             Lanjutkan Pelajaran <MoveRight className="ml-2 h-4 w-4" />
                         </Button>
 
-                        {/* Tabs Bar Parity */}
-                        <div className="grid grid-cols-3 gap-1 rounded-2xl bg-slate-900 p-1.5 ring-1 ring-white/10">
+                        <div className="grid grid-cols-3 gap-1 rounded-2xl bg-black/40 p-1.5 ring-1 ring-white/10 shadow-inner">
                              {(['current', 'past', 'upcoming'] as const).map(tab => (
                                 <button
                                     key={tab}
                                     onClick={() => setSeriesTab(tab)}
                                     className={cn(
                                         "rounded-xl py-2 text-[11px] font-bold transition-all",
-                                        seriesTab === tab ? "bg-slate-700 text-white shadow-sm" : "text-slate-500"
+                                        seriesTab === tab ? "bg-white/10 text-white shadow-sm" : "text-slate-500"
                                     )}
                                 >
                                     {tab === 'current' ? 'Aktif' : tab === 'past' ? 'Lalu' : 'Mendatang'}
@@ -201,33 +203,32 @@ export default function ChannelsPage() {
                              ))}
                         </div>
 
-                        {/* Lesson Progress Parity */}
-                        <div className="space-y-3 rounded-[24px] bg-slate-900 p-5 ring-1 ring-white/10">
+                        <div className="space-y-3 rounded-[24px] bg-black/20 p-5 ring-1 ring-white/5 shadow-inner">
                             <div className="flex items-center justify-between">
                                 <p className="text-xs font-bold text-white tracking-tight">Lessons</p>
                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">0/{lessonStates.length} Completed</p>
                             </div>
-                            <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-                                <div className="h-full bg-cyan-500 w-0" />
+                            <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                <div className="h-full bg-cyan-500 w-0 shadow-[0_0_8px_rgba(6,182,212,0.5)]" />
                             </div>
 
                             <div className="grid gap-2.5 mt-4">
-                                {filteredLessons.map(({ lesson, locked, isCurrent }) => (
+                                {filteredLessons.map(({ lesson, isCurrent }) => (
                                     <button
                                         key={lesson.id}
                                         onClick={() => {
                                              router.push(`/channels/sabbath-school/${selectedQuarter?.year}/q${selectedQuarter?.quarter}/lesson/${lesson.lesson_number}`);
                                         }}
                                         className={cn(
-                                            "flex items-center justify-between p-4 rounded-2xl bg-slate-800 ring-1 ring-white/5 transition-all text-left",
-                                            isCurrent ? "ring-cyan-500/40 bg-cyan-900/20" : ""
+                                            "flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] ring-1 ring-white/5 transition-all text-left group hover:bg-white/[0.04]",
+                                            isCurrent ? "ring-cyan-500/40 bg-cyan-900/10" : ""
                                         )}
                                     >
                                         <div>
-                                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Lesson {lesson.lesson_number}</p>
+                                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 group-hover:text-cyan-400 transition-colors">Lesson {lesson.lesson_number}</p>
                                             <p className="font-bold text-sm text-white mt-1">{lesson.title}</p>
                                         </div>
-                                        {isCurrent && <span className="bg-cyan-500 rounded-full px-2 py-0.5 text-[9px] font-bold text-white uppercase tracking-widest">Sekarang</span>}
+                                        {isCurrent && <span className="bg-cyan-500 rounded-full px-2 py-0.5 text-[9px] font-bold text-slate-950 uppercase tracking-widest">Sekarang</span>}
                                     </button>
                                 ))}
                             </div>
@@ -235,7 +236,6 @@ export default function ChannelsPage() {
                     </div>
                 </motion.section>
 
-                {/* Sub-Channels Section Parity */}
                 <section className="space-y-4">
                     <div className="flex items-center justify-between">
                          <h3 className="text-lg font-bold tracking-tight">Channel Lainnya</h3>
@@ -249,24 +249,25 @@ export default function ChannelsPage() {
                             <button
                                 key={channel.slug}
                                 onClick={() => router.push(`/channels/${channel.slug}`)}
-                                className="group flex flex-col overflow-hidden rounded-[32px] bg-slate-800/60 ring-1 ring-white/10 transition-all hover:-translate-y-1 hover:shadow-xl"
+                                className="group flex flex-col overflow-hidden rounded-[32px] bg-white/[0.02] border border-white/5 ring-1 ring-white/5 transition-all hover:-translate-y-1 hover:shadow-xl hover:bg-white/[0.04]"
                             >
                                 <div className="relative h-32 w-full overflow-hidden">
                                     <img
                                         src={channel.cover_image_url ?? "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=800"}
-                                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        alt={channel.title}
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
                                 </div>
                                 <div className="p-4 pt-3 flex-1 flex flex-col justify-between">
                                     <div>
                                         <p className="font-bold text-sm tracking-tight text-white line-clamp-1">{channel.title}</p>
-                                        <p className="text-[10px] text-slate-400 mt-1 line-clamp-1">{channel.description}</p>
+                                        <p className="text-[10px] text-slate-500 mt-1 line-clamp-1 font-medium">{channel.description}</p>
                                     </div>
                                     <div className="mt-4 flex items-center justify-between">
                                         <div className="flex items-center gap-1">
                                             <div className="h-1 w-1 bg-emerald-500 rounded-full animate-pulse" />
-                                            <span className="text-[9px] font-bold text-slate-400">{channel.members_count} anggota</span>
+                                            <span className="text-[9px] font-bold text-slate-500">{channel.members_count} anggota</span>
                                         </div>
                                         <button
                                             type="button"
@@ -274,7 +275,7 @@ export default function ChannelsPage() {
                                                 event.stopPropagation();
                                                 handleMembershipToggle(channel.slug);
                                             }}
-                                            className="text-[9px] font-bold text-slate-100 bg-slate-700 px-2.5 py-1 rounded-full"
+                                            className="text-[9px] font-bold text-slate-100 bg-white/10 px-2.5 py-1 rounded-full border border-white/5 hover:bg-white/20 transition-colors"
                                         >
                                             {channel.is_joined ? 'Leave' : 'Join'}
                                         </button>

@@ -16,10 +16,44 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-/* ─────────────────────────── Background ────────────────────────── */
+const featureItems = [
+    {
+        icon: BookOpen,
+        title: 'Channels',
+        description: 'Pelajaran terstruktur termasuk Sabbath School untuk pendalaman iman yang sistematis.',
+        href: '/channels',
+        ctaLabel: 'Buka Channels',
+        accent: 'violet' as const,
+    },
+    {
+        icon: BookMarked,
+        title: 'Bible',
+        description: 'Alkitab reader modern dengan pelacakan perjalanan rohani dan refleksi.',
+        href: '/versehub/id',
+        ctaLabel: 'Buka Bible',
+        accent: 'blue' as const,
+    },
+    {
+        icon: Users,
+        title: 'Community',
+        description: 'Bagikan berkat, kesaksian, dan permohonan doa dalam lingkungan yang aman.',
+        href: '/community',
+        ctaLabel: 'Buka Community',
+        accent: 'emerald' as const,
+    },
+    {
+        icon: Sparkles,
+        title: 'Mentor',
+        description: 'Panduan belajar Alkitab berbasis teks dengan Scripture Guide yang transparan.',
+        href: '/versehub/id',
+        ctaLabel: 'Buka Mentor',
+        accent: 'cyan' as const,
+    },
+];
+
 function Background() {
     return (
-        <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-900 to-teal-950" />
             <div className={cn(
                 'absolute inset-0',
@@ -38,7 +72,6 @@ function Background() {
     );
 }
 
-/* ─────────────────────────── Badge ─────────────────────────── */
 function Badge({ children, className }: { children: React.ReactNode; className?: string }) {
     return (
         <span className={cn('inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/50 backdrop-blur-sm', className)}>
@@ -47,7 +80,6 @@ function Badge({ children, className }: { children: React.ReactNode; className?:
     );
 }
 
-/* ─────────────────────────── Feature Card ─────────────────────────── */
 function FeatureCard({ icon: Icon, title, description, href, ctaLabel = 'Buka', accent = 'cyan' }: {
     icon: React.ElementType;
     title: string;
@@ -64,7 +96,7 @@ function FeatureCard({ icon: Icon, title, description, href, ctaLabel = 'Buka', 
     }[accent];
 
     return (
-        <article className="group relative flex flex-col overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.04] p-8 backdrop-blur-xl hover:border-white/20 transition-all duration-500 shadow-2xl">
+        <article className="group relative flex flex-col overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.04] p-8 backdrop-blur-xl hover:border-white/20 transition-all duration-500 shadow-2xl will-change-transform" style={{ transform: 'translateZ(0)' }}>
             <div
                 className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                 style={{ background: `radial-gradient(400px circle at 0% 0%, ${accentMap.glow}, transparent 60%)` }}
@@ -89,7 +121,6 @@ function FeatureCard({ icon: Icon, title, description, href, ctaLabel = 'Buka', 
     );
 }
 
-/* ─────────────────── Quick Access Launcher ─────────────────── */
 function QuickAccessLauncher() {
     const [open, setOpen] = useState(false);
     const items = [
@@ -160,7 +191,6 @@ function HeroIconRow() {
     );
 }
 
-/* ─────────────────────────── Sticky Card Stage ─────────────────────────── */
 function StickyCardStage() {
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
@@ -174,7 +204,6 @@ function StickyCardStage() {
         setActiveIndex(idx);
     });
 
-    // High-performance transforms directly mapped to scroll
     const card1_op = useTransform(scrollYProgress, [0, 0.1, 0.25], [1, 1, 0]);
     const card1_sc = useTransform(scrollYProgress, [0, 0.25], [1, 0.95]);
     const card1_y  = useTransform(scrollYProgress, [0, 0.25], [0, -40]);
@@ -243,7 +272,6 @@ function StickyCardStage() {
     );
 }
 
-/* ─────────────────────────── Landing Page ─────────────────────────── */
 export default function LandingPage() {
     return (
         <div className="relative min-h-screen text-white selection:bg-cyan-400/30 overflow-x-hidden bg-slate-950">
