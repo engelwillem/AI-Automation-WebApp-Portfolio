@@ -133,14 +133,14 @@ export default function QuoteCard({
 
     return (
         <>
-            <Card className="overflow-hidden rounded-[32px] border-0 bg-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.04)] ring-1 ring-black/[0.03] backdrop-blur-xl dark:bg-white/5 dark:ring-white/[0.08]">
+            <Card className="overflow-hidden rounded-[32px] border-0 bg-surface/80 shadow-soft ring-1 ring-border/60 backdrop-blur-xl">
                 <CardContent className="px-5 pb-5 pt-5 md:px-7 md:pb-7 md:pt-7">
                     <div className="mb-4 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 ring-1 ring-black/5 dark:bg-slate-800">
+                            <span className="inline-flex items-center rounded-full bg-surface-muted px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground ring-1 ring-border/70">
                                 Quotes
                             </span>
-                            <span className="text-[12px] font-medium text-slate-400">Today Reflection</span>
+                            <span className="text-[12px] font-medium text-muted-foreground">Today Reflection</span>
                         </div>
                         <Sparkles className="h-4 w-4 text-brand/40" />
                     </div>
@@ -158,12 +158,12 @@ export default function QuoteCard({
                         </div>
                     </div>
 
-                    <div className="mt-4 flex items-center justify-between border-b border-black/5 pb-4 dark:border-white/5">
+                    <div className="mt-4 flex items-center justify-between border-b border-border/70 pb-4">
                         <div className="flex items-center gap-1">
                             <button
                                 type="button"
                                 className={`group tct-pressable inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
-                                    liked ? 'bg-rose-50 text-rose-500' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'
+                                    liked ? 'bg-brand/10 text-brand' : 'text-muted-foreground hover:bg-surface-muted hover:text-foreground'
                                 }`}
                                 onClick={() => {
                                     if (!requireMember()) return;
@@ -176,7 +176,7 @@ export default function QuoteCard({
 
                             <button
                                 type="button"
-                                className="group tct-pressable inline-flex h-10 w-10 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600"
+                                className="group tct-pressable inline-flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
                                 onClick={() => {
                                     if (!requireMember()) return;
                                     setCommentsOpen(true);
@@ -189,7 +189,7 @@ export default function QuoteCard({
 
                             <button
                                 type="button"
-                                className="group tct-pressable inline-flex h-10 w-10 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600"
+                                className="group tct-pressable inline-flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
                                 onClick={() => {
                                     if (!requireMember()) return;
                                     void shareQuote();
@@ -203,7 +203,7 @@ export default function QuoteCard({
                         <button
                             type="button"
                             className={`group tct-pressable inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
-                                bookmarked ? 'bg-cyan-50 text-cyan-600' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'
+                                bookmarked ? 'bg-brand/10 text-brand' : 'text-muted-foreground hover:bg-surface-muted hover:text-foreground'
                             }`}
                             onClick={() => {
                                 if (!requireMember()) return;
@@ -215,21 +215,21 @@ export default function QuoteCard({
                         </button>
                     </div>
 
-                    <div className="mt-4 flex items-center gap-4 px-1 text-[12px] font-bold text-slate-400">
-                        <span className={liked ? 'text-rose-500' : ''}>
+                    <div className="mt-4 flex items-center gap-4 px-1 text-[12px] font-bold text-muted-foreground">
+                        <span className={liked ? 'text-brand' : ''}>
                             {liked ? `${likeBase + 1} Suka` : `${likeBase} Suka`}
                         </span>
                         <span>{commentsCount} Komentar</span>
-                        <span className={bookmarked ? 'text-cyan-600' : ''}>
+                        <span className={bookmarked ? 'text-brand' : ''}>
                             {bookmarked ? 'Disimpan' : `${bookmarkBase} Simpan`}
                         </span>
                     </div>
 
-                    <div className="relative mt-5 overflow-hidden rounded-2xl bg-white/30 p-6 ring-1 ring-black/[0.02] dark:bg-black/20 dark:ring-white/[0.04] md:p-8">
+                    <div className="relative mt-5 overflow-hidden rounded-2xl bg-surface-muted/70 p-6 ring-1 ring-border/40 md:p-8">
                         <div className="absolute right-0 top-0 p-4 opacity-5">
                             <Sparkles className="h-12 w-12" />
                         </div>
-                        <p className="relative font-serif text-[22px] tracking-tight leading-[1.6] text-slate-800 md:text-[26px] dark:text-slate-100">
+                        <p className="relative font-serif text-[22px] tracking-tight leading-[1.6] text-foreground md:text-[26px]">
                             {quoteText}
                         </p>
                         <div className="mt-4 flex flex-col gap-1">
@@ -239,7 +239,7 @@ export default function QuoteCard({
                             {payload?.ref?.trim() ? (
                                 <Link
                                     href={`/versehub/id/${payload.ref}`}
-                                    className="flex items-center gap-1 text-[11px] font-bold text-slate-400 transition-colors hover:text-brand"
+                                    className="flex items-center gap-1 text-[11px] font-bold text-muted-foreground transition-colors hover:text-brand"
                                 >
                                     Buka dalam Alkitab <Send className="h-2 w-2" />
                                 </Link>

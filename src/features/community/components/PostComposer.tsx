@@ -43,11 +43,11 @@ export function PostComposer({
     };
   }, [images]);
 
-  const types: { value: PostType; label: string; icon: any; color: string }[] = [
-    { value: "reflection", label: "Refleksi", icon: Sparkles, color: "text-amber-500 bg-amber-50" },
-    { value: "prayer_request", label: "Permohonan Doa", icon: Hand, color: "text-rose-500 bg-rose-50" },
-    { value: "testimony", label: "Kesaksian", icon: MessageSquare, color: "text-emerald-500 bg-emerald-50" },
-    { value: "user_post", label: "Pikiran", icon: MessageSquare, color: "text-sky-400 bg-sky-400/5" },
+  const types: { value: PostType; label: string; icon: any }[] = [
+    { value: "reflection", label: "Refleksi", icon: Sparkles },
+    { value: "prayer_request", label: "Permohonan Doa", icon: Hand },
+    { value: "testimony", label: "Kesaksian", icon: MessageSquare },
+    { value: "user_post", label: "Pikiran", icon: MessageSquare },
   ];
 
   const handleSubmit = () => {
@@ -72,8 +72,8 @@ export function PostComposer({
   return (
     <Card
       className={cn(
-        "rounded-[32px] bg-white/70 dark:bg-slate-900/70 shadow-2xl backdrop-blur-3xl border border-white/40 dark:border-white/5 overflow-hidden transition-all duration-500",
-        isExpanded ? "ring-2 ring-sky-400/10 shadow-premium" : "",
+        "rounded-[32px] bg-surface/80 shadow-premium backdrop-blur-3xl border border-border/60 overflow-hidden transition-all duration-500",
+        isExpanded ? "ring-2 ring-brand/20 shadow-premium" : "",
         className
       )}
     >
@@ -81,14 +81,14 @@ export function PostComposer({
         <div className="flex flex-col">
           <div className="flex items-center gap-5 px-6 pt-8 pb-3">
             <div className="relative group">
-              <div className="absolute -inset-1.5 rounded-full bg-gradient-to-tr from-sky-400 via-cyan-400 to-emerald-400 opacity-30 blur-md transition duration-500 group-hover:opacity-60" />
-              <div className="relative h-14 w-14 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden shadow-inner border border-white/30">
+              <div className="absolute -inset-1.5 rounded-full bg-brand/30 opacity-30 blur-md transition duration-500 group-hover:opacity-60" />
+              <div className="relative h-14 w-14 shrink-0 rounded-full bg-surface-muted flex items-center justify-center overflow-hidden shadow-inner border border-border/60">
                 {currentUser?.avatarUrl ? (
                   <img src={currentUser.avatarUrl} alt={currentUser.name} className="h-full w-full object-cover" />
                 ) : (
                   <>
-                    <div className="bg-gradient-to-br from-sky-400/20 to-sky-400/40 absolute inset-0" />
-                    <div className="relative text-sky-400 text-[13px] font-black tracking-[0.15em] uppercase select-none">
+                    <div className="bg-brand/15 absolute inset-0" />
+                    <div className="relative text-brand text-[13px] font-black tracking-[0.15em] uppercase select-none">
                       {initials}
                     </div>
                   </>
@@ -97,22 +97,22 @@ export function PostComposer({
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <h2 className="text-[22px] font-black tracking-tight leading-loose bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-sky-400 to-slate-900 dark:from-white dark:via-sky-400 dark:to-white">
+                <h2 className="text-[22px] font-black tracking-tight leading-loose bg-clip-text text-transparent bg-gradient-to-r from-foreground via-brand to-foreground">
                   Berbagi Berkat
                 </h2>
-                <div className="h-1.5 w-1.5 rounded-full bg-sky-400 animate-pulse shadow-[0_0_10px_rgba(56,189,248,1)]" />
+                <div className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse shadow-[0_0_10px_rgba(0,166,255,0.8)]" />
               </div>
-              <p className="text-[14px] text-slate-500 dark:text-slate-400 font-bold mt-0.5 opacity-70 tracking-tight">
+              <p className="mt-0.5 text-[14px] font-bold tracking-tight text-muted-foreground opacity-70">
                 Bagikan terang yang Anda terima hari ini
               </p>
             </div>
-            <Sparkles className="h-6 w-6 text-sky-400/20 animate-pulse" />
+            <Sparkles className="h-6 w-6 text-brand/20 animate-pulse" />
           </div>
 
           <div className="px-6">
             <textarea
               className={cn(
-                "w-full bg-transparent border-none focus:ring-0 px-0 py-4 leading-relaxed text-slate-700 dark:text-slate-200 placeholder:text-slate-300 dark:placeholder:text-slate-600 resize-none transition-all duration-500 outline-none",
+                "w-full bg-transparent border-none focus:ring-0 px-0 py-4 leading-relaxed text-foreground placeholder:text-muted-foreground resize-none transition-all duration-500 outline-none",
                 layoutVariant === "twitter" ? "text-[22px] font-black italic md:text-[24px]" : "text-[17px] font-medium"
               )}
               placeholder={layoutVariant === "quote" ? "Tulis ayat atau kutipan..." : "Apa yang Tuhan taruh di hati Anda?"}
@@ -130,7 +130,7 @@ export function PostComposer({
                   <div
                     key={key}
                     className={cn(
-                      "relative shrink-0 overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 transition-all duration-300 w-32 aspect-[4/5]"
+                      "relative shrink-0 overflow-hidden rounded-2xl shadow-lg ring-1 ring-border/60 transition-all duration-300 w-32 aspect-[4/5]"
                     )}
                   >
                     <img src={url} alt="preview" className="h-full w-full object-cover" />
@@ -148,16 +148,16 @@ export function PostComposer({
           )}
 
           {isExpanded && (
-            <div className="flex flex-col border-t border-black/5 dark:border-white/5 bg-slate-50/50 dark:bg-slate-900/40 backdrop-blur-xl transition-all duration-500 animate-in fade-in slide-in-from-bottom-4">
+            <div className="flex flex-col border-t border-border/70 bg-surface-muted/60 backdrop-blur-xl transition-all duration-500 animate-in fade-in slide-in-from-bottom-4">
               {!hasImages && (
-                <div className="flex items-center gap-2 px-6 py-3 border-b border-black/5 dark:border-white/5">
+                <div className="flex items-center gap-2 px-6 py-3 border-b border-border/70">
                   <button
                     onClick={() => setLayoutVariant("standard")}
                     className={cn(
                       "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all",
                       layoutVariant === "standard"
-                        ? "bg-sky-400 text-white shadow-md"
-                        : "bg-white dark:bg-slate-800 text-slate-400"
+                        ? "bg-brand text-brand-foreground shadow-md"
+                        : "bg-surface text-muted-foreground"
                     )}
                   >
                     Standard
@@ -167,8 +167,8 @@ export function PostComposer({
                     className={cn(
                       "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all",
                       layoutVariant === "twitter"
-                        ? "bg-sky-400/10 text-sky-400 ring-1 ring-sky-400/20"
-                        : "bg-white dark:bg-slate-800 text-slate-400"
+                        ? "bg-brand/10 text-brand ring-1 ring-brand/20"
+                        : "bg-surface text-muted-foreground"
                     )}
                   >
                     Twitter Style
@@ -181,8 +181,8 @@ export function PostComposer({
                     className={cn(
                       "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all",
                       layoutVariant === "quote"
-                        ? "bg-sky-400/10 text-sky-400 ring-1 ring-sky-400/20"
-                        : "bg-white dark:bg-slate-800 text-slate-400"
+                        ? "bg-brand/10 text-brand ring-1 ring-brand/20"
+                        : "bg-surface text-muted-foreground"
                     )}
                   >
                     Classy Quote
@@ -190,7 +190,7 @@ export function PostComposer({
                 </div>
               )}
 
-              <div className="relative group flex items-center px-4 py-4 border-b border-black/5 dark:border-white/5 overflow-hidden">
+              <div className="relative group flex items-center px-4 py-4 border-b border-border/70 overflow-hidden">
                 <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide px-2">
                   {types.map((t) => (
                     <button
@@ -199,8 +199,8 @@ export function PostComposer({
                       className={cn(
                         "flex items-center gap-2 px-4 py-2.5 rounded-full text-[12px] font-bold transition-all whitespace-nowrap shrink-0 tct-pressable shadow-sm border border-transparent",
                         type === t.value
-                          ? "bg-sky-400 text-white ring-2 ring-sky-400/20 ring-offset-2 dark:ring-offset-slate-900 shadow-lg scale-105"
-                          : "text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border-black/5 dark:border-white/5"
+                          ? "bg-brand text-brand-foreground ring-2 ring-brand/20 ring-offset-2 ring-offset-background shadow-lg scale-105"
+                          : "text-muted-foreground bg-surface hover:bg-surface-elevated border-border/70"
                       )}
                     >
                       <t.icon size={14} className="opacity-100" />
@@ -212,8 +212,8 @@ export function PostComposer({
 
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4">
                 <div className="flex items-center gap-3">
-                  <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-2xl bg-white px-4 text-[12px] font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:scale-105 transition-transform active:scale-95">
-                    <ImagePlus className="h-5 w-5 text-sky-400" />
+                  <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-2xl bg-surface px-4 text-[12px] font-bold text-foreground shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:scale-105 transition-transform active:scale-95">
+                    <ImagePlus className="h-5 w-5 text-brand" />
                     <span>Media</span>
                     <input
                       type="file"
@@ -235,14 +235,14 @@ export function PostComposer({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="rounded-full px-5 h-11 font-bold text-slate-500"
+                    className="rounded-full px-5 h-11 font-bold text-muted-foreground"
                     onClick={() => setIsExpanded(false)}
                   >
                     Batal
                   </Button>
                   <Button
                     size="sm"
-                    className="rounded-2xl px-8 h-11 font-bold bg-sky-400 text-white shadow-[0_8px_20px_rgba(56,189,248,0.3)] hover:scale-[1.05] active:scale-[0.95] transition-all"
+                    className="rounded-2xl px-8 h-11 font-bold bg-brand text-brand-foreground shadow-[0_8px_20px_rgba(0,166,255,0.25)] hover:scale-[1.05] active:scale-[0.95] transition-all"
                     onClick={handleSubmit}
                     disabled={(!text.trim() && images.length === 0) || isSubmitting}
                   >

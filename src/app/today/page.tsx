@@ -311,7 +311,7 @@ export default function TodayPage() {
             title="Today"
             activeNavId="home"
             backHref="/"
-            className="md:max-w-none bg-slate-50/30 dark:bg-slate-950/30"
+            className="md:max-w-none bg-surface-muted/40"
             header={<GreetingHeader />}
         >
             <motion.div

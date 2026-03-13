@@ -116,8 +116,8 @@ export function CommunityPage() {
   return (
     <div className="flex flex-col h-full animate-in fade-in duration-1000">
       <header className="p-8 pb-4 space-y-2">
-        <h2 className="text-3xl font-black tracking-tight text-sky-400">Komunitas</h2>
-        <p className="text-amber-500/80 text-sm font-bold tracking-wide leading-relaxed">
+        <h2 className="text-3xl font-black tracking-tight text-brand">Komunitas</h2>
+        <p className="text-sm font-bold tracking-wide leading-relaxed text-muted-foreground">
           Tempat berbagi inspirasi, doa, dan pertumbuhan bersama.
         </p>
       </header>
@@ -130,7 +130,7 @@ export function CommunityPage() {
 
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="space-y-6">
           <div className="sticky top-0 z-40 py-2 -mx-1 px-1">
-            <TabsList className="relative flex h-[52px] w-full items-center justify-between rounded-[20px] bg-white/5 p-1.5 backdrop-blur-2xl shadow-inner ring-1 ring-white/10 overflow-hidden">
+            <TabsList className="relative flex h-[52px] w-full items-center justify-between rounded-[20px] bg-surface-muted/70 p-1.5 backdrop-blur-2xl shadow-inner ring-1 ring-border/70 overflow-hidden">
               {[
                 { id: "discussions", label: "Diskusi" },
                 { id: "archive", label: "Arsip" },
@@ -141,8 +141,8 @@ export function CommunityPage() {
                   value={tab.id}
                   className={cn(
                     "relative flex-1 h-full rounded-[14px] text-[13px] font-black uppercase tracking-widest transition-all duration-300 z-10",
-                    "data-[state=active]:bg-white/10 data-[state=active]:text-white",
-                    "data-[state=inactive]:text-slate-500 hover:text-slate-300"
+                    "data-[state=active]:bg-surface data-[state=active]:text-foreground",
+                    "data-[state=inactive]:text-muted-foreground hover:text-foreground"
                   )}
                 >
                   {tab.label}
@@ -156,7 +156,7 @@ export function CommunityPage() {
 
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-                <Loader2 className="animate-spin mb-4 text-sky-400" size={32} />
+                <Loader2 className="animate-spin mb-4 text-brand" size={32} />
                 <p className="text-xs font-bold uppercase tracking-widest opacity-50">Memperbarui Feed...</p>
               </div>
             ) : posts.length ? (
@@ -182,10 +182,10 @@ export function CommunityPage() {
                 />
               ))
             ) : (
-              <Card className="rounded-[32px] bg-white/[0.02] border-none shadow-xl">
+              <Card className="rounded-[32px] bg-surface/80 border-none shadow-card">
                 <CardContent className="p-12 text-center space-y-2">
-                  <p className="text-xl font-bold text-slate-400">Belum ada diskusi aktif.</p>
-                  <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">
+                  <p className="text-xl font-bold text-muted-foreground">Belum ada diskusi aktif.</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">
                     Mulai percakapan hari ini
                   </p>
                 </CardContent>
@@ -211,8 +211,8 @@ export function CommunityPage() {
                     className={cn(
                       "whitespace-nowrap rounded-full px-5 py-2 text-[11px] font-black uppercase tracking-wider transition-all",
                       active
-                        ? "bg-white text-slate-900 shadow-lg"
-                        : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-slate-200"
+                        ? "bg-brand text-brand-foreground shadow-lg"
+                        : "bg-surface-muted text-muted-foreground hover:bg-surface-elevated hover:text-foreground"
                     )}
                   >
                     {item.label}
@@ -225,10 +225,10 @@ export function CommunityPage() {
               archiveGroups.map((group) => (
                 <section key={group.key} className="space-y-4">
                   <div className="flex items-center justify-between px-1">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-500/50">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
                       {group.label}
                     </p>
-                    <ChevronDown size={14} className="text-slate-600" />
+                    <ChevronDown size={14} className="text-muted-foreground" />
                   </div>
                   <div className="space-y-4">
                     {group.items.map((p) => (
@@ -256,8 +256,8 @@ export function CommunityPage() {
                 </section>
               ))
             ) : (
-              <Card className="rounded-[32px] bg-white/[0.02] border border-dashed border-white/10 py-20 text-center flex flex-col items-center gap-6">
-                <div className="w-20 h-20 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center text-white/50 shadow-inner">
+              <Card className="rounded-[32px] bg-surface/80 border border-dashed border-border/70 py-20 text-center flex flex-col items-center gap-6">
+                <div className="w-20 h-20 rounded-3xl bg-surface-muted border border-border/70 flex items-center justify-center text-muted-foreground shadow-inner">
                   <Inbox size={36} />
                 </div>
                 <div className="space-y-2">
@@ -269,12 +269,12 @@ export function CommunityPage() {
           </TabsContent>
 
           <TabsContent value="bookmarks">
-            <Card className="rounded-[32px] bg-white/[0.02] border border-dashed border-white/10 py-20 text-center flex flex-col items-center gap-6">
-                <div className="w-20 h-20 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center text-white/50 shadow-inner">
+            <Card className="rounded-[32px] bg-surface/80 border border-dashed border-border/70 py-20 text-center flex flex-col items-center gap-6">
+                <div className="w-20 h-20 rounded-3xl bg-surface-muted border border-border/70 flex items-center justify-center text-muted-foreground shadow-inner">
                   <Inbox size={36} />
                 </div>
                 <div className="space-y-2">
-                  <CardTitle className="text-xl font-black text-slate-400">Belum ada post tersimpan.</CardTitle>
+                  <CardTitle className="text-xl font-black text-muted-foreground">Belum ada post tersimpan.</CardTitle>
                 </div>
               </Card>
           </TabsContent>

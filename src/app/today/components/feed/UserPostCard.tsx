@@ -83,11 +83,11 @@ export default function UserPostCard({
     const currentMedia = media[Math.min(activeMediaIdx, Math.max(0, media.length - 1))] ?? null;
 
     return (
-        <Card className="overflow-hidden rounded-[32px] border-0 bg-white/80 dark:bg-slate-900/40 shadow-soft ring-1 ring-black/5 backdrop-blur-sm">
+        <Card className="overflow-hidden rounded-[32px] border-0 bg-surface/80 shadow-soft ring-1 ring-border/60 backdrop-blur-sm">
             <CardHeader className="p-5 pb-3">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 font-bold overflow-hidden border border-black/5">
+                        <div className="h-10 w-10 rounded-full bg-surface-muted flex items-center justify-center text-foreground font-bold overflow-hidden border border-border/60">
                             {avatar ? (
                                 <img src={avatar} alt={userName} className="h-full w-full object-cover" />
                             ) : (
@@ -95,23 +95,23 @@ export default function UserPostCard({
                             )}
                         </div>
                         <div>
-                            <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{userName}</p>
-                            <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">{timestamp}</p>
+                            <p className="text-sm font-bold text-foreground">{userName}</p>
+                            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-widest">{timestamp}</p>
                         </div>
                     </div>
-                    <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <button className="text-muted-foreground hover:text-foreground">
                         <MoreHorizontal className="h-5 w-5" />
                     </button>
                 </div>
             </CardHeader>
             <CardContent className="p-0">
                 <div className="px-5 pb-4">
-                    <p className="text-[15px] leading-relaxed text-slate-700 dark:text-slate-200">{content}</p>
+                    <p className="text-[15px] leading-relaxed text-foreground">{content}</p>
                 </div>
 
                 {currentMedia ? (
                     <div className="space-y-2 px-4 pb-2">
-                        <div className="relative overflow-hidden rounded-2xl border border-black/5 bg-slate-100 dark:bg-slate-800">
+                        <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-surface-muted">
                             <div className={cn(
                                 "w-full",
                                 (payload.metadata?.media_aspect_ratio === 'og') ? "aspect-[1.91/1]" : "aspect-[4/5]"
@@ -155,7 +155,7 @@ export default function UserPostCard({
                                         onClick={() => setActiveMediaIdx(idx)}
                                         className={cn(
                                             'h-1.5 rounded-full transition-all duration-200',
-                                            idx === activeMediaIdx ? 'w-6 bg-slate-800 dark:bg-white' : 'w-2.5 bg-slate-400/40',
+                                            idx === activeMediaIdx ? 'w-6 bg-brand' : 'w-2.5 bg-muted-foreground/40',
                                         )}
                                     />
                                 ))}
@@ -165,7 +165,7 @@ export default function UserPostCard({
                 ) : null}
 
                 <div className="px-5 pb-5">
-                    <div className="h-px bg-slate-100 dark:bg-slate-800/60 mb-4" />
+                    <div className="mb-4 h-px bg-border/70" />
                     <ActionBar
                         prayLabel={String(likes)}
                         prayed={liked}

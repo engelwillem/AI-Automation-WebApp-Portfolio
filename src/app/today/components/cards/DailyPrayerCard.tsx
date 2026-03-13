@@ -25,16 +25,16 @@ export default function DailyPrayerCard({
     };
 
     return (
-        <Card className="overflow-hidden rounded-[32px] border-0 bg-sky-50/50 shadow-soft ring-1 ring-sky-200/50 backdrop-blur-sm dark:bg-sky-950/20 dark:ring-sky-500/10">
+        <Card className="overflow-hidden rounded-[32px] border-0 bg-surface/80 shadow-soft ring-1 ring-border/60 backdrop-blur-sm">
             <CardContent className="p-6 md:p-8">
                 <div className="flex flex-col items-center space-y-5 text-center">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-100 text-sky-600 dark:bg-sky-900/50 dark:text-sky-400">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 text-brand ring-1 ring-brand/20">
                         <Sparkles className="h-6 w-6" />
                     </div>
 
                     <div className="space-y-2">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-sky-600 dark:text-sky-400">Doa Hari Ini</span>
-                        <p className="text-lg font-medium italic leading-relaxed text-slate-800 md:text-xl dark:text-slate-100">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand">Doa Hari Ini</span>
+                        <p className="text-lg font-medium italic leading-relaxed text-foreground md:text-xl">
                             "{prayer}"
                         </p>
                     </div>
@@ -45,15 +45,15 @@ export default function DailyPrayerCard({
                             className={cn(
                                 'h-12 rounded-2xl px-8 font-bold shadow-lg transition-all active:scale-[0.98]',
                                 saidAmin
-                                    ? 'bg-sky-500 text-white shadow-sky-500/20 hover:bg-sky-600'
-                                    : 'bg-white text-sky-600 ring-1 ring-sky-100 hover:bg-sky-50 dark:bg-slate-900 dark:text-sky-400 dark:ring-sky-800'
+                                    ? 'bg-brand text-brand-foreground hover:opacity-90'
+                                    : 'bg-surface text-brand ring-1 ring-border hover:bg-surface-elevated'
                             )}
                         >
                             <span className="mr-2">🙌</span>
                             {saidAmin ? 'Kami Mengamini' : 'Sebut AMIN'}
                         </Button>
 
-                        <p className="text-[11px] font-bold uppercase tracking-widest text-sky-400">
+                        <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
                             {count} Chosen People Mengamini
                         </p>
                     </div>

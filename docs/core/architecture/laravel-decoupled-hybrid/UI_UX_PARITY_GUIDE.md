@@ -47,7 +47,7 @@ Gunakan status: `NOT STARTED`, `IN PROGRESS`, `PARITY DONE`.
 | Route | Legacy Reference | Next Route | Status | Catatan Gap |
 |---|---|---|---|---|
 | `/` | `Auth/Welcome.tsx` | `src/app/page.tsx` | IN PROGRESS | Visual hero/feature stage masih perlu validasi akhir |
-| `/today` | `Today/Index.tsx` | `src/app/today/page.tsx` | IN PROGRESS | Batch terbaru: GreetingHeader, ActionShortcutBar, dan semua Today cards core sudah diselaraskan ke baseline legacy (menuju PARITY DONE) |
+| `/today` | `Today/Index.tsx` | `src/app/today/page.tsx` | PARITY DONE | Komposisi page + cards + feed interaction shell + fallback behavior sudah diselaraskan ke baseline legacy/API-first |
 | `/community` | `Community/Index.tsx` | `src/app/community/page.tsx` | IN PROGRESS | Action bar/member post card parity ongoing |
 | `/inbox*` | `Inbox/*` | `src/app/inbox/**` | IN PROGRESS | Pola card state + thread spacing |
 | `/profile` | `Profile/Edit.tsx` | `src/app/profile/page.tsx` | IN PROGRESS | Section grouping + density controls |
@@ -102,6 +102,17 @@ Batch tidak boleh loncat jika batch sebelumnya belum `PARITY DONE`.
     - `src/app/today/components/cards/PinnedLessonCard.tsx`
   - Result:
     - Shape/radius, color tokens, card density, CTA hierarchy, dan interaction shell (like/comment/bookmark/share/sheet) ditarik kembali ke baseline legacy.
+
+- 2026-03-13: Final batch parity `/today` page-level:
+  - Target:
+    - `src/app/today/page.tsx`
+    - `src/app/today/components/feed/UserPostCard.tsx`
+    - `src/app/today/components/feed/PrayerRequestCard.tsx`
+    - `src/app/today/components/feed/SystemReflectionCard.tsx`
+  - Result:
+    - Page sekarang membaca payload API `/api/today` dengan fallback legacy-safe (dailyVerse, rituals, feed, pinned/welcome bila tersedia).
+    - Mock interaction di feed (`console.log`) dihapus, diganti call API proxy (`/api/community/posts/{id}/pray`) dengan optimistic update + rollback jika gagal.
+    - Layout wrapper `/today` dikembalikan ke baseline spacing legacy (`max-w`, `space-y`, `pb-28`, `pt-2`).
 
 ## 5) Execution Workflow (Mandatory)
 

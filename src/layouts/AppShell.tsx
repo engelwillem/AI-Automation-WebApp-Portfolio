@@ -49,7 +49,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     }
   };
 
-  if (!mounted) return <div className="min-h-screen bg-slate-950" />;
+  if (!mounted) return <div className="min-h-screen bg-[#fafafa]" />;
 
   const isLanding = pathname === "/";
   const isReader = pathname.includes('/versehub/'); // Equivalent to density='reader'

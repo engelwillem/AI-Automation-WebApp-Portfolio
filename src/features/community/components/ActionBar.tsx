@@ -46,14 +46,14 @@ export function ActionBar({
                     whileTap={{ scale: 0.95 }}
                     type="button"
                     className={cn(
-                        'tct-pressable inline-flex h-9 items-center gap-2 rounded-full px-3 text-muted-foreground transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-foreground',
-                        prayed ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30' : 'bg-slate-100/30 dark:bg-slate-800/30',
+                        'tct-pressable inline-flex h-9 items-center gap-2 rounded-full px-3 text-muted-foreground transition-all duration-200 hover:bg-surface-muted hover:text-foreground',
+                        prayed ? 'bg-brand/10 text-brand ring-1 ring-inset ring-brand/20' : 'bg-surface-muted/70',
                     )}
                     aria-label="Pray"
                     aria-pressed={prayed}
                     onClick={() => runMemberAction(onPray)}
                 >
-                    <AppIcon icon={Hand} variant="action" active={prayed} className={prayed ? 'text-emerald-600' : 'opacity-70'} />
+                    <AppIcon icon={Hand} variant="action" active={prayed} className={prayed ? 'text-brand' : 'opacity-70'} />
                     <span className="text-[12px] font-medium tabular-nums">{prayLabel}</span>
                 </motion.button>
             )}
@@ -61,7 +61,7 @@ export function ActionBar({
             <motion.button
                 whileTap={{ scale: 0.95 }}
                 type="button"
-                className="tct-pressable inline-flex h-9 items-center gap-2 rounded-full bg-slate-100/30 dark:bg-slate-800/30 px-3 text-muted-foreground transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-foreground"
+                className="tct-pressable inline-flex h-9 items-center gap-2 rounded-full bg-surface-muted/70 px-3 text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
                 aria-label={`Comment${commentsCount ? ` (${commentsCount})` : ''}`}
                 onClick={() => runMemberAction(onOpenComments)}
             >
@@ -76,7 +76,7 @@ export function ActionBar({
             <motion.button
                 whileTap={{ scale: 0.95 }}
                 type="button"
-                className="tct-pressable flex h-9 w-9 items-center justify-center rounded-full bg-slate-100/30 dark:bg-slate-800/30 text-muted-foreground transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-foreground"
+                className="tct-pressable flex h-9 w-9 items-center justify-center rounded-full bg-surface-muted/70 text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
                 aria-label="Share"
                 onClick={() => runMemberAction(onShare)}
             >
@@ -89,13 +89,13 @@ export function ActionBar({
                 className={cn(
                     'tct-pressable inline-flex h-9 items-center gap-2 rounded-full px-3 text-muted-foreground transition-all hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-foreground',
                     splitSave ? 'ml-auto' : '',
-                    bookmarked ? 'bg-amber-500/10 text-amber-500 ring-1 ring-inset ring-amber-500/20' : 'bg-slate-100/30 dark:bg-slate-800/30',
+                    bookmarked ? 'bg-brand/10 text-brand ring-1 ring-inset ring-brand/20' : 'bg-surface-muted/70',
                 )}
                 aria-label="Bookmark"
                 aria-pressed={bookmarked}
                 onClick={() => runMemberAction(onBookmark)}
             >
-                <AppIcon icon={Bookmark} variant="action" active={bookmarked} className={bookmarked ? 'text-amber-500' : 'opacity-70'} />
+                <AppIcon icon={Bookmark} variant="action" active={bookmarked} className={bookmarked ? 'text-brand' : 'opacity-70'} />
                 <span className="text-[12px] font-medium tabular-nums">
                     {bookmarkLabel}
                 </span>

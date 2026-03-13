@@ -58,7 +58,7 @@ export default function SystemReflectionCard({
     };
 
     return (
-        <Card className="overflow-hidden rounded-[32px] border-0 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl ring-1 ring-white/10 relative">
+        <Card className="relative overflow-hidden rounded-[32px] border-0 bg-surface-dark text-surface-dark-foreground shadow-card ring-1 ring-border/50">
             {/* Background pattern */}
             <div className="absolute inset-0 opacity-10 pointer-events-none">
                 <div className="absolute top-0 left-0 h-full w-full bg-[radial-gradient(circle_at_center,white_1px,transparent_1px)] bg-[size:24px_24px]" />
@@ -67,20 +67,20 @@ export default function SystemReflectionCard({
             <CardContent className="p-7 relative z-10">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm">
-                            <Sparkles className="h-4 w-4 text-cyan-300" />
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand/20 backdrop-blur-sm">
+                            <Sparkles className="h-4 w-4 text-brand" />
                         </div>
-                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-300/80">Refleksi Terpilih</span>
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand">Refleksi Terpilih</span>
                     </div>
 
                     <button
                         onClick={toggleEncourage}
-                        className={cn(
-                            "flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-md transition-all active:scale-95",
-                            encouraged
-                                ? "bg-cyan-500 text-white shadow-lg shadow-cyan-500/20"
-                                : "bg-white/10 text-white hover:bg-white/20 border border-white/5"
-                        )}
+                            className={cn(
+                                "flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-md transition-all active:scale-95",
+                                encouraged
+                                    ? "bg-brand text-brand-foreground shadow-lg"
+                                    : "bg-surface-elevated text-surface-foreground hover:bg-surface-muted border border-border/70"
+                            )}
                     >
                         <Heart className={cn("h-3.5 w-3.5", encouraged && "fill-current")} />
                         <span className="text-[10px] font-bold">{encouraged ? 'Terberkati' : count > 0 ? count : 'Amin'}</span>
@@ -92,20 +92,20 @@ export default function SystemReflectionCard({
                         {title}
                     </h3>
 
-                    <p className="text-sm leading-relaxed text-slate-300">
+                    <p className="text-sm leading-relaxed text-surface-foreground/80">
                         {content}
                     </p>
 
                     {payload.verseRef && (
-                        <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 border border-white/5">
-                            <span className="text-[10px] font-bold text-slate-300">{payload.verseRef}</span>
+                        <div className="inline-flex items-center gap-2 rounded-full bg-surface-elevated px-3 py-1.5 border border-border/70">
+                            <span className="text-[10px] font-bold text-surface-foreground/80">{payload.verseRef}</span>
                         </div>
                     )}
 
                     <div className="pt-4">
                         <Link
                             href={payload.ctaLink ?? '/community'}
-                            className="inline-flex items-center gap-2 text-xs font-bold text-white hover:text-cyan-300 transition-colors group"
+                            className="inline-flex items-center gap-2 text-xs font-bold text-brand transition-colors group hover:opacity-80"
                         >
                             {payload.ctaText ?? 'Bagikan pemikiranmu'}
                             <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />

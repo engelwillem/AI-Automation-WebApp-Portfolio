@@ -128,20 +128,20 @@ export function VerseHubFeaturedCard({
       <div className="space-y-3">
         <a
           href="/versehub/id"
-          className="inline-flex items-center gap-2 rounded-full bg-slate-900/40 dark:bg-white/5 px-3 py-1 text-xs text-muted-foreground shadow-sm ring-1 ring-black/5 transition hover:text-foreground dark:ring-white/10 backdrop-blur"
+          className="inline-flex items-center gap-2 rounded-full bg-surface-muted px-3 py-1 text-xs text-muted-foreground shadow-sm ring-1 ring-border/70 transition hover:text-foreground backdrop-blur"
           aria-label="Buka VerseHub"
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-sky-400" aria-hidden />
+          <span className="h-1.5 w-1.5 rounded-full bg-brand" aria-hidden />
           VerseHub
         </a>
 
         <a href={verseHref} className="mt-1 block max-w-full" aria-label={`Buka ayat ${verse.reference}`}>
-          <h2 className="text-2xl font-black text-sky-400 hover:underline tracking-tight">{verse.reference}</h2>
+          <h2 className="text-2xl font-black text-brand hover:underline tracking-tight">{verse.reference}</h2>
         </a>
       </div>
 
-      <Card className="rounded-[32px] bg-white/[0.02] p-5 shadow-xl ring-1 ring-white/10 backdrop-blur-xl transition-all hover:bg-white/[0.04]">
-        <a href={verseHref} className="mt-1 block overflow-hidden rounded-2xl ring-1 ring-white/10" aria-label={`Buka OG ayat ${verse.reference}`}>
+      <Card className="rounded-[32px] bg-surface/80 p-5 shadow-card ring-1 ring-border/60 backdrop-blur-xl transition-all hover:bg-surface-elevated">
+        <a href={verseHref} className="mt-1 block overflow-hidden rounded-2xl ring-1 ring-border/60" aria-label={`Buka OG ayat ${verse.reference}`}>
           <img
             src={ogImageUrl ?? `/versehub/id/${verse.ref}/og.png`}
             alt={`OG image ${verse.reference}`}
@@ -151,19 +151,19 @@ export function VerseHubFeaturedCard({
         </a>
       </Card>
 
-      <Card className="rounded-[32px] bg-white/[0.02] shadow-xl ring-1 ring-white/10 backdrop-blur-xl">
+      <Card className="rounded-[32px] bg-surface/80 shadow-card ring-1 ring-border/60 backdrop-blur-xl">
         <CardContent className="p-7 md:p-9">
-          <a href={verseHref} className="block rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/50" aria-label={`Buka ayat ${verse.reference}`}>
+          <a href={verseHref} className="block rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40" aria-label={`Buka ayat ${verse.reference}`}>
             <VerseQuoteRail text={verse.text} />
           </a>
 
           <div className="mt-6">
-            <div className="h-px bg-white/5" aria-hidden />
+            <div className="h-px bg-border/70" aria-hidden />
             <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <button
                 type="button"
                 onClick={() => window.location.assign(verseHref)}
-                className="tct-pressable inline-flex items-center justify-center rounded-2xl bg-white/5 px-4 py-2.5 font-bold text-sky-400 transition-all hover:bg-white/10"
+                className="tct-pressable inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-2.5 font-bold text-brand-foreground transition-all hover:opacity-90"
               >
                 Baca Alkitab hari ini
               </button>

@@ -62,11 +62,11 @@ export default function PrayerRequestCard({
     };
 
     return (
-        <Card className="overflow-hidden rounded-[32px] border-0 bg-violet-50/50 dark:bg-violet-950/20 shadow-soft ring-1 ring-violet-200/50 dark:ring-violet-500/10 backdrop-blur-sm">
+        <Card className="overflow-hidden rounded-[32px] border-0 bg-surface/80 shadow-soft ring-1 ring-border/60 backdrop-blur-sm">
             <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-violet-100 dark:bg-violet-900/50 flex items-center justify-center text-violet-600 dark:text-violet-400 font-bold border border-violet-200/50 dark:border-violet-700/50">
+                        <div className="h-10 w-10 rounded-full bg-surface-muted flex items-center justify-center text-foreground font-bold border border-border/60">
                             {avatar ? (
                                 <img src={avatar} alt={userName} className="h-full w-full rounded-full object-cover" />
                             ) : (
@@ -74,17 +74,17 @@ export default function PrayerRequestCard({
                             )}
                         </div>
                         <div>
-                            <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{userName}</p>
-                            <p className="text-[11px] font-medium text-violet-500 dark:text-violet-400 uppercase tracking-wider">{title}</p>
+                            <p className="text-sm font-bold text-foreground">{userName}</p>
+                            <p className="text-[11px] font-medium text-brand uppercase tracking-wider">{title}</p>
                         </div>
                     </div>
-                    <div className="h-8 w-8 rounded-full bg-white/50 dark:bg-slate-800/50 flex items-center justify-center text-violet-500">
-                        <Heart className="h-4 w-4 fill-violet-500" />
+                    <div className="h-8 w-8 rounded-full bg-surface-muted flex items-center justify-center text-brand">
+                        <Heart className="h-4 w-4 fill-brand" />
                     </div>
                 </div>
 
                 <div className="space-y-4">
-                    <p className="text-[17px] leading-relaxed text-slate-700 dark:text-slate-200 font-medium italic font-serif">
+                    <p className="text-[17px] leading-relaxed text-foreground font-medium italic font-serif">
                         "{requestText}"
                     </p>
 
@@ -95,21 +95,21 @@ export default function PrayerRequestCard({
                                 className={cn(
                                     "flex items-center gap-2 px-4 py-2 rounded-2xl transition-all active:scale-95",
                                     prayed
-                                        ? "bg-violet-500 text-white shadow-md shadow-violet-500/20"
-                                        : "bg-white dark:bg-slate-800 text-violet-600 dark:text-violet-400 ring-1 ring-violet-100 dark:ring-violet-800 hover:bg-violet-50"
+                                        ? "bg-brand text-brand-foreground shadow-md"
+                                        : "bg-surface text-brand ring-1 ring-border hover:bg-surface-elevated"
                                 )}
                             >
                                 <span className="text-lg">🙏</span>
                                 <span className="text-sm font-bold">{prayed ? 'Sudah Didoakan' : 'Doakan'}</span>
                             </button>
 
-                            <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500 text-sm font-medium">
+                            <div className="flex items-center gap-1.5 text-muted-foreground text-sm font-medium">
                                 <MessageCircle className="h-4 w-4" />
                                 <span>{commentCount}</span>
                             </div>
                         </div>
 
-                        <div className="text-xs font-bold text-violet-400 dark:text-violet-500">
+                        <div className="text-xs font-bold text-muted-foreground">
                             {count} AMIN
                         </div>
                     </div>

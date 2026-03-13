@@ -121,7 +121,7 @@ export function MemberPostCard({
   return (
     <Card
       className={cn(
-        "rounded-[32px] bg-white dark:bg-slate-900 shadow-card border border-white/40 dark:border-white/5 overflow-hidden transition-all duration-300 hover:shadow-premium animate-in fade-in slide-in-from-bottom-4",
+        "rounded-[32px] bg-surface shadow-card border border-border/70 overflow-hidden transition-all duration-300 hover:shadow-premium animate-in fade-in slide-in-from-bottom-4",
         className
       )}
     >
@@ -135,14 +135,14 @@ export function MemberPostCard({
           <div className="flex items-center gap-3 group/author cursor-pointer">
             <div className="relative h-11 w-11 shrink-0">
               {/* Avatar Glow */}
-              <div className="absolute -inset-1 rounded-full bg-gradient-to-tr from-sky-400/40 to-cyan-400/20 opacity-0 blur transition duration-500 group-hover/author:opacity-100" />
-              <div className="relative h-full w-full rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden border border-white/20 ring-1 ring-black/5 dark:ring-white/10 shadow-sm transition-transform duration-500 group-hover/author:scale-105">
+              <div className="absolute -inset-1 rounded-full bg-brand/25 opacity-0 blur transition duration-500 group-hover/author:opacity-100" />
+              <div className="relative h-full w-full rounded-full bg-surface-muted flex items-center justify-center overflow-hidden border border-border/60 ring-1 ring-border/60 shadow-sm transition-transform duration-500 group-hover/author:scale-105">
                 {authorAvatar ? (
                     <img src={authorAvatar} alt={authorName ?? ""} className="h-full w-full object-cover" />
                 ) : (
                     <>
-                        <div className="bg-gradient-to-br from-sky-400/20 to-sky-400/40 absolute inset-0" />
-                        <span className="relative text-sky-400 text-[11px] font-black uppercase tracking-widest">
+                        <div className="bg-brand/15 absolute inset-0" />
+                        <span className="relative text-brand text-[11px] font-black uppercase tracking-widest">
                         {(authorName ?? "U")[0]}
                         </span>
                     </>
@@ -150,14 +150,14 @@ export function MemberPostCard({
               </div>
             </div>
             <div>
-              <CardTitle className="text-[16px] font-black tracking-tight text-slate-800 dark:text-slate-100 group-hover/author:text-sky-400 transition-colors">
+              <CardTitle className="text-[16px] font-black tracking-tight text-foreground group-hover/author:text-brand transition-colors">
                 {authorName ?? "Unknown"}
               </CardTitle>
               <div className="flex items-center gap-2 mt-0.5">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Baru Saja</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Baru Saja</p>
                 {isOfficial && (
-                  <span className="flex items-center gap-1 rounded-full bg-sky-400/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-sky-400 ring-1 ring-inset ring-sky-400/20">
-                    <div className="h-1 w-1 rounded-full bg-sky-400 animate-pulse" />
+                  <span className="flex items-center gap-1 rounded-full bg-brand/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-brand ring-1 ring-inset ring-brand/20">
+                    <div className="h-1 w-1 rounded-full bg-brand animate-pulse" />
                     Official
                   </span>
                 )}
@@ -168,7 +168,7 @@ export function MemberPostCard({
             <div className="flex items-center gap-1.5 opacity-40 hover:opacity-100 transition-opacity">
               <button
                 onClick={onAdminHide}
-                className="h-8 w-8 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-colors"
+                className="h-8 w-8 rounded-full flex items-center justify-center bg-surface-muted text-muted-foreground hover:bg-brand/10 hover:text-brand transition-colors"
               >
                 <span className="text-[10px] font-black">×</span>
               </button>
@@ -180,7 +180,7 @@ export function MemberPostCard({
       <CardContent className={cn("flex flex-col gap-4", compact ? "px-5 pb-5" : "px-6 pb-6 md:px-8 md:pb-8")}>
         {/* Text Above Layout */}
         {hasText && textPosition === "above" && !isTwitterStyle && (
-          <p className="text-[16px] leading-relaxed text-slate-700 dark:text-slate-300 font-medium px-1">
+          <p className="text-[16px] leading-relaxed text-foreground font-medium px-1">
             {normalizedText}
           </p>
         )}
@@ -190,7 +190,7 @@ export function MemberPostCard({
           <div className="relative group">
             <div
               className={cn(
-                "relative overflow-hidden rounded-[24px] shadow-lg ring-1 ring-black/5 bg-slate-100 dark:bg-slate-800",
+                "relative overflow-hidden rounded-[24px] shadow-lg ring-1 ring-border/60 bg-surface-muted",
                 aspectRatio === "4:5" ? "aspect-[4/5]" : "aspect-[1.91/1]"
               )}
             >
@@ -225,11 +225,11 @@ export function MemberPostCard({
 
         {/* Twitter Style Text */}
         {isTwitterStyle && (
-          <div className="relative py-8 px-6 rounded-[32px] bg-gradient-to-br from-slate-50/80 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-900/40 ring-1 ring-black/5 dark:ring-white/10 shadow-inner overflow-hidden">
-            <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-sky-400/5 blur-3xl" />
-            <div className="absolute -left-8 -bottom-8 h-32 w-32 rounded-full bg-cyan-400/5 blur-3xl" />
+          <div className="relative py-8 px-6 rounded-[32px] bg-surface-muted/80 ring-1 ring-border/60 shadow-inner overflow-hidden">
+            <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-brand/8 blur-3xl" />
+            <div className="absolute -left-8 -bottom-8 h-32 w-32 rounded-full bg-brand/6 blur-3xl" />
 
-            <p className="relative z-10 text-[21px] md:text-[24px] font-bold leading-relaxed tracking-tight text-slate-800 dark:text-slate-100 italic">
+            <p className="relative z-10 text-[21px] md:text-[24px] font-bold leading-relaxed tracking-tight text-foreground italic">
               {normalizedText}
             </p>
           </div>
@@ -237,12 +237,12 @@ export function MemberPostCard({
 
         {/* Standard Text Below */}
         {hasText && textPosition === "below" && !isTwitterStyle && (
-          <p className="text-[16px] leading-relaxed text-slate-700 dark:text-slate-300 font-medium px-1">
+          <p className="text-[16px] leading-relaxed text-foreground font-medium px-1">
             {normalizedText}
           </p>
         )}
 
-        <div className="h-px bg-slate-100 dark:bg-slate-800/60 mt-2" />
+        <div className="h-px bg-border/70 mt-2" />
         {actionBar}
       </CardContent>
     </Card>

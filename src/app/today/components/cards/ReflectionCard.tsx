@@ -15,19 +15,19 @@ export default function ReflectionCard({
         : `/journal/new`;
 
     return (
-        <Card className="relative overflow-hidden rounded-3xl border-0 bg-gradient-to-br from-amber-50/60 to-white shadow-sm ring-1 ring-amber-100/60 backdrop-blur-sm dark:from-amber-950/20 dark:to-slate-900/40 dark:ring-amber-500/10">
+        <Card className="relative overflow-hidden rounded-3xl border-0 bg-surface/80 shadow-soft ring-1 ring-border/60 backdrop-blur-sm">
             {/* Accent blob */}
-            <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-amber-300/20 blur-2xl" />
+            <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-brand/12 blur-2xl" />
 
             <CardContent className="relative p-5">
                 <div className="mb-3 flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/40">
-                        <BookHeart className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand/10 ring-1 ring-brand/20">
+                        <BookHeart className="h-4 w-4 text-brand" />
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400">Jurnal Pribadi</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-brand">Jurnal Pribadi</span>
                 </div>
 
-                <p className="text-base font-semibold leading-snug text-slate-800 dark:text-slate-100">
+                <p className="text-base font-semibold leading-snug text-foreground">
                     {payload.prompt}
                 </p>
 
@@ -35,7 +35,7 @@ export default function ReflectionCard({
                     <Button
                         asChild
                         variant="outline"
-                        className="h-10 rounded-2xl border-amber-200 bg-amber-50/80 px-5 text-sm font-semibold text-amber-700 transition-all active:scale-[0.98] hover:border-amber-300 hover:bg-amber-100 dark:border-amber-800/40 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/40"
+                        className="h-10 rounded-2xl border-border bg-surface-muted px-5 text-sm font-semibold text-foreground transition-all active:scale-[0.98] hover:bg-surface-elevated"
                     >
                         <Link href={href} className="inline-flex items-center gap-1.5">
                             <PenLine className="h-3.5 w-3.5" />

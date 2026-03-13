@@ -18,16 +18,16 @@ export default function ReflectionPrompt({ payload }: { payload?: { question: st
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
         >
-            <Card className="overflow-hidden rounded-[32px] border-0 bg-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.04)] ring-1 ring-black/[0.03] backdrop-blur-xl dark:bg-white/5 dark:ring-white/[0.08]">
+            <Card className="overflow-hidden rounded-[32px] border-0 bg-surface/80 shadow-soft ring-1 ring-border/60 backdrop-blur-xl">
                 <CardContent className="p-6 md:p-8">
                     <div className="flex flex-col items-center space-y-5 text-center">
-                        <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400">
+                        <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 text-brand ring-1 ring-brand/20">
                             <Sparkles className="h-6 w-6" />
                         </div>
 
                         <div className="space-y-2">
-                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400">Renungan Hari Ini</span>
-                            <p className="text-xl font-bold leading-relaxed text-slate-800 md:text-2xl md:tracking-tight dark:text-slate-100">
+                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand">Renungan Hari Ini</span>
+                            <p className="text-xl font-bold leading-relaxed text-foreground md:text-2xl md:tracking-tight">
                                 {question}
                             </p>
                         </div>
@@ -38,7 +38,7 @@ export default function ReflectionPrompt({ payload }: { payload?: { question: st
                                     <button
                                         key={chip}
                                         onClick={handleChipClick}
-                                        className="rounded-full bg-indigo-100/50 px-4 py-2 text-xs font-bold text-indigo-700 transition-colors hover:bg-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:hover:bg-indigo-800"
+                                        className="rounded-full bg-surface-muted px-4 py-2 text-xs font-bold text-foreground transition-colors hover:bg-surface-elevated"
                                     >
                                         {chip}
                                     </button>
@@ -47,7 +47,7 @@ export default function ReflectionPrompt({ payload }: { payload?: { question: st
 
                             <Button
                                 asChild
-                                className="group h-12 rounded-2xl bg-slate-900 px-8 font-bold text-white shadow-lg transition-all active:scale-[0.98] hover:bg-slate-800 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200"
+                                className="group h-12 rounded-2xl bg-brand px-8 font-bold text-brand-foreground shadow-lg transition-all active:scale-[0.98] hover:opacity-90"
                             >
                                 <Link href="/community">
                                     <MessageSquarePlus className="mr-2 h-5 w-5 transition-transform group-hover:rotate-12" />
@@ -55,10 +55,10 @@ export default function ReflectionPrompt({ payload }: { payload?: { question: st
                                 </Link>
                             </Button>
 
-                            <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-indigo-500">
+                            <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
                                 <span className="relative flex h-2 w-2">
-                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75" />
-                                    <span className="relative inline-flex h-2 w-2 rounded-full bg-indigo-500" />
+                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand/70 opacity-75" />
+                                    <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
                                 </span>
                                 {responseCount} Chosen People sedang merenung
                             </div>

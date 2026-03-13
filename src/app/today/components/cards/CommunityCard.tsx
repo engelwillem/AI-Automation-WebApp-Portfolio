@@ -11,15 +11,15 @@ export default function CommunityCard({
     payload: { title: string; count?: number | null; ctaText?: string | null };
 }) {
     return (
-        <Card className="relative overflow-hidden rounded-3xl border-0 bg-white/60 shadow-sm ring-1 ring-black/5 backdrop-blur-sm dark:bg-slate-900/40 dark:ring-white/8">
+        <Card className="relative overflow-hidden rounded-3xl border-0 bg-surface/80 shadow-soft ring-1 ring-border/60 backdrop-blur-sm">
             {/* Accent blob */}
-            <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-emerald-400/15 blur-2xl" />
-            <div className="pointer-events-none absolute bottom-0 left-4 h-20 w-20 rounded-full bg-cyan-400/10 blur-2xl" />
+            <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-brand/12 blur-2xl" />
+            <div className="pointer-events-none absolute bottom-0 left-4 h-20 w-20 rounded-full bg-brand/8 blur-2xl" />
 
             <CardContent className="relative p-5">
                 {/* Header */}
                 <div className="mb-3 flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+                    <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-brand">
                         <Users className="h-3 w-3" />
                         Community Highlight
                     </span>
@@ -45,10 +45,10 @@ export default function CommunityCard({
                 </p>
 
                 {typeof payload.count === 'number' && (
-                    <div className="mt-2 flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
+                    <div className="mt-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                         <span className="relative flex h-2 w-2">
-                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand/70 opacity-75" />
+                            <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
                         </span>
                         {payload.count} orang sedang berdiskusi
                     </div>
@@ -57,7 +57,7 @@ export default function CommunityCard({
                 <div className="mt-4">
                     <Button
                         asChild
-                        className="h-11 w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 font-semibold text-white shadow-md shadow-emerald-500/20 transition-opacity active:scale-[0.98] hover:opacity-90"
+                        className="h-11 w-full rounded-2xl bg-brand font-semibold text-brand-foreground shadow-md transition-opacity active:scale-[0.98] hover:opacity-90"
                     >
                         <Link href="/community" className="inline-flex items-center gap-2">
                             <MessageCircle className="h-4 w-4" />
