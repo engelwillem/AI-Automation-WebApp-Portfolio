@@ -6,7 +6,8 @@ interface RouteContext {
 }
 
 /**
- * Endpoint tunggal untuk info ayat guna menghindari konflik [id] vs [ref] vs [slug].
+ * Consolidated Verse/Chapter Fetch
+ * Standardised on [slug] to prevent sibling ambiguity.
  */
 export async function GET(request: NextRequest, { params }: RouteContext) {
   const { lang, slug } = await params;

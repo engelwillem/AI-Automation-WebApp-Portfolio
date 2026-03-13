@@ -6,7 +6,7 @@ interface RouteContext {
 }
 
 /**
- * Menstandardisasi parameter ke [slug] untuk stabilitas routing Next.js 15.
+ * GET Mentor Insights for a specific verse slug.
  */
 export async function GET(request: NextRequest, { params }: RouteContext) {
   const { lang, slug } = await params;

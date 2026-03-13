@@ -3,7 +3,7 @@ import { callLaravelApi } from "@/lib/laravel-api";
 
 /**
  * Proksi permintaan dari Next.js ke Laravel API.
- * Versi diperkeras: Menjamin integritas data biner (upload) dan fleksibilitas response (JSON/HTML).
+ * Versi P0 (Hardened): Menjamin integritas data biner (upload) dan fleksibilitas response (JSON/HTML).
  */
 export async function proxyLaravel(request: NextRequest, targetPath: string): Promise<NextResponse> {
   try {
