@@ -48,7 +48,7 @@ Gunakan status: `NOT STARTED`, `IN PROGRESS`, `PARITY DONE`.
 |---|---|---|---|---|
 | `/` | `Auth/Welcome.tsx` | `src/app/page.tsx` | IN PROGRESS | Visual hero/feature stage masih perlu validasi akhir |
 | `/today` | `Today/Index.tsx` | `src/app/today/page.tsx` | PARITY DONE | Komposisi page + cards + feed interaction shell + fallback behavior sudah diselaraskan ke baseline legacy/API-first |
-| `/community` | `Community/Index.tsx` | `src/app/community/page.tsx` | IN PROGRESS | Action bar/member post card parity ongoing |
+| `/community` | `Community/Index.tsx` | `src/app/community/page.tsx` | PARITY DONE | Theme token parity, tab/filter state, composer, featured verse, dan member post cards sudah diselaraskan ke baseline legacy/API-first |
 | `/inbox*` | `Inbox/*` | `src/app/inbox/**` | IN PROGRESS | Pola card state + thread spacing |
 | `/profile` | `Profile/Edit.tsx` | `src/app/profile/page.tsx` | IN PROGRESS | Section grouping + density controls |
 | `/channels*` | `Channels/*` | `src/app/channels/**` | IN PROGRESS | Weekly detail polish + sabbath reader parity |
@@ -113,6 +113,19 @@ Batch tidak boleh loncat jika batch sebelumnya belum `PARITY DONE`.
     - Page sekarang membaca payload API `/api/today` dengan fallback legacy-safe (dailyVerse, rituals, feed, pinned/welcome bila tersedia).
     - Mock interaction di feed (`console.log`) dihapus, diganti call API proxy (`/api/community/posts/{id}/pray`) dengan optimistic update + rollback jika gagal.
     - Layout wrapper `/today` dikembalikan ke baseline spacing legacy (`max-w`, `space-y`, `pb-28`, `pt-2`).
+
+- 2026-03-13: Theme token harmonization + batch parity `/community`:
+  - Target:
+    - `src/app/globals.css`
+    - `src/app/layout.tsx`
+    - `src/layouts/AppShell.tsx`
+    - `src/features/community/pages/CommunityPage.tsx`
+    - `src/features/community/components/*` (ActionBar, PostComposer, MemberPostCard, QuoteCard, VerseHubFeaturedCard, PostCard)
+    - `src/app/today/components/**` (sections, cards, feed) untuk normalisasi token semantic
+  - Result:
+    - Forced dark mode global dihapus; token `:root`/`.dark` diselaraskan dengan Laravel legacy sebagai source of truth.
+    - Hardcoded warna literal (`sky/amber/violet/emerald/cyan/...`) di route aktif `/today` dan `/community` direfactor ke semantic token (`bg-surface`, `text-foreground`, `text-muted-foreground`, `bg-brand`, `ring-border`, dll).
+    - Visual state tabs, cards, composer, action bar, featured verse, dan feed cards di `/community` sekarang konsisten ke sistem token yang sama dengan legacy.
 
 ## 5) Execution Workflow (Mandatory)
 

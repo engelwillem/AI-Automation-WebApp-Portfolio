@@ -26,13 +26,13 @@ export default function CommunityCard({
                     {/* Avatar cluster */}
                     <div className="flex -space-x-1.5">
                         {[
-                            'bg-gradient-to-br from-rose-400 to-pink-500',
-                            'bg-gradient-to-br from-amber-400 to-orange-500',
-                            'bg-gradient-to-br from-cyan-400 to-blue-500',
+                            'bg-brand',
+                            'bg-brand/75',
+                            'bg-brand/55',
                         ].map((g, i) => (
                             <div
                                 key={i}
-                                className={`flex h-6 w-6 items-center justify-center rounded-full border-2 border-white text-[8px] font-bold text-white shadow-sm dark:border-slate-900 ${g}`}
+                                className={`flex h-6 w-6 items-center justify-center rounded-full border-2 border-surface text-[8px] font-bold text-brand-foreground shadow-sm ${g}`}
                             >
                                 {String.fromCharCode(65 + i)}
                             </div>
@@ -40,7 +40,7 @@ export default function CommunityCard({
                     </div>
                 </div>
 
-                <p className="text-base font-bold leading-snug text-slate-800 dark:text-slate-100">
+                <p className="text-base font-bold leading-snug text-foreground">
                     {payload.title}
                 </p>
 

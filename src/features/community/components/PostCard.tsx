@@ -25,15 +25,15 @@ export function PostCard({ post, comments, onAddComment, onLike, onBookmark, cur
 
   return (
     <>
-      <Card className="border border-white/10 bg-white/[0.02] backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.12)] ring-1 ring-white/5 hover:ring-white/10 hover:bg-white/[0.04] transition-all duration-300 overflow-hidden mb-4">
+      <Card className="mb-4 overflow-hidden border border-border/70 bg-surface/80 shadow-card ring-1 ring-border/40 backdrop-blur-md transition-all duration-300 hover:bg-surface-elevated hover:ring-border/70">
         <CardHeader className="p-4 flex-row items-center gap-3 space-y-0">
-          <Avatar className="w-10 h-10 border-2 border-white/10 shadow-sm ring-2 ring-background">
+          <Avatar className="w-10 h-10 border-2 border-border/60 shadow-sm ring-2 ring-background">
             <AvatarImage src={post.author.avatarUrl} />
             <AvatarFallback>{post.author.name[0]}</AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="font-bold text-sm truncate text-white"> {post.author.name}</p>
-            <p className="text-[10px] text-amber-500/60 font-bold uppercase tracking-[0.15em]">{post.createdAt}</p>
+            <p className="font-bold text-sm truncate text-foreground"> {post.author.name}</p>
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.15em]">{post.createdAt}</p>
           </div>
           <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
             <MoreHorizontal size={18} className="text-muted-foreground" />
@@ -57,13 +57,13 @@ export function PostCard({ post, comments, onAddComment, onLike, onBookmark, cur
           )}
         </CardContent>
 
-        <CardFooter className="p-2 px-4 flex justify-between border-t border-white/5 bg-white/[0.01]">
+        <CardFooter className="p-2 px-4 flex justify-between border-t border-border/70 bg-surface-muted/40">
           <div className="flex items-center gap-4">
             <button 
               onClick={() => onLike(post.id)}
               className={cn(
                 "flex items-center gap-1.5 transition-all active:scale-125",
-                post.isLiked ? "text-red-500" : "text-muted-foreground"
+                post.isLiked ? "text-brand" : "text-muted-foreground"
               )}
             >
               <Heart size={20} className={cn(post.isLiked && "fill-current animate-in zoom-in-50")} />

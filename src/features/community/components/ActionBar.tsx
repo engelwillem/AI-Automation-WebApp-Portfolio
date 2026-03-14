@@ -87,7 +87,7 @@ export function ActionBar({
                 whileTap={{ scale: 0.95 }}
                 type="button"
                 className={cn(
-                    'tct-pressable inline-flex h-9 items-center gap-2 rounded-full px-3 text-muted-foreground transition-all hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-foreground',
+                    'tct-pressable inline-flex h-9 items-center gap-2 rounded-full px-3 text-muted-foreground transition-all hover:bg-surface-muted hover:text-foreground',
                     splitSave ? 'ml-auto' : '',
                     bookmarked ? 'bg-brand/10 text-brand ring-1 ring-inset ring-brand/20' : 'bg-surface-muted/70',
                 )}
