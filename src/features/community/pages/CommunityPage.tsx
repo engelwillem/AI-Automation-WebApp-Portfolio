@@ -41,7 +41,7 @@ export function CommunityPage() {
   const handlePost = async (text: string, type: string) => {
     try {
       const newPost = await CommunityService.createPost(text);
-      // In a real app, we'd send the type too. For now, we update local state with the type for parity.
+      // Ensure the newly created post has the correct type from the UI
       const postWithType = { ...newPost, type };
       setPosts((prev) => [postWithType, ...prev]);
     } catch (error) {
@@ -50,17 +50,23 @@ export function CommunityPage() {
   };
 
   const toggleLike = async (postId: string) => {
-    setPosts((prev) =>
-      prev.map((p) =>
-        p.id === postId
-          ? { ...p, isLiked: !p.isLiked, counts: { ...p.counts, likes: p.counts.likes + (p.isLiked ? -1 : 1) } }
-          : p
-      )
-    );
+    // REAL PERSISTENCE: Now calls Laravel via proxy
+    try {
+      const updatedPost = await CommunityService.toggleLike(postId);
+      setPosts((prev) => prev.map((p) => (p.id === postId ? updatedPost : p)));
+    } catch (error) {
+      console.error("Failed to toggle like", error);
+    }
   };
 
   const toggleBookmark = async (postId: string) => {
-    setPosts((prev) => prev.map((p) => (p.id === postId ? { ...p, isBookmarked: !p.isBookmarked } : p)));
+    // REAL PERSISTENCE: Now calls Laravel via proxy
+    try {
+      const updatedPost = await CommunityService.toggleBookmark(postId);
+      setPosts((prev) => prev.map((p) => (p.id === postId ? updatedPost : p)));
+    } catch (error) {
+      console.error("Failed to toggle bookmark", error);
+    }
   };
 
   const featuredPost = useMemo(() => posts.find((p) => p.isFeatured), [posts]);
@@ -130,7 +136,7 @@ export function CommunityPage() {
 
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="space-y-6">
           <div className="sticky top-0 z-40 py-2 -mx-1 px-1">
-            <TabsList className="relative flex h-[52px] w-full items-center justify-between rounded-[20px] bg-surface-muted/70 p-1.5 backdrop-blur-2xl shadow-inner ring-1 ring-border/70 overflow-hidden">
+            <TabsList className="relative flex h-[52px] w-full items-center justify-between rounded-[20px] bg-surface-muted/70 p-1.5 backdrop-blur-2xl shadow-inner ring-1 ring-border/70 overflow-hidden text-slate-900">
               {[
                 { id: "discussions", label: "Diskusi" },
                 { id: "archive", label: "Arsip" },
@@ -194,7 +200,7 @@ export function CommunityPage() {
           </TabsContent>
 
           <TabsContent value="archive" className="space-y-6">
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide text-slate-900">
               {[
                 { key: "all", label: "Semua" },
                 { key: "quotes", label: "Quotes" },

@@ -6,7 +6,7 @@
  */
 
 import { CommunityPost, CommunityComment } from "@/features/community/types";
-import { MOCK_POSTS, MOCK_COMMENTS, MOCK_USERS } from "@/features/community/mock";
+import { MOCK_POSTS, MOCK_COMMENTS } from "@/features/community/mock";
 import { clearAppAccessToken, getAppAccessToken } from "@/services/app-auth-token";
 
 let posts: CommunityPost[] = [...MOCK_POSTS];
@@ -33,11 +33,15 @@ interface ApiPost {
   type?: string;
   text: string;
   imageUrl?: string;
+  mediaPaths?: string[];
+  isFeatured?: boolean;
+  metadata?: any;
   createdAt: string;
   author: {
     id: string;
     name: string;
     avatarUrl?: string;
+    isOfficial?: boolean;
   };
   counts: {
     likes: number;
@@ -65,11 +69,15 @@ const mapApiPost = (post: ApiPost): CommunityPost => ({
   type: post.type || "member_post",
   text: post.text || "",
   imageUrl: post.imageUrl,
+  mediaPaths: post.mediaPaths,
+  isFeatured: Boolean(post.isFeatured),
+  metadata: post.metadata,
   createdAt: post.createdAt || "Baru saja",
   author: {
     id: String(post.author?.id || ""),
     name: post.author?.name || "Member",
     avatarUrl: post.author?.avatarUrl,
+    isOfficial: Boolean(post.author?.isOfficial),
   },
   counts: {
     likes: Number(post.counts?.likes || 0),

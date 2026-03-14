@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Heart, MessageCircle } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { CommunityService } from '@/services/community.service';
 
 export default function PrayerRequestCard({
     id,
@@ -34,12 +35,13 @@ export default function PrayerRequestCard({
     const [prayed, setPrayed] = useState(interactions?.is_prayed ?? false);
     const [count, setCount] = useState(initialPrays);
 
-    const togglePray = () => {
+    const togglePray = async () => {
         if (!postId) return;
 
         const prevPrayed = prayed;
         const prevCount = count;
 
+        // Optimistic UI update
         if (prayed) {
             setCount((prev) => prev - 1);
         } else {
@@ -47,18 +49,15 @@ export default function PrayerRequestCard({
         }
         setPrayed(!prayed);
 
-        void fetch(`/api/community/posts/${postId}/pray`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-        }).then((response) => {
-            if (!response.ok) {
-                setPrayed(prevPrayed);
-                setCount(prevCount);
-            }
-        }).catch(() => {
+        try {
+            const updated = await CommunityService.toggleLike(postId);
+            setPrayed(updated.isLiked);
+            setCount(updated.counts.likes);
+        } catch (error) {
+            // Rollback on error
             setPrayed(prevPrayed);
             setCount(prevCount);
-        });
+        }
     };
 
     return (

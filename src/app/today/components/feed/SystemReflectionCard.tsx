@@ -5,6 +5,7 @@ import { Sparkles, ArrowRight, Heart } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { CommunityService } from '@/services/community.service';
 
 export default function SystemReflectionCard({
     id,
@@ -30,12 +31,13 @@ export default function SystemReflectionCard({
     const [encouraged, setEncouraged] = useState(interactions?.is_encouraged ?? false);
     const [count, setCount] = useState(payload.stats?.encouraged_count ?? 0);
 
-    const toggleEncourage = () => {
+    const toggleEncourage = async () => {
         if (!postId) return;
 
         const prevEncouraged = encouraged;
         const prevCount = count;
 
+        // Optimistic UI
         if (encouraged) {
             setCount((prev) => prev - 1);
         } else {
@@ -43,18 +45,15 @@ export default function SystemReflectionCard({
         }
         setEncouraged(!encouraged);
 
-        void fetch(`/api/community/posts/${postId}/pray`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-        }).then((response) => {
-            if (!response.ok) {
-                setEncouraged(prevEncouraged);
-                setCount(prevCount);
-            }
-        }).catch(() => {
+        try {
+            const updated = await CommunityService.toggleLike(postId);
+            setEncouraged(updated.isLiked);
+            setCount(updated.counts.likes);
+        } catch (error) {
+            // Rollback
             setEncouraged(prevEncouraged);
             setCount(prevCount);
-        });
+        }
     };
 
     return (

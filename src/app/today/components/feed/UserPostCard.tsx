@@ -5,6 +5,7 @@ import { MoreHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import ActionBar from '@/components/ActionBar';
 import { cn } from '@/lib/utils';
+import { CommunityService } from '@/services/community.service';
 
 export default function UserPostCard({
     id,
@@ -51,28 +52,26 @@ export default function UserPostCard({
     const [liked, setLiked] = useState(interactions?.is_liked ?? false);
     const [likes, setLikes] = useState(initialLikes);
 
-    const toggleLike = () => {
+    const toggleLike = async () => {
         if (!postId) return;
 
         const prevLiked = liked;
         const prevLikes = likes;
 
+        // Optimistic UI
         if (liked) setLikes((prev) => prev - 1);
         else setLikes((prev) => prev + 1);
         setLiked(!liked);
 
-        void fetch(`/api/community/posts/${postId}/pray`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-        }).then((response) => {
-            if (!response.ok) {
-                setLiked(prevLiked);
-                setLikes(prevLikes);
-            }
-        }).catch(() => {
+        try {
+            const updated = await CommunityService.toggleLike(postId);
+            setLiked(updated.isLiked);
+            setLikes(updated.counts.likes);
+        } catch (error) {
+            // Rollback
             setLiked(prevLiked);
             setLikes(prevLikes);
-        });
+        }
     };
 
     const moveMedia = (dir: -1 | 1) => {
