@@ -52,7 +52,7 @@ const featureItems = [
 
 function Background() {
     return (
-        <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-900 to-teal-950" />
             <div className={cn(
                 'absolute inset-0',
