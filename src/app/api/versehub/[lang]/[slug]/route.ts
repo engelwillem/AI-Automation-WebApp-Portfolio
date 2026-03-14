@@ -1,3 +1,4 @@
+
 import { NextRequest } from "next/server";
 import { proxyLaravel } from "@/lib/proxy-laravel";
 
@@ -18,8 +19,10 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
   
   // Distinguish between Chapter Reader (e.g., yoh-3) and Verse Share (e.g., yoh-3-16)
   if (segments.length < 3) {
+    // If it's a chapter request, use the specialized chapter endpoint
     return proxyLaravel(request, `/api/v1/versehub/${lang}/chapter/${slug}${search}`);
   }
 
+  // Otherwise, it's a specific verse share/detail request
   return proxyLaravel(request, `/api/v1/versehub/${lang}/${slug}${search}`);
 }
