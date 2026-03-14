@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useRef } from 'react';
@@ -30,6 +29,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { clearAppAccessToken, getAppAccessToken } from '@/services/app-auth-token';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type OpsGatewayData = {
     status: 'Healthy' | 'Needs Attention' | 'High Risk' | string;
