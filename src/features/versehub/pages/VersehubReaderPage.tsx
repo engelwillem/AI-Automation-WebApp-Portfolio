@@ -135,6 +135,16 @@ export function VersehubReaderPage({ lang: initialLang, mode = 'landing', initia
         { id: 'settings', label: 'Settings', icon: Zap, href: '/profile' },
     ];
 
+    const selectedVerse = useMemo(() => 
+        verses.find(v => v.key === activeVerseKey), 
+        [verses, activeVerseKey]
+    );
+
+    const handlePickChapter = (bookCode: string, chapter: number) => {
+        setPickerOpen(false);
+        router.push(`/versehub/${lang}/chapter/${bookCode}.${chapter}`);
+    };
+
     if (loading) {
         return <div className="min-h-screen bg-slate-950 flex items-center justify-center">
             <div className="h-10 w-10 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin" />
