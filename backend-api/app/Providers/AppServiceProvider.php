@@ -8,6 +8,7 @@ use App\Services\Mentor\TemplateMentorDriver;
 use Filament\Auth\Http\Responses\Contracts\LoginResponse as FilamentLoginResponseContract;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Auth\Notifications\ResetPassword;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,5 +35,14 @@ class AppServiceProvider extends ServiceProvider
         if (!app()->isLocal()) {
             Vite::prefetch(concurrency: 3);
         }
+
+        ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
+            $baseUrl = rtrim(env('NEXT_PUBLIC_APP_URL', 'http://localhost:9002'), '/');
+            $query = http_build_query([
+                'token' => $token,
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ]);
+            return "{$baseUrl}/reset-password?{$query}";
+        });
     }
 }

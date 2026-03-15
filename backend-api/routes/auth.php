@@ -22,14 +22,13 @@ Route::middleware('guest')->group(function () {
         abort(403, 'Pendaftaran sementara dinonaktifkan.');
     });
 
-    // Public login is currently redirected to admin login page.
+    // Public login is now migrated to the Next.js SPA.
     Route::get('login', function () {
-        return redirect()->to('/admintalk/login');
-    })
-        ->name('login');
+        return redirect()->to(env('NEXT_PUBLIC_APP_URL', 'http://localhost:9002') . '/login');
+    })->name('login');
 
     Route::post('login', function () {
-        return redirect()->to('/admintalk/login');
+        return redirect()->to(env('NEXT_PUBLIC_APP_URL', 'http://localhost:9002') . '/login');
     });
 
     Route::get('two-factor-challenge', [TwoFactorChallengeController::class, 'create'])
@@ -38,17 +37,26 @@ Route::middleware('guest')->group(function () {
         ->middleware('throttle:10,1')
         ->name('two-factor.verify');
 
-    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
-        ->name('password.request');
+    Route::get('forgot-password', function () {
+        return redirect()->to(env('NEXT_PUBLIC_APP_URL', 'http://localhost:9002') . '/forgot-password');
+    })->name('password.request');
 
-    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
-        ->name('password.email');
+    Route::post('forgot-password', function () {
+        return redirect()->to(env('NEXT_PUBLIC_APP_URL', 'http://localhost:9002') . '/forgot-password');
+    })->name('password.email');
 
-    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
-        ->name('password.reset');
+    Route::get('reset-password/{token}', function (string $token) {
+        $baseUrl = rtrim(env('NEXT_PUBLIC_APP_URL', 'http://localhost:9002'), '/');
+        $query = http_build_query([
+            'token' => $token,
+            'email' => request()->query('email'),
+        ]);
+        return redirect()->to("{$baseUrl}/reset-password?{$query}");
+    })->name('password.reset');
 
-    Route::post('reset-password', [NewPasswordController::class, 'store'])
-        ->name('password.store');
+    Route::post('reset-password', function () {
+        return redirect()->to(env('NEXT_PUBLIC_APP_URL', 'http://localhost:9002') . '/login');
+    })->name('password.store');
 });
 
 Route::middleware('auth')->group(function () {

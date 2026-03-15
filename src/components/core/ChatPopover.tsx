@@ -2,7 +2,7 @@ import SegmentedTabs from '@/components/core/SegmentedTabs';
 import { IconMessage } from '@/components/icons/AppIcons';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { useRouter, usePage } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getAppAccessToken } from '@/services/app-auth-token';
 
