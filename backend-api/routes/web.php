@@ -324,7 +324,9 @@ Route::get('/versehub/{ref}', [VerseHubController::class, 'showLegacy'])
 // Account settings (premium main app page)
 Route::middleware('auth')->group(function () {
     // Settings UI lives in the main app `/profile` page.
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('settings.index');
+    Route::get('/profile', function () {
+        return redirect()->to(env('NEXT_PUBLIC_APP_URL', 'http://localhost:9002') . '/profile');
+    })->name('settings.index');
     Route::get('/settings/ops-visibility', [SettingsVisibilityController::class, 'index'])
         ->middleware('admin')
         ->name('settings.ops-visibility');

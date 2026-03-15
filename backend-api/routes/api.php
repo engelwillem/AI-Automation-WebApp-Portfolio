@@ -23,6 +23,10 @@ use App\Http\Controllers\UserFollowController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
+    Route::post('/login', [\App\Http\Controllers\Api\V1\AuthController::class, 'login']);
+    Route::post('/forgot-password', [\App\Http\Controllers\Api\V1\AuthController::class, 'forgotPassword']);
+    Route::post('/reset-password', [\App\Http\Controllers\Api\V1\AuthController::class, 'resetPassword']);
+
     Route::get('/today', [TodayApiController::class, 'show']);
 
     Route::post('/auth/firebase/sync', [FirebaseAuthSyncController::class, 'sync']);
