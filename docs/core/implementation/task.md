@@ -4,7 +4,7 @@
     - [x] Audit Laravel structure and assets
     - [x] Setup Next.js environment for Firebase Studio compatibility
     - [x] Resolve git conflicts and force push to repository
-    - [/] Refining "Cut and Replace" strategy for full frontend purge
+    - [x] Refining "Cut and Replace" strategy for full frontend purge
 - [x] Core Assets Migration
     - [x] Copy `app.css` and design tokens (Design System Parity)
     - [x] Port `app.blade.php` meta/SEO logic to Next.js `layout.tsx`
@@ -31,12 +31,17 @@
         - [x] Port `Profile` (Settings, 2FA, Admin Gateway)
         - [x] Port `Library`, `GateUpdates`, `Visitors`
         - [x] Port `Legal` (Privacy & Terms)
-- [ ] Integration & Routing
-    - [ ] Setup Axios/Fetch to communicate with Laravel backend-api
-    - [ ] Implement Next.js routing parity with Laravel `web.php`
-    - [ ] Configure `firebase.json` and `apphosting.yaml` for Firebase Studio
+- [x] Visual & Layout Realignment
+    - [x] Mechanical scroll parity for Landing Page (Linear Sticky Stack)
+    - [x] Removal of non-legacy motion filters (Blur/Spring)
+- [x] Integration & Routing (Foundation)
+    - [x] Setup Axios/Fetch to communicate with Laravel backend-api
+    - [x] Implement Next.js routing parity with Laravel `web.php`
+    - [x] Configure `firebase.json` and `apphosting.yaml` for Firebase Studio
 - [ ] Verification & Laravel Purge
     - [ ] Side-by-side visual comparison
     - [ ] Functional testing (Auth, Comments, Daily Verse)
     - [ ] Firebase Studio deployment validation
     - [ ] **Purge legacy frontend from `backend-api`** (Clean Backend Checkpoint)
+        - Path: `backend-api/resources/js/Pages`
+        - Path: `backend-api/resources/js/Components`
