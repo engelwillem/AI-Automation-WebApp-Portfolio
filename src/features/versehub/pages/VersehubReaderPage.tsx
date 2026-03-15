@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
@@ -7,7 +6,8 @@ import {
     Search, Library, History, Zap, Compass, Heart, 
     MessageSquareQuote, SendHorizontal, Bookmark, Wand2, 
     StickyNote, Highlighter, Network, ArrowRight, X, Scroll,
-    ChevronLeft, ChevronRight, Loader2, ArrowRightCircle, BookOpenText
+    ChevronLeft, ChevronRight, Loader2, ArrowRightCircle, BookOpenText,
+    RefreshCcw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -108,35 +108,24 @@ export function VersehubReaderPage({ lang: initialLang, mode = 'landing', initia
     const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
     const suppressClickRef = useRef(false);
 
-    // Initial Load: Books & Auth
-    useEffect(() => {
-        setIsAuthenticated(Boolean(getAppAccessToken()));
-        
-        const fetchBooks = async () => {
-            try {
-                const res = await fetch(`/api/versehub/${lang}/books`);
-                if (!res.ok) throw new Error('books_fetch_failed');
-                const data = await res.json();
-                if (data.books) {
-                    setBooks(data.books);
-                } else {
-                    setBooks([]);
-                }
-            } catch (e) { 
-                console.error("VerseHub: Failed to load books", e);
+    const fetchBooks = useCallback(async () => {
+        try {
+            const res = await fetch(`/api/versehub/${lang}/books`);
+            if (!res.ok) throw new Error('books_fetch_failed');
+            const data = await res.json();
+            if (data.books) {
+                setBooks(data.books);
+            } else {
                 setBooks([]);
             }
-        };
-        fetchBooks();
-
-        if (mode === 'chapter' && initialChapterRef) {
-            loadChapter(initialChapterRef);
-        } else {
-            setLoading(false);
+        } catch (e: any) { 
+            console.error("VerseHub: Failed to load books", e);
+            setError(e.message === 'books_fetch_failed' ? 'books_fetch_failed' : 'fetch_error');
+            setBooks([]);
         }
-    }, [lang, mode, initialChapterRef]);
+    }, [lang]);
 
-    const loadChapter = async (ref: string) => {
+    const loadChapter = useCallback(async (ref: string) => {
         setLoading(true);
         setError(null);
         try {
@@ -167,7 +156,20 @@ export function VersehubReaderPage({ lang: initialLang, mode = 'landing', initia
         } finally { 
             setLoading(false); 
         }
-    };
+    }, [lang]);
+
+    // Initial Load: Books & Auth
+    useEffect(() => {
+        setIsAuthenticated(Boolean(getAppAccessToken()));
+        
+        fetchBooks();
+
+        if (mode === 'chapter' && initialChapterRef) {
+            loadChapter(initialChapterRef);
+        } else {
+            setLoading(false);
+        }
+    }, [lang, mode, initialChapterRef, fetchBooks, loadChapter]);
 
     // Suggestion logic
     useEffect(() => {
@@ -310,21 +312,19 @@ export function VersehubReaderPage({ lang: initialLang, mode = 'landing', initia
 
     const navItems = getUiNavItems(isAuthenticated);
     const selectedVerse = useMemo(() => verses.find(v => v.key === activeVerseKey), [verses, activeVerseKey]);
-    const otStarter = books.find(b => b.testament === 'ot');
-    const ntStarter = books.find(b => b.testament === 'nt');
-
+    
     const activeReflectionQuestion = ''; // Placeholder for dynamic logic
     const reflection_question = 'Bagaimana ayat-ayat ini menguatkan imanmu hari ini?';
+
+    const handlePathSelect = (path: { slug: string }) => {
+        router.push(`/versehub/${lang}/study/${path.slug}`);
+    };
 
     if (loading) {
         return <div className="min-h-screen bg-slate-950 flex items-center justify-center">
             <Loader2 className="h-10 w-10 text-amber-500 animate-spin" />
         </div>;
     }
-
-    const handlePathSelect = (path: { slug: string }) => {
-        router.push(`/versehub/${lang}/study/${path.slug}`);
-    };
 
     return (
         <div className={cn(
@@ -373,7 +373,21 @@ export function VersehubReaderPage({ lang: initialLang, mode = 'landing', initia
                         </div>
 
                         <main className="mx-auto max-w-3xl px-4 py-8">
-                            {!isChapter ? (
+                            {error === 'books_fetch_failed' || (error === 'fetch_error' && !isChapter) ? (
+                                <div className="rounded-[2.5rem] bg-rose-500/5 border border-rose-500/10 p-10 text-center">
+                                    <div className="h-16 w-16 rounded-full bg-rose-500/10 flex items-center justify-center mx-auto mb-6 text-rose-500">
+                                        <RefreshCcw size={32} />
+                                    </div>
+                                    <h3 className="text-xl font-bold mb-2">Gagal Memuat Daftar Kitab</h3>
+                                    <p className="text-slate-500 text-sm mb-8">Maaf, terjadi kesalahan saat mengambil data dari server.</p>
+                                    <button 
+                                        onClick={() => { setError(null); fetchBooks(); }}
+                                        className="px-8 py-3 rounded-full bg-slate-900 text-white font-bold hover:bg-slate-800 transition-all"
+                                    >
+                                        Coba Lagi
+                                    </button>
+                                </div>
+                            ) : !isChapter ? (
                                 <section className="space-y-10">
                                     {/* Search Anchor */}
                                     <div className="relative group">

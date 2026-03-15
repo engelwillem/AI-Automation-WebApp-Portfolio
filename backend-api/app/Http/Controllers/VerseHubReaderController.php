@@ -36,22 +36,22 @@ class VerseHubReaderController extends Controller
 
     public function getBooksApi(string $lang): JsonResponse
     {
-        $codes = $this->availableIdBookCodesCanonical();
-        $books = $this->buildIdBooks($codes);
+        $codes = $this->availableBookCodesCanonical($lang);
+        $books = $this->buildBooks($codes);
         return response()->json(['books' => $books]);
     }
 
     public function getChapterContentApi(string $lang, string $ref): JsonResponse
     {
-        $bookCodes = $this->availableIdBookCodesCanonical();
+        $bookCodes = $this->availableBookCodesCanonical($lang);
         $parsedRef = $this->parseChapterRef($ref);
         if (!$parsedRef) return response()->json(['message' => 'Invalid reference'], 400);
 
         $book = $this->resolveIdBookCode($parsedRef['book']) ?? $parsedRef['book'];
         $chapter = $parsedRef['chapter'];
 
-        $books = $this->buildIdBooks($bookCodes);
-        $data = $this->buildChapterViewData($book, $chapter, $books, $bookCodes);
+        $books = $this->buildBooks($bookCodes);
+        $data = $this->buildChapterViewData($lang, $book, $chapter, $books, $bookCodes);
 
         if (!$data) return response()->json(['message' => 'Chapter not found'], 404);
 
@@ -63,8 +63,8 @@ class VerseHubReaderController extends Controller
         abort_unless(in_array($lang, ['id', 'en'], true), 404);
         if ($lang === 'en') return redirect()->to('/versehub/id');
 
-        $bookCodes = $this->availableIdBookCodesCanonical();
-        $books = $this->buildIdBooks($bookCodes);
+        $bookCodes = $this->availableBookCodesCanonical($lang);
+        $books = $this->buildBooks($bookCodes);
         return response()->json(['books' => $books]);
     }
 
@@ -76,17 +76,18 @@ class VerseHubReaderController extends Controller
 
         $book = $parsedRef['book'];
         $chapter = $parsedRef['chapter'];
-        $bookCodes = $this->availableIdBookCodesCanonical();
+        $lang = 'id'; // Default for web view
+        $bookCodes = $this->availableBookCodesCanonical($lang);
         $canonicalBook = $this->resolveIdBookCode($book) ?? $book;
 
-        $books = $this->buildIdBooks($bookCodes);
-        $chapterData = $this->buildChapterViewData($canonicalBook, $chapter, $books, $bookCodes);
+        $books = $this->buildBooks($bookCodes);
+        $chapterData = $this->buildChapterViewData($lang, $canonicalBook, $chapter, $books, $bookCodes);
         abort_unless($chapterData !== null, 404);
 
         return response()->json($chapterData);
     }
 
-    public function chapters(Request $request)
+    public function chapters(string $lang, Request $request)
     {
         $book = Str::lower(trim((string) $request->query('book', '')));
         $book = $this->resolveIdBookCode($book) ?? $book;
@@ -94,7 +95,7 @@ class VerseHubReaderController extends Controller
 
         $chapters = BibleVerse::query()
             ->where('provider', 'ayt')
-            ->where('lang', 'id')
+            ->where('lang', $lang)
             ->whereIn('book_code', $this->idBookQueryCodes($book))
             ->distinct()
             ->orderBy('chapter')
@@ -106,14 +107,14 @@ class VerseHubReaderController extends Controller
         return response()->json(['book' => $book, 'chapters' => $chapters]);
     }
 
-    private function buildChapterViewData(string $book, int $chapter, array $books, array $bookCodes, array $verseFilter = []): ?array
+    private function buildChapterViewData(string $lang, string $book, int $chapter, array $books, array $bookCodes, array $verseFilter = []): ?array
     {
         if ($chapter < 1 || !in_array($book, $bookCodes, true)) return null;
 
         $queryCodes = $this->idBookQueryCodes($book);
         $chapters = BibleVerse::query()
             ->where('provider', 'ayt')
-            ->where('lang', 'id')
+            ->where('lang', $lang)
             ->whereIn('book_code', $queryCodes)
             ->distinct()
             ->orderBy('chapter')
@@ -130,7 +131,7 @@ class VerseHubReaderController extends Controller
         $verses = BibleVerse::query()
             ->select(['verse', 'text'])
             ->where('provider', 'ayt')
-            ->where('lang', 'id')
+            ->where('lang', $lang)
             ->whereIn('book_code', $queryCodes)
             ->where('chapter', $chapter)
             ->orderBy('verse')
@@ -185,11 +186,11 @@ class VerseHubReaderController extends Controller
         return null;
     }
 
-    private function availableIdBookCodesCanonical(): array
+    private function availableBookCodesCanonical(string $lang): array
     {
         $rawCodes = BibleVerse::query()
             ->where('provider', 'ayt')
-            ->where('lang', 'id')
+            ->where('lang', $lang)
             ->distinct()
             ->pluck('book_code')
             ->map(fn($x) => Str::lower((string) $x))
@@ -212,7 +213,7 @@ class VerseHubReaderController extends Controller
         return $codes;
     }
 
-    private function buildIdBooks(array $codes): array
+    private function buildBooks(array $codes): array
     {
         return array_map(function (string $code) {
             return [
