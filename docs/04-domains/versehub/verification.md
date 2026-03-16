@@ -7,6 +7,7 @@
 4. (Target Mismatch): *Scroll* laman bab (Chapter) ke paling bawah, pastikan "Pertanyaan Refleksi" sudah sesuai dengan hasil dari *AI Mentor Insight* (bukan baris kata hardcoded "Bagaimana ayat-ayat ini...").
 5. Jika `has_reflected` di state Backend diklaim memilikinya, blok ajakan "Tulis Refleksimu" (tombol kompon) otomatis hilang.
 6. (NEW) Tekan panitan "Tulis Refleksimu". Pastikan rute _Frontend_ melempar secara akurat ke `/community?intent=reflection...` ketimbang menampilkan modal lokal terisolasi (`<ReflectionComposer>`).
+7. (NEW) Verifikasi parameter aksi pengguna terhadap ayat individual (Bookmark, Highlight). Beban parameter (payload) menembak kunci REST `book`, `chapter`, `verse`, sesuai implementasi yang tertera di `backend-api`.
 
 ## Status
-- **PASS**: Validasi terkini menemukan alur _handoff_ ke _CTA End-of-Chapter_ sekarang melempar ke sistem parameter Komunitas (`CommunityPage.tsx`) dengan semestinya, mengunci daur balik pengalaman antar domain.
+- **PASS & READY FOR CLEANUP**: Verifikasi purna membenarkan seluruh _handoff_ dan komponen muatan _state_ telah ditangkap wajar di sisi antarmuka. Tidak ada sisa kesenjangan krusial (high-severity mismatch) yang menghalangi laju VerseHub. Domain dikunci untuk _cleanup_ (_Stop-Gate Progression_).
