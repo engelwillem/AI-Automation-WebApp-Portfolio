@@ -22,7 +22,6 @@ import { Badge } from '@/components/ui/badge';
 // VerseHub Specific Components
 import MentorPanel from '@/components/versehub/MentorPanel';
 import EndOfChapterPrompt from '@/components/versehub/EndOfChapterPrompt';
-import ReflectionComposer from '@/components/versehub/ReflectionComposer';
 import SharePanel from '@/components/versehub/SharePanel';
 import { getAppAccessToken } from '@/services/app-auth-token';
 import { getUiNavItems } from '@/lib/navigation';
@@ -95,7 +94,6 @@ export function VersehubReaderPage({ lang: initialLang, mode = 'landing', initia
     const [mentorOpen, setMentorOpen] = useState(false);
     const [shareOpen, setShareOpen] = useState(false);
     const [shareData, setShareData] = useState<any>({});
-    const [reflectionComposerOpen, setReflectionComposerOpen] = useState(false);
     const [has_reflected, setHasReflected] = useState(false);
     const [activeReflectionQuestion, setActiveReflectionQuestion] = useState('');
     
@@ -532,7 +530,11 @@ export function VersehubReaderPage({ lang: initialLang, mode = 'landing', initia
                                                 <EndOfChapterPrompt 
                                                     lang={lang}
                                                     questionText={activeReflectionQuestion || fallback_reflection_question}
-                                                    onReflect={() => setReflectionComposerOpen(true)}
+                                                    onReflect={() => {
+                                                        const question = activeReflectionQuestion || fallback_reflection_question;
+                                                        const refParam = chapter_label || 'VerseHub';
+                                                        router.push(`/community?intent=reflection&ref=${encodeURIComponent(refParam)}&text=${encodeURIComponent(question)}`);
+                                                    }}
                                                     onPathSelect={handlePathSelect}
                                                 />
                                             )}
@@ -694,14 +696,6 @@ export function VersehubReaderPage({ lang: initialLang, mode = 'landing', initia
                     onClose={() => setShareOpen(false)} 
                 />
             )}
-
-            <ReflectionComposer 
-                isOpen={reflectionComposerOpen} 
-                onClose={() => setReflectionComposerOpen(false)} 
-                verseRef={activeVerseKey || ''} 
-                questionText={activeReflectionQuestion || fallback_reflection_question} 
-                lang={lang} 
-            />
 
             {/* Toast System */}
             <AnimatePresence>

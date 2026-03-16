@@ -9,4 +9,4 @@
 6. (NEW) Tekan panitan "Tulis Refleksimu". Pastikan rute _Frontend_ melempar secara akurat ke `/community?intent=reflection...` ketimbang menampilkan modal lokal terisolasi (`<ReflectionComposer>`).
 
 ## Status
-- **BLOCKED**: Validasi terkini menemukan kegagalan _handoff_ (pelemparan) _CTA End-of-Chapter_ ke sistem parameter Komunitas (`CommunityPage.tsx`), menyebabkan diskoneksi ekosistem _feed_ harian.
+- **PASS**: Validasi terkini menemukan alur _handoff_ ke _CTA End-of-Chapter_ sekarang melempar ke sistem parameter Komunitas (`CommunityPage.tsx`) dengan semestinya, mengunci daur balik pengalaman antar domain.

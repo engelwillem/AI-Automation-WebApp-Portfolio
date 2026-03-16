@@ -14,3 +14,9 @@
 ### Diubah
 - Menggantikan pertanyaan refleksi _hard-coded_ di `VersehubReaderPage.tsx` menjadi pertanyaan dinamis sesuai payload (_reflection_question_).
 - Mencegat render ulang `<EndOfChapterPrompt>` jika _state_ pengguna sudah disahkan oleh server pernah menulis `has_reflected`.
+
+## [Community Transition Patch] - 2026-03-17
+
+### Diubah
+- Mengarahkan fungsional _button_ "Tulis Refleksimu" pada `<EndOfChapterPrompt>` menuju `/community?intent=reflection` menggunakan parameter `ref` dan `text`.
+- Menghapus `<ReflectionComposer>` yang sebelumnya membuat formulir eksklusif tertutup secara lokal (_isolated loop_).

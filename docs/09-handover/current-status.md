@@ -21,7 +21,7 @@ Hybrid monorepo sedang berjalan dalam dua track:
 - Spiritual journeys
 
 ## Current Priority
-1. Rampungkan experience architecture dengan merekatkan sisa transisi _VerseHub CTA to Community_ yang masih tertutup.
+1. Siapkan E2E main apps dengan environment deterministik (VerseHub & Today Parity serta Community Integration telah tercapai purnarupa).
 4. selesaikan mitigasi local vs production parity yang masih berselimut status `NEEDS SERVER VALIDATION` (khususnya isu Env CORS dan CGIPassAuth cPanel).
 
 ## Non-Negotiable Constraints
