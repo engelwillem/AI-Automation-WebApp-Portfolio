@@ -43,13 +43,20 @@
 - root cause: Alamat IP dari peladen *GitHub Actions runners* ditolak oleh *Firewall* (CSF/mod_security) cPanel milik penyedia *hosting*. Titik gagal (*Failure Point*) berada secara nyata pada baris `Upload artifact and deploy scripts`: `ssh: connect to host *** port ***: Connection timed out`.
 - file terkait: `.github/workflows/backend-cpanel-deploy.yml` dan konfigurasi *Security Panel* di server cPanel.
 - dampak: Pipeline CI/CD `main` menjadi rongsokan dan gagal mengeksekusi otomatisasi skrip `deploy.sh`. Seluruh rilis akan tertahan.
-- langkah verifikasi: Setujui rancangan mitigasi jaringan (Server Action Plan):
-  - **Validasi Pertama:** Pastikan *Service* SSH cPanel berjalan pada *port* yang sesuai (default 2121 / 22) dan dapat diping dari luar (`nmap` / telnet).
-  - **Audit CSF/ModSecurity:** Periksa log `/var/log/lfd.log` atau antarmuka *ConfigServer Security & Firewall* untuk memastikan apakah rentang IP GitHub Actions diblok oleh *Port Scan Tracking* atau dibalas `DROP`.
-  - **Mitigasi Opsi A (Temporary/Dynamic Allowlist):** Buat satu skrip khusus (di GitHub Actions via API WHM / cPanel) untuk mendinamiskan IP runner ke daftar putih peladen.
-  - **Mitigasi Opsi B (Static Bastion/VPN):** (Lebih aman) Hubungkan Tailscale / Wireguard antara GitHub Runner dan cPanel. Setel port lokal di runner via *Action VPN*.
-  - **Mitigasi Opsi C (Manual Fixed IP):** Tetapkan pemulihan VPS IP tunggal dengan proksi pro-aktif, atau pertimbangkan deploy pull via WebHook.
-- status: **READY FOR SERVER ACTION**
+- server execution checklist (Untuk Admin cPanel):
+  - [ ] **SSH Service Validation:** Verifikasi SSH daemon (`sshd`) beroperasi tangguh. Pastikan `CPANEL_SSH_PORT` (mis. 2121 atau 22) di Github Secrets sudah cocok dengan setelan daemon.
+  - [ ] **Port Validation:** Test *port* pendengar dari IP publik di luar jaringan dengan `telnet [IP] [PORT]`. Jika menggantung (*timeout*), drop di tingkat network terlarang.
+  - [ ] **CSF / Firewall Validation:** Buka panel WHM -> *ConfigServer Security & Firewall*. Periksa log IP masuk terblokir (*Port Scan Tracking*) via `/var/log/lfd.log`. 
+  - [ ] **Pilih & Terapkan Opsi Jaringan Terbuka (Pilih satu):**
+        *Rekomendasi Utama (Paling Aman):* Gelar **VPN/Tailscale** pada OS peladen VPS, rutekan *Action Tailscale* statis dari *runner*.
+        *Rekomendasi Reguler:* Otomasi daftarkan Meta rentang IP Github Actions ke file `csf.allow` (`/etc/csf/csf.allow`).
+        *Opsi Pengganti Buntut:* Batalkan Push Deploy, ubah ke Arsitektur Pull Deploy (*WebHook script* pemicu dari dalam).
+- re-test checklist & success criteria:
+  - [ ] Admin VPS mengkonfirmasi mitigasi mod_security/firewall telah aktif sepenuhnya.
+  - [ ] Pemanggilan *Re-run* pada *Deploy Job* `backend-cpanel-deploy.yml` dari panel GitHub Actions ditekankan manual.
+  - [ ] **Evidence 1:** Mata rantai langkah `Upload artifact and deploy scripts` melepaskan jebakan *timeout*, log `scp` mengalir lancar ke server.
+  - [ ] **Evidence 2:** Eksekusi `ssh` remote bash script menggapai baris final: `Deployment completed successfully`.
+- status: **READY FOR SERVER EXECUTION**
 
 ## Notes
 Setiap blocker harus terus dipantau dan statusnya harus dinaikkan dari BLOCKED/NV menjadi PASS/CLOSED pada lembar ini beserta `06-testing/parity/*-diff-log.md` terkait.

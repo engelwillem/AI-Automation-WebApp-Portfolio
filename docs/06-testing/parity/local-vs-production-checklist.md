@@ -156,9 +156,10 @@ Dokumen ini adalah checklist release gate, bukan catatan opini.
 ### Notes
 - Local: CSR & Next.js proxying API tervalidasi `npm run dev`.
 - Production: Deployment #21 via GitHub Actions `backend-cpanel-deploy.yml` secara inheren dilarang (TCP Drop) akibat mitigasi proaktif pada *runner*. Status repositori sudah mendapat perlindungan kebersihan memori (`concurrency` mitigasi ganda/tabrakan deploy & pembatalan gantung). 
-- Action Plan cPanel: Wajib meninjau modul *CSF Firewall* panel VPS/Shared untuk me-*whitelist* atau mendirikan proksi *Jump-Host* via Tailscale ke runner Github Actions.
+- Action Plan cPanel: Eksekusi *Server Validation Checklist* (Buka Blokade CSF Port 22/2121 via VPN / Whitelist) agar IP Github *runner* sah menembus tembok api.
+- Re-Test Deploy: Dibutuhkan *run* mandiri yang bisa mencatat keberhasilan (*scp/ssh payload success*).
 - Risks: Next.js API Routes (Server Actions) yang dijadikan proxy auth token performanya di Tencent Edge Function belum dipastikan.
-- Status: READY FOR SERVER ACTION
+- Status: READY FOR SERVER EXECUTION
 
 ---
 
