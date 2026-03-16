@@ -92,7 +92,7 @@ function FeatureCard({ icon: Icon, title, description, href, ctaLabel = 'Buka', 
 
     return (
         <article 
-            className="group relative flex flex-1 flex-col overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-900/90 md:bg-white/[0.06] p-8 md:p-12 backdrop-blur-3xl transition-all duration-500 shadow-premium ring-1 ring-white/5 min-h-[380px] md:min-h-[500px] justify-between" 
+            className="group relative flex flex-1 flex-col overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-950 md:bg-white/[0.06] p-8 md:p-12 backdrop-blur-3xl transition-all duration-500 shadow-premium ring-1 ring-white/5 min-h-[380px] md:min-h-[500px] justify-between" 
         >
             <div
                 className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
@@ -156,29 +156,29 @@ function StickyStackScene({
         index + 3    // Pushed back 3
     ];
 
-    // Mobile specific Y offset logic to prevent collision seen in screenshot
+    // Refined mobile specific stacking logic
     const y = useTransform(cardProgress, inputRanges, [
-        600,    // Enter from deep below on mobile
-        0,      // Active
-        -15,    // Stacking Layer 1
-        -30,    // Stacking Layer 2
-        -45     // Stacking Layer 3
+        600,    // Start deep below
+        0,      // Focused
+        -25,    // Layer 1
+        -50,    // Layer 2
+        -75     // Layer 3
     ]);
 
     const scale = useTransform(cardProgress, inputRanges, [
-        0.9,    // Slightly smaller entering
-        1,      // Active
-        0.96,   // Layer 1
-        0.92,   // Layer 2
-        0.88    // Layer 3
+        0.9,    
+        1,      
+        0.95,   
+        0.90,   
+        0.85    
     ]);
 
     const opacity = useTransform(cardProgress, inputRanges, [
         0,      
         1,      
-        0.9,   
-        0.7,    
-        0.5     
+        0.95,   
+        0.85,    
+        0.7     
     ]);
 
     const blurValue = useTransform(cardProgress, inputRanges, [
@@ -192,9 +192,9 @@ function StickyStackScene({
     const brightnessValue = useTransform(cardProgress, inputRanges, [
         1,      
         1,      
-        0.85,   
-        0.7,    
-        0.5     
+        0.9,   
+        0.8,    
+        0.7     
     ]);
 
     const filter = useMotionTemplate`blur(${blurValue}px) brightness(${brightnessValue})`;
@@ -259,7 +259,7 @@ function QuickAccessLauncher() {
     ];
 
     return (
-        <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 flex flex-col items-center gap-2">
+        <div className="fixed bottom-8 left-1/2 z-50 -translate-x-1/2 flex flex-col items-center gap-2">
             <AnimatePresence>
                 {open && (
                     <motion.div
@@ -272,11 +272,11 @@ function QuickAccessLauncher() {
                             const Icon = item.icon;
                             return (
                                 <motion.div key={item.href} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                                    <Link href={item.href} className="group flex w-[84px] flex-col items-center gap-2 rounded-2xl bg-slate-900/95 px-2 py-3 ring-1 ring-white/12 shadow-2xl backdrop-blur-md active:scale-95 transition-all">
-                                        <span className={cn('flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm', item.tone)}>
-                                            <Icon className="h-4.5 w-4.5 text-slate-950" />
+                                    <Link href={item.href} className="group flex w-[80px] flex-col items-center gap-2 rounded-2xl bg-slate-900/95 px-2 py-3 ring-1 ring-white/12 shadow-2xl backdrop-blur-md active:scale-95 transition-all">
+                                        <span className={cn('flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm', item.tone)}>
+                                            <Icon className="h-4 w-4 text-slate-950" />
                                         </span>
-                                        <span className="text-[9px] font-bold uppercase tracking-wider text-white/50">
+                                        <span className="text-[8px] font-bold uppercase tracking-wider text-white/50">
                                             {item.label}
                                         </span>
                                     </Link>
@@ -291,7 +291,7 @@ function QuickAccessLauncher() {
                 type="button"
                 onClick={() => setOpen(v => !v)}
                 className={cn(
-                    'relative inline-flex h-12 w-12 items-center justify-center rounded-full ring-1 ring-white/20 transition-all duration-300',
+                    'relative inline-flex h-11 w-11 items-center justify-center rounded-full ring-1 ring-white/20 transition-all duration-300',
                     open
                         ? 'bg-slate-800 text-white shadow-xl'
                         : 'bg-gradient-to-br from-cyan-400 to-blue-500 text-slate-950 shadow-[0_12px_32px_rgba(34,211,238,0.3)]',
@@ -365,8 +365,8 @@ export default function LandingPage() {
 
                 {/* Sticky Experience Stage */}
                 <section ref={containerRef} className="relative h-[320vh] mb-24">
-                    <div className="sticky top-0 h-[100dvh] flex flex-col items-center justify-center overflow-hidden px-6 pt-12 md:pt-0">
-                        {/* Sticky Heading Anchor - Safe spacing for mobile status bar */}
+                    <div className="sticky top-0 h-[100dvh] flex flex-col items-center justify-center overflow-hidden px-6 pt-20 md:pt-0">
+                        {/* Sticky Heading Anchor */}
                         <div className="w-full max-w-xl text-center mb-8 md:mb-12 space-y-4">
                             <Badge><Sparkles size={12} className="text-brand" /> Ecosystem Modules</Badge>
                             <h2 className="tct-serif text-3xl sm:text-5xl leading-tight tracking-tight text-white font-bold">
