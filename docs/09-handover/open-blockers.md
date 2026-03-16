@@ -16,6 +16,13 @@
 - langkah verifikasi: Bongkar objek respons pada `loadChapter`, pancing masuk ke parameter `EndOfChapterPrompt`. Pastikan tulisan di UI menyamai cetakan *Database*. (TERBUKTI)
 - status: **PASS**
 
+### 1c. VerseHub Reflection CTA to Community Transition Cut-off
+- root cause: `VersehubReaderPage.tsx` merender komponen `<EndOfChapterPrompt>` yang mana tombol *Tulis Refleksimu* memanggil modal lokal eksklusif (`<ReflectionComposer>`) bukan melempar *(redirect)* pengguna menuju sistem *Smart Composer* lewat `/community?intent=reflection`.
+- file terkait: `src/features/versehub/pages/VersehubReaderPage.tsx`
+- dampak: Jurnal refleksi tertutup mati di backend sebagai spesimen `ReflectionResponse` tanpa pernah menjangkau papan etalase Diskusi Anggota (tidak direkam sebagai `MemberPost`). Perjalanan pengguna terbelit jalan buntu (_isolated dead-end_).
+- langkah verifikasi: Patch prop `onReflect` pada panitan `<EndOfChapterPrompt>` agar memicu transisi rute langsung ke `router.push('/community?intent=reflection&ref=...&text=...&question=...` (meninggalkan modal sama sekali). Pastikan Komunitas menangkap utuh muatan parameter tersebut secara alami.
+- status: **READY FOR PATCH**
+
 ### 2. Authorization Header cPanel Restriction Risk
 - root cause: Apache di cPanel sering memangkas HTTP Header `Authorization: Bearer`.
 - file terkait: `backend-api/public/.htaccess`
