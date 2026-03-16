@@ -102,22 +102,22 @@ Contoh:
 
 ## Critical Variables Checklist
 ### Backend
-- [ ] APP_ENV
-- [ ] APP_URL
+- [x] APP_ENV
+- [x] APP_URL
 - [ ] ASSET_URL
-- [ ] SESSION_DOMAIN
+- [x] SESSION_DOMAIN
 - [ ] SANCTUM_STATEFUL_DOMAINS
 - [ ] CORS / frontend allowed origins related vars
 - [ ] filesystem/public storage related vars
 
 ### Frontend
-- [ ] NEXT_PUBLIC_APP_URL
-- [ ] NEXT_PUBLIC_API_URL or equivalent
+- [x] NEXT_PUBLIC_APP_URL
+- [x] NEXT_PUBLIC_API_URL or equivalent
 - [ ] any Firebase/public auth keys used by runtime
 - [ ] any share/og/public asset host config
 
 ### Shared / Operational
-- [ ] database connection pattern documented
+- [x] database connection pattern documented
 - [ ] queue/mail toggles that affect UX documented
 - [ ] build-time vars for Tencent Edge documented
 - [ ] cPanel runtime assumptions documented
@@ -125,4 +125,99 @@ Contoh:
 ---
 
 ## Active Environment Drift Entries
-Tambahkan entry baru di bawah bagian ini dengan urutan terbaru di atas.
+
+### Entry ID
+`env-diff-002`
+
+### Date
+2026-03-16
+
+### Layer
+- backend
+
+### Variable Name
+- `CORS_ALLOWED_ORIGINS`
+
+### Secret?
+- no
+
+### Expected Role
+Menentukan domain eksternal React/Next.js (Edge Frontend) yang berhak meminjam token sesi dari rute `/api` Laravel di dalam cPanel.
+
+### Expected Local Value Pattern
+`http://localhost:9002` atau *null/kosong* karena di dalam mode lokal laravel sering membiarkan preflight port localhost.
+
+### Expected Production Value Pattern
+`https://app.thechoosentalks.com` (Ganti dengan origin pasti URL Tencent Edge).
+
+### Observed Local State
+- missing 
+
+### Observed Production State
+- unknown
+
+### Risk if Drift Exists
+- CORS Failed di Edge saat login lintas origin.
+
+### Related Flows
+- all (seluruh Endpoint API).
+
+### Verification Steps
+1. Push Laravel code dan Frontend ke Domain publik.
+2. Buat origin `example.vercel.app` atau `app.tct.com` tidak terdaptar di `CORS_ALLOWED_ORIGINS`.
+3. Akan tampil *red log* di console network browser.
+
+### Resolution
+- pending server update
+
+### Status
+- NEEDS SERVER VALIDATION
+
+---
+
+### Entry ID
+`env-diff-001`
+
+### Date
+2026-03-16
+
+### Layer
+- backend
+
+### Variable Name
+- `SANCTUM_STATEFUL_DOMAINS`
+
+### Secret?
+- no
+
+### Expected Role
+Memberi privilesi CSRF Header Cookie pada domain UI Next.js untuk menghindari Laravel `VerifyCsrfToken` error (`419`).
+
+### Expected Local Value Pattern
+`localhost:9002`
+
+### Expected Production Value Pattern
+`thechoosentalks.com, app.thechoosentalks.com`
+
+### Observed Local State
+- missing
+- notes: `SANCTUM_STATEFUL_DOMAINS` belum terwujud dalam .env file root `backend-api` maupun `.env.local` frontend. Ini meloloskan POST hanya perihal *Bearer* custom.
+
+### Observed Production State
+- unknown
+
+### Risk if Drift Exists
+- CSRF gagal
+- Token Sanctum tidak tertanam di cookie.
+
+### Related Flows
+- auth
+- profile
+- inbox
+- community
+
+### Resolution
+- pending validation
+
+### Status
+- NEEDS SERVER VALIDATION
