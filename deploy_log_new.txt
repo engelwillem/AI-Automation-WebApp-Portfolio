@@ -1,0 +1,708 @@
+deploy-backend	Set up job	﻿2026-03-17T07:50:30.0915863Z Current runner version: '2.332.0'
+deploy-backend	Set up job	2026-03-17T07:50:30.0956676Z ##[group]Runner Image Provisioner
+deploy-backend	Set up job	2026-03-17T07:50:30.0959594Z Hosted Compute Agent
+deploy-backend	Set up job	2026-03-17T07:50:30.0961474Z Version: 20260213.493
+deploy-backend	Set up job	2026-03-17T07:50:30.0963727Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+deploy-backend	Set up job	2026-03-17T07:50:30.0966018Z Build Date: 2026-02-13T00:28:41Z
+deploy-backend	Set up job	2026-03-17T07:50:30.0968442Z Worker ID: {401025ad-525a-43a9-8e2a-3ac16fb867f5}
+deploy-backend	Set up job	2026-03-17T07:50:30.0970926Z Azure Region: westus
+deploy-backend	Set up job	2026-03-17T07:50:30.0972978Z ##[endgroup]
+deploy-backend	Set up job	2026-03-17T07:50:30.0976428Z ##[group]Operating System
+deploy-backend	Set up job	2026-03-17T07:50:30.0978946Z Ubuntu
+deploy-backend	Set up job	2026-03-17T07:50:30.0980935Z 24.04.3
+deploy-backend	Set up job	2026-03-17T07:50:30.0982699Z LTS
+deploy-backend	Set up job	2026-03-17T07:50:30.0984471Z ##[endgroup]
+deploy-backend	Set up job	2026-03-17T07:50:30.0986320Z ##[group]Runner Image
+deploy-backend	Set up job	2026-03-17T07:50:30.0988404Z Image: ubuntu-24.04
+deploy-backend	Set up job	2026-03-17T07:50:30.0990417Z Version: 20260309.50.1
+deploy-backend	Set up job	2026-03-17T07:50:30.0993285Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260309.50/images/ubuntu/Ubuntu2404-Readme.md
+deploy-backend	Set up job	2026-03-17T07:50:30.0997365Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260309.50
+deploy-backend	Set up job	2026-03-17T07:50:30.1000548Z ##[endgroup]
+deploy-backend	Set up job	2026-03-17T07:50:30.1004233Z ##[group]GITHUB_TOKEN Permissions
+deploy-backend	Set up job	2026-03-17T07:50:30.1008139Z Contents: read
+deploy-backend	Set up job	2026-03-17T07:50:30.1010058Z Metadata: read
+deploy-backend	Set up job	2026-03-17T07:50:30.1012039Z Packages: read
+deploy-backend	Set up job	2026-03-17T07:50:30.1014057Z ##[endgroup]
+deploy-backend	Set up job	2026-03-17T07:50:30.1018896Z Secret source: Actions
+deploy-backend	Set up job	2026-03-17T07:50:30.1021062Z Prepare workflow directory
+deploy-backend	Set up job	2026-03-17T07:50:30.2078366Z Prepare all required actions
+deploy-backend	Set up job	2026-03-17T07:50:30.2187146Z Getting action download info
+deploy-backend	Set up job	2026-03-17T07:50:30.7554121Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+deploy-backend	Set up job	2026-03-17T07:50:31.8301758Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+deploy-backend	Set up job	2026-03-17T07:50:32.5891931Z Download action repository 'shivammathur/setup-php@v2' (SHA:accd6127cb78bee3e8082180cb391013d204ef9f)
+deploy-backend	Set up job	2026-03-17T07:50:33.0714727Z Download action repository 'webfactory/ssh-agent@v0.9.0' (SHA:dc588b651fe13675774614f8e6a936a468676387)
+deploy-backend	Set up job	2026-03-17T07:50:33.6033271Z Complete job name: deploy-backend
+deploy-backend	Checkout repository	﻿2026-03-17T07:50:33.6745844Z ##[group]Run actions/checkout@v4
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6746662Z with:
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6747136Z   repository: engelwillem/TCT--Hybrid--Monorepo
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6748191Z   token: ***
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6748563Z   ssh-strict: true
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6748927Z   ssh-user: git
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6749292Z   persist-credentials: true
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6749684Z   clean: true
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6750045Z   sparse-checkout-cone-mode: true
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6750456Z   fetch-depth: 1
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6750805Z   fetch-tags: false
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6751176Z   show-progress: true
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6751538Z   lfs: false
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6751875Z   submodules: false
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6752229Z   set-safe-directory: true
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6752886Z env:
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6753376Z   DEPLOY_PATH: ***
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6753765Z   SSH_HOST: ***
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6754121Z   SSH_PORT: ***
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6754488Z   SSH_USER: ***
+deploy-backend	Checkout repository	2026-03-17T07:50:33.6754821Z ##[endgroup]
+deploy-backend	Checkout repository	2026-03-17T07:50:33.7942081Z Syncing repository: engelwillem/TCT--Hybrid--Monorepo
+deploy-backend	Checkout repository	2026-03-17T07:50:33.7944595Z ##[group]Getting Git version info
+deploy-backend	Checkout repository	2026-03-17T07:50:33.7945707Z Working directory is '/home/runner/work/TCT--Hybrid--Monorepo/TCT--Hybrid--Monorepo'
+deploy-backend	Checkout repository	2026-03-17T07:50:33.7947264Z [command]/usr/bin/git version
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8038970Z git version 2.53.0
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8068205Z ##[endgroup]
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8100449Z Temporarily overriding HOME='/home/runner/work/_temp/311fb504-b448-45de-865f-fe624e19f836' before making global git config changes
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8104338Z Adding repository directory to the temporary git global config as a safe directory
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8106974Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/TCT--Hybrid--Monorepo/TCT--Hybrid--Monorepo
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8163027Z Deleting the contents of '/home/runner/work/TCT--Hybrid--Monorepo/TCT--Hybrid--Monorepo'
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8169646Z ##[group]Initializing the repository
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8174405Z [command]/usr/bin/git init /home/runner/work/TCT--Hybrid--Monorepo/TCT--Hybrid--Monorepo
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8292776Z hint: Using 'master' as the name for the initial branch. This default branch name
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8294706Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8298460Z hint: to use in all of your new repositories, which will suppress this warning,
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8300719Z hint: call:
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8301322Z hint:
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8302109Z hint: 	git config --global init.defaultBranch <name>
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8302982Z hint:
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8303935Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8305286Z hint: 'development'. The just-created branch can be renamed via this command:
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8306456Z hint:
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8307142Z hint: 	git branch -m <name>
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8308739Z hint:
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8309669Z hint: Disable this message with "git config set advice.defaultBranchName false"
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8311318Z Initialized empty Git repository in /home/runner/work/TCT--Hybrid--Monorepo/TCT--Hybrid--Monorepo/.git/
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8319812Z [command]/usr/bin/git remote add origin https://github.com/engelwillem/TCT--Hybrid--Monorepo
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8360347Z ##[endgroup]
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8361568Z ##[group]Disabling automatic garbage collection
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8365061Z [command]/usr/bin/git config --local gc.auto 0
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8406760Z ##[endgroup]
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8409115Z ##[group]Setting up auth
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8410932Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8446723Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8823258Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+deploy-backend	Checkout repository	2026-03-17T07:50:33.8859796Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+deploy-backend	Checkout repository	2026-03-17T07:50:33.9113971Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+deploy-backend	Checkout repository	2026-03-17T07:50:33.9158896Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+deploy-backend	Checkout repository	2026-03-17T07:50:33.9414460Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+deploy-backend	Checkout repository	2026-03-17T07:50:33.9455999Z ##[endgroup]
+deploy-backend	Checkout repository	2026-03-17T07:50:33.9457315Z ##[group]Fetching the repository
+deploy-backend	Checkout repository	2026-03-17T07:50:33.9466172Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +dff48b295d1c7c8ba75a607add1457051535f126:refs/remotes/origin/main
+deploy-backend	Checkout repository	2026-03-17T07:50:34.5690193Z From https://github.com/engelwillem/TCT--Hybrid--Monorepo
+deploy-backend	Checkout repository	2026-03-17T07:50:34.5692233Z  * [new ref]         dff48b295d1c7c8ba75a607add1457051535f126 -> origin/main
+deploy-backend	Checkout repository	2026-03-17T07:50:34.5742628Z ##[endgroup]
+deploy-backend	Checkout repository	2026-03-17T07:50:34.5744552Z ##[group]Determining the checkout info
+deploy-backend	Checkout repository	2026-03-17T07:50:34.5749658Z ##[endgroup]
+deploy-backend	Checkout repository	2026-03-17T07:50:34.5772538Z [command]/usr/bin/git sparse-checkout disable
+deploy-backend	Checkout repository	2026-03-17T07:50:34.5803859Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+deploy-backend	Checkout repository	2026-03-17T07:50:34.5909277Z ##[group]Checking out the ref
+deploy-backend	Checkout repository	2026-03-17T07:50:34.5910621Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+deploy-backend	Checkout repository	2026-03-17T07:50:34.6677355Z Switched to a new branch 'main'
+deploy-backend	Checkout repository	2026-03-17T07:50:34.6680480Z branch 'main' set up to track 'origin/main'.
+deploy-backend	Checkout repository	2026-03-17T07:50:34.6693989Z ##[endgroup]
+deploy-backend	Checkout repository	2026-03-17T07:50:34.6737158Z [command]/usr/bin/git log -1 --format=%H
+deploy-backend	Checkout repository	2026-03-17T07:50:34.6763613Z dff48b295d1c7c8ba75a607add1457051535f126
+deploy-backend	Setup Node.js	﻿2026-03-17T07:50:34.7005081Z ##[group]Run actions/setup-node@v4
+deploy-backend	Setup Node.js	2026-03-17T07:50:34.7005554Z with:
+deploy-backend	Setup Node.js	2026-03-17T07:50:34.7005901Z   node-version: 20
+deploy-backend	Setup Node.js	2026-03-17T07:50:34.7006260Z   cache: npm
+deploy-backend	Setup Node.js	2026-03-17T07:50:34.7006675Z   cache-dependency-path: backend-api/package-lock.json
+deploy-backend	Setup Node.js	2026-03-17T07:50:34.7007181Z   always-auth: false
+deploy-backend	Setup Node.js	2026-03-17T07:50:34.7007714Z   check-latest: false
+deploy-backend	Setup Node.js	2026-03-17T07:50:34.7008228Z   token: ***
+deploy-backend	Setup Node.js	2026-03-17T07:50:34.7008567Z env:
+deploy-backend	Setup Node.js	2026-03-17T07:50:34.7009023Z   DEPLOY_PATH: ***
+deploy-backend	Setup Node.js	2026-03-17T07:50:34.7009387Z   SSH_HOST: ***
+deploy-backend	Setup Node.js	2026-03-17T07:50:34.7009724Z   SSH_PORT: ***
+deploy-backend	Setup Node.js	2026-03-17T07:50:34.7010077Z   SSH_USER: ***
+deploy-backend	Setup Node.js	2026-03-17T07:50:34.7010408Z ##[endgroup]
+deploy-backend	Setup Node.js	2026-03-17T07:50:34.8825339Z Found in cache @ /opt/hostedtoolcache/node/20.20.1/x64
+deploy-backend	Setup Node.js	2026-03-17T07:50:34.8831001Z ##[group]Environment details
+deploy-backend	Setup Node.js	2026-03-17T07:50:35.4523324Z node: v20.20.1
+deploy-backend	Setup Node.js	2026-03-17T07:50:35.4531149Z npm: 10.8.2
+deploy-backend	Setup Node.js	2026-03-17T07:50:35.4535910Z yarn: 1.***.***
+deploy-backend	Setup Node.js	2026-03-17T07:50:35.4542076Z ##[endgroup]
+deploy-backend	Setup Node.js	2026-03-17T07:50:35.4583235Z [command]/opt/hostedtoolcache/node/20.20.1/x64/bin/npm config get cache
+deploy-backend	Setup Node.js	2026-03-17T07:50:35.6263978Z /home/runner/work/TCT--Hybrid--Monorepo/TCT--Hybrid--Monorepo/.npm-cache
+deploy-backend	Setup Node.js	2026-03-17T07:50:35.9419200Z Cache hit for: node-cache-Linux-x64-npm-5c28b091190ccaf73a4807f1b40d34f4012a477a9008b96bb4fffaf728dcdacf
+deploy-backend	Setup Node.js	2026-03-17T07:50:36.3164781Z Received 667 of 667 (100.0%), 0.0 MBs/sec
+deploy-backend	Setup Node.js	2026-03-17T07:50:36.3172486Z Cache Size: ~0 MB (667 B)
+deploy-backend	Setup Node.js	2026-03-17T07:50:36.3206095Z [command]/usr/bin/tar -xf /home/runner/work/_temp/8f4e0e67-ac82-4bb2-a2c8-97b5a2d04a90/cache.tzst -P -C /home/runner/work/TCT--Hybrid--Monorepo/TCT--Hybrid--Monorepo --use-compress-program unzstd
+deploy-backend	Setup Node.js	2026-03-17T07:50:36.3269201Z Cache restored successfully
+deploy-backend	Setup Node.js	2026-03-17T07:50:36.3294173Z Cache restored from key: node-cache-Linux-x64-npm-5c28b091190ccaf73a4807f1b40d34f4012a477a9008b96bb4fffaf728dcdacf
+deploy-backend	Setup PHP	﻿2026-03-17T07:50:36.3440032Z ##[group]Run shivammathur/setup-php@v2
+deploy-backend	Setup PHP	2026-03-17T07:50:36.3440560Z with:
+deploy-backend	Setup PHP	2026-03-17T07:50:36.3440910Z   php-version: 8.3
+deploy-backend	Setup PHP	2026-03-17T07:50:36.3441320Z   extensions: mbstring, pdo_mysql
+deploy-backend	Setup PHP	2026-03-17T07:50:36.3441725Z   coverage: none
+deploy-backend	Setup PHP	2026-03-17T07:50:36.3442089Z   ini-file: production
+deploy-backend	Setup PHP	2026-03-17T07:50:36.3442591Z   github-token: ***
+deploy-backend	Setup PHP	2026-03-17T07:50:36.3442945Z env:
+deploy-backend	Setup PHP	2026-03-17T07:50:36.3443420Z   DEPLOY_PATH: ***
+deploy-backend	Setup PHP	2026-03-17T07:50:36.3443787Z   SSH_HOST: ***
+deploy-backend	Setup PHP	2026-03-17T07:50:36.3444145Z   SSH_PORT: ***
+deploy-backend	Setup PHP	2026-03-17T07:50:36.3444504Z   SSH_USER: ***
+deploy-backend	Setup PHP	2026-03-17T07:50:36.3444845Z ##[endgroup]
+deploy-backend	Setup PHP	2026-03-17T07:50:36.3831907Z [command]/usr/bin/bash /home/runner/work/_actions/shivammathur/setup-php/v2/src/scripts/run.sh
+deploy-backend	Setup PHP	2026-03-17T07:50:36.4320120Z 
+deploy-backend	Setup PHP	2026-03-17T07:50:36.4321549Z [90;1m==> [0m[37;1mSetup PHP[0m
+deploy-backend	Setup PHP	2026-03-17T07:50:42.9392346Z [32;1m✓ [0m[34;1mPHP [0m[90;1mUpdated to PHP 8.3.30[0m
+deploy-backend	Setup PHP	2026-03-17T07:50:42.9400655Z 
+deploy-backend	Setup PHP	2026-03-17T07:50:42.9405842Z [90;1m==> [0m[37;1mSetup Extensions[0m
+deploy-backend	Setup PHP	2026-03-17T07:50:42.9947402Z [32;1m✓ [0m[34;1mmbstring [0m[90;1mEnabled[0m
+deploy-backend	Setup PHP	2026-03-17T07:50:42.9965553Z [32;1m✓ [0m[34;1mpdo_mysql [0m[90;1mEnabled[0m
+deploy-backend	Setup PHP	2026-03-17T07:50:42.9966861Z 
+deploy-backend	Setup PHP	2026-03-17T07:50:42.9967679Z [90;1m==> [0m[37;1mSetup Tools[0m
+deploy-backend	Setup PHP	2026-03-17T07:50:43.3010823Z [32;1m✓ [0m[34;1mcomposer [0m[90;1mAdded composer 2.9.3[0m
+deploy-backend	Setup PHP	2026-03-17T07:50:43.3021946Z 
+deploy-backend	Setup PHP	2026-03-17T07:50:43.3022625Z [90;1m==> [0m[37;1mSetup Coverage[0m
+deploy-backend	Setup PHP	2026-03-17T07:50:43.5500807Z [32;1m✓ [0m[34;1mnone [0m[90;1mDisabled Xdebug and PCOV[0m
+deploy-backend	Setup PHP	2026-03-17T07:50:43.5501952Z 
+deploy-backend	Setup PHP	2026-03-17T07:50:43.5508769Z [90;1m==> [0m[37;1mSponsor setup-php[0m
+deploy-backend	Setup PHP	2026-03-17T07:50:43.5512625Z [32;1m✓ [0m[34;1msetup-php [0m[90;1mhttps://setup-php.com/sponsor[0m
+deploy-backend	Validate required deploy secrets	﻿2026-03-17T07:50:43.5716047Z ##[group]Run test -n "$DEPLOY_PATH"
+deploy-backend	Validate required deploy secrets	2026-03-17T07:50:43.5716574Z [36;1mtest -n "$DEPLOY_PATH"[0m
+deploy-backend	Validate required deploy secrets	2026-03-17T07:50:43.5717006Z [36;1mtest -n "$SSH_HOST"[0m
+deploy-backend	Validate required deploy secrets	2026-03-17T07:50:43.5717403Z [36;1mtest -n "$SSH_PORT"[0m
+deploy-backend	Validate required deploy secrets	2026-03-17T07:50:43.5718030Z [36;1mtest -n "$SSH_USER"[0m
+deploy-backend	Validate required deploy secrets	2026-03-17T07:50:43.5775740Z shell: /usr/bin/bash -e {0}
+deploy-backend	Validate required deploy secrets	2026-03-17T07:50:43.5776179Z env:
+deploy-backend	Validate required deploy secrets	2026-03-17T07:50:43.5776714Z   DEPLOY_PATH: ***
+deploy-backend	Validate required deploy secrets	2026-03-17T07:50:43.5777100Z   SSH_HOST: ***
+deploy-backend	Validate required deploy secrets	2026-03-17T07:50:43.5777719Z   SSH_PORT: ***
+deploy-backend	Validate required deploy secrets	2026-03-17T07:50:43.5778222Z   SSH_USER: ***
+deploy-backend	Validate required deploy secrets	2026-03-17T07:50:43.5778587Z   COMPOSER_PROCESS_TIMEOUT: 0
+deploy-backend	Validate required deploy secrets	2026-03-17T07:50:43.5779002Z   COMPOSER_NO_INTERACTION: 1
+deploy-backend	Validate required deploy secrets	2026-03-17T07:50:43.5779412Z   COMPOSER_NO_AUDIT: 1
+deploy-backend	Validate required deploy secrets	2026-03-17T07:50:43.5779791Z ##[endgroup]
+deploy-backend	Install backend PHP dependencies	﻿2026-03-17T07:50:43.5915153Z ##[group]Run composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.5916052Z [36;1mcomposer install --no-dev --prefer-dist --optimize-autoloader --no-interaction[0m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.5962020Z shell: /usr/bin/bash -e {0}
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.5962439Z env:
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.5962951Z   DEPLOY_PATH: ***
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.5963332Z   SSH_HOST: ***
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.5963693Z   SSH_PORT: ***
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.5964061Z   SSH_USER: ***
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.5964416Z   COMPOSER_PROCESS_TIMEOUT: 0
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.5964839Z   COMPOSER_NO_INTERACTION: 1
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.5965223Z   COMPOSER_NO_AUDIT: 1
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.5965582Z ##[endgroup]
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7356196Z Installing dependencies from lock file
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7414661Z Verifying lock file contents can be installed on current platform.
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7811263Z Package operations: 114 installs, 0 updates, 0 removals
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7830199Z   - Downloading voku/portable-ascii (2.0.3)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7839693Z   - Downloading symfony/polyfill-php80 (v1.33.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7842484Z   - Downloading symfony/polyfill-mbstring (v1.33.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7845904Z   - Downloading symfony/polyfill-ctype (v1.33.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7850004Z   - Downloading phpoption/phpoption (1.9.5)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7853427Z   - Downloading graham-campbell/result-type (v1.1.4)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7857994Z   - Downloading vlucas/phpdotenv (v5.6.3)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7861410Z   - Downloading symfony/css-selector (v7.4.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7865416Z   - Downloading tijsverkoyen/css-to-inline-styles (v2.4.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7868617Z   - Downloading symfony/deprecation-contracts (v3.6.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7871925Z   - Downloading symfony/var-dumper (v7.4.4)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7875179Z   - Downloading symfony/polyfill-uuid (v1.33.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7878457Z   - Downloading symfony/uid (v7.4.4)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7880937Z   - Downloading symfony/routing (v7.4.4)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7888879Z   - Downloading symfony/process (v7.4.5)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7889992Z   - Downloading symfony/polyfill-php85 (v1.33.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7891136Z   - Downloading symfony/polyfill-php84 (v1.33.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7892210Z   - Downloading symfony/polyfill-php83 (v1.33.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7893355Z   - Downloading symfony/polyfill-intl-normalizer (v1.33.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7894570Z   - Downloading symfony/polyfill-intl-idn (v1.33.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7902822Z   - Downloading symfony/mime (v7.4.5)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7910155Z   - Downloading psr/container (2.0.2)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7911160Z   - Downloading symfony/service-contracts (v3.6.1)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7912228Z   - Downloading psr/event-dispatcher (1.0.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7913340Z   - Downloading symfony/event-dispatcher-contracts (v3.6.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7914477Z   - Downloading symfony/event-dispatcher (v7.4.4)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7915460Z   - Downloading psr/log (3.0.2)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7916340Z   - Downloading doctrine/lexer (3.0.1)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7917317Z   - Downloading egulias/email-validator (4.0.4)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7934758Z   - Downloading symfony/mailer (v7.4.4)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7935762Z   - Downloading symfony/http-foundation (v7.4.5)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7936825Z   - Downloading symfony/error-handler (v7.4.4)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7945293Z   - Downloading symfony/http-kernel (v7.4.5)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7946323Z   - Downloading symfony/finder (v7.4.5)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7947383Z   - Downloading symfony/polyfill-intl-grapheme (v1.33.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7948913Z   - Downloading symfony/string (v7.4.4)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7949860Z   - Downloading symfony/console (v7.4.4)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7950812Z   - Downloading ramsey/collection (2.1.1)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7951741Z   - Downloading brick/math (0.14.8)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7952616Z   - Downloading ramsey/uuid (4.9.2)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7953521Z   - Downloading psr/simple-cache (3.0.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7954507Z   - Downloading nunomaduro/termwind (v2.4.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7955906Z   - Downloading symfony/translation-contracts (v3.6.1)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7956954Z   - Downloading symfony/translation (v7.4.4)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7958100Z   - Downloading psr/clock (1.0.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7958984Z   - Downloading symfony/clock (v7.4.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7960028Z   - Downloading carbonphp/carbon-doctrine-types (3.2.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7961050Z   - Downloading nesbot/carbon (3.11.1)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7961978Z   - Downloading monolog/monolog (3.10.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7962919Z   - Downloading psr/http-message (2.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7963838Z   - Downloading psr/http-factory (1.1.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7991141Z   - Downloading league/uri-interfaces (7.8.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7992119Z   - Downloading league/uri (7.8.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7993085Z   - Downloading league/mime-type-detection (1.16.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7994152Z   - Downloading league/flysystem-local (3.31.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7995136Z   - Downloading league/flysystem (3.31.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7996067Z   - Downloading nette/utils (v4.1.3)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7996970Z   - Downloading nette/schema (v1.3.4)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7998140Z   - Downloading dflydev/dot-access-data (v3.0.3)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.7999119Z   - Downloading league/config (v1.2.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8000043Z   - Downloading league/commonmark (2.8.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8001057Z   - Downloading laravel/serializable-closure (v2.0.9)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8002082Z   - Downloading laravel/prompts (v0.3.13)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8003081Z   - Downloading guzzlehttp/uri-template (v1.0.5)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8004233Z   - Downloading psr/http-client (1.0.3)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8005251Z   - Downloading ralouphie/getallheaders (3.0.3)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8006227Z   - Downloading guzzlehttp/psr7 (2.8.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8007156Z   - Downloading guzzlehttp/promises (2.3.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8028610Z   - Downloading guzzlehttp/guzzle (7.10.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8029633Z   - Downloading fruitcake/php-cors (v1.4.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8030704Z   - Downloading dragonmantank/cron-expression (v3.6.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8031732Z   - Downloading doctrine/inflector (2.1.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8032723Z   - Downloading laravel/framework (v12.52.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8033766Z   - Downloading anourvalar/eloquent-serialize (1.3.5)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8034831Z   - Downloading blade-ui-kit/blade-icons (1.8.1)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8035904Z   - Downloading blade-ui-kit/blade-heroicons (2.6.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8037037Z   - Downloading chillerlan/php-settings-container (3.2.1)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8038424Z   - Downloading danharrin/date-format-converter (v0.3.1)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8039576Z   - Downloading danharrin/livewire-rate-limiting (v2.1.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8040748Z   - Downloading paragonie/constant_time_encoding (v3.1.3)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8041792Z   - Downloading pragmarx/google2fa (v9.0.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8042834Z   - Downloading pragmarx/google2fa-qrcode (v3.0.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8043860Z   - Downloading masterminds/html5 (2.10.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8044872Z   - Downloading symfony/html-sanitizer (v7.4.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8045958Z   - Downloading spatie/laravel-package-tools (1.93.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8046981Z   - Downloading spatie/invade (2.1.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8055083Z   - Downloading ryangjchandler/blade-capture-directive (v1.1.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8059146Z   - Downloading nette/php-generator (v4.2.1)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8060212Z   - Downloading livewire/livewire (v4.1.4)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8061205Z   - Downloading league/uri-components (7.8.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8062646Z   - Downloading kirschbaum-development/eloquent-power-joins (4.2.11)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8063824Z   - Downloading filament/support (v5.2.2)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8064815Z   - Downloading openspout/openspout (v4.32.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8065770Z   - Downloading league/csv (9.28.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8066668Z   - Downloading filament/actions (v5.2.2)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8070020Z   - Downloading filament/notifications (v5.2.2)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8072434Z   - Downloading filament/schemas (v5.2.2)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8075012Z   - Downloading filament/infolists (v5.2.2)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8077353Z   - Downloading spatie/shiki-php (2.3.3)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8079955Z   - Downloading scrivo/highlight.php (v9.18.1.10)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8082396Z   - Downloading ueberdosis/tiptap-php (2.1.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8084737Z   - Downloading filament/forms (v5.2.2)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8085652Z   - Downloading filament/widgets (v5.2.2)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8086600Z   - Downloading filament/query-builder (v5.2.2)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8087776Z   - Downloading filament/tables (v5.2.2)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8088717Z   - Downloading chillerlan/php-qrcode (5.0.5)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8089631Z   - Downloading filament/filament (v5.2.2)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8090536Z   - Downloading inertiajs/inertia-laravel (v2.0.20)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8091472Z   - Downloading laravel/sanctum (v4.3.1)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8092343Z   - Downloading nikic/php-parser (v5.7.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8093303Z   - Downloading psy/psysh (v0.12.20)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8094222Z   - Downloading laravel/tinker (v2.11.1)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8095137Z   - Downloading predis/predis (v3.4.1)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:43.8096096Z   - Downloading tightenco/ziggy (v2.6.0)
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:47.9882349Z   - Installing voku/portable-ascii (2.0.3): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:47.9902765Z   - Installing symfony/polyfill-php80 (v1.33.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:47.9914455Z   - Installing symfony/polyfill-mbstring (v1.33.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:47.9925198Z   - Installing symfony/polyfill-ctype (v1.33.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:47.9955765Z   - Installing phpoption/phpoption (1.9.5): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:47.9972744Z   - Installing graham-campbell/result-type (v1.1.4): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:47.9990258Z   - Installing vlucas/phpdotenv (v5.6.3): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:47.9992998Z   - Installing symfony/css-selector (v7.4.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0067244Z   - Installing tijsverkoyen/css-to-inline-styles (v2.4.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0159145Z   - Installing symfony/deprecation-contracts (v3.6.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0160919Z   - Installing symfony/var-dumper (v7.4.4): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0162365Z   - Installing symfony/polyfill-uuid (v1.33.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0163705Z   - Installing symfony/uid (v7.4.4): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0164970Z   - Installing symfony/routing (v7.4.4): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0166250Z   - Installing symfony/process (v7.4.5): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0168870Z   - Installing symfony/polyfill-php85 (v1.33.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0170043Z   - Installing symfony/polyfill-php84 (v1.33.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0171215Z   - Installing symfony/polyfill-php83 (v1.33.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0172461Z   - Installing symfony/polyfill-intl-normalizer (v1.33.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0173771Z   - Installing symfony/polyfill-intl-idn (v1.33.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0188309Z   - Installing symfony/mime (v7.4.5): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0213101Z   - Installing psr/container (2.0.2): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0214297Z   - Installing symfony/service-contracts (v3.6.1): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0215534Z   - Installing psr/event-dispatcher (1.0.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0216855Z   - Installing symfony/event-dispatcher-contracts (v3.6.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0221231Z   - Installing symfony/event-dispatcher (v7.4.4): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0225676Z   - Installing psr/log (3.0.2): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0232355Z   - Installing doctrine/lexer (3.0.1): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0239325Z   - Installing egulias/email-validator (4.0.4): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0248040Z   - Installing symfony/mailer (v7.4.4): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0287614Z   - Installing symfony/http-foundation (v7.4.5): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0289221Z   - Installing symfony/error-handler (v7.4.4): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0290696Z   - Installing symfony/http-kernel (v7.4.5): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0318608Z   - Installing symfony/finder (v7.4.5): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0320193Z   - Installing symfony/polyfill-intl-grapheme (v1.33.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0321759Z   - Installing symfony/string (v7.4.4): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0323206Z   - Installing symfony/console (v7.4.4): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0324563Z   - Installing ramsey/collection (2.1.1): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0325852Z   - Installing brick/math (0.14.8): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0327069Z   - Installing ramsey/uuid (4.9.2): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0335451Z   - Installing psr/simple-cache (3.0.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0344467Z   - Installing nunomaduro/termwind (v2.4.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0361569Z   - Installing symfony/translation-contracts (v3.6.1): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0536911Z   - Installing symfony/translation (v7.4.4): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0540861Z   - Installing psr/clock (1.0.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0541979Z   - Installing symfony/clock (v7.4.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0543258Z   - Installing carbonphp/carbon-doctrine-types (3.2.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0544537Z   - Installing nesbot/carbon (3.11.1): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0545672Z   - Installing monolog/monolog (3.10.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0546794Z   - Installing psr/http-message (2.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0548118Z   - Installing psr/http-factory (1.1.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0549316Z   - Installing league/uri-interfaces (7.8.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0550560Z   - Installing league/uri (7.8.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0551760Z   - Installing league/mime-type-detection (1.16.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0553074Z   - Installing league/flysystem-local (3.31.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0554284Z   - Installing league/flysystem (3.31.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0555403Z   - Installing nette/utils (v4.1.3): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0556489Z   - Installing nette/schema (v1.3.4): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0557875Z   - Installing dflydev/dot-access-data (v3.0.3): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0559096Z   - Installing league/config (v1.2.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0560225Z   - Installing league/commonmark (2.8.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0561518Z   - Installing laravel/serializable-closure (v2.0.9): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0562803Z   - Installing laravel/prompts (v0.3.13): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0564048Z   - Installing guzzlehttp/uri-template (v1.0.5): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0565300Z   - Installing psr/http-client (1.0.3): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0566498Z   - Installing ralouphie/getallheaders (3.0.3): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0583549Z   - Installing guzzlehttp/psr7 (2.8.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0584768Z   - Installing guzzlehttp/promises (2.3.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0585929Z   - Installing guzzlehttp/guzzle (7.10.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0587313Z   - Installing fruitcake/php-cors (v1.4.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0588765Z   - Installing dragonmantank/cron-expression (v3.6.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0589994Z   - Installing doctrine/inflector (2.1.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0591062Z   - Installing laravel/framework (v12.52.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0592265Z   - Installing anourvalar/eloquent-serialize (1.3.5): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0593554Z   - Installing blade-ui-kit/blade-icons (1.8.1): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0595175Z   - Installing blade-ui-kit/blade-heroicons (2.6.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0596527Z   - Installing chillerlan/php-settings-container (3.2.1): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0598129Z   - Installing danharrin/date-format-converter (v0.3.1): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0599482Z   - Installing danharrin/livewire-rate-limiting (v2.1.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0600650Z   - Installing paragonie/constant_time_encoding (v3.1.3): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0601953Z   - Installing pragmarx/google2fa (v9.0.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0603214Z   - Installing pragmarx/google2fa-qrcode (v3.0.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0604475Z   - Installing masterminds/html5 (2.10.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0605671Z   - Installing symfony/html-sanitizer (v7.4.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0606971Z   - Installing spatie/laravel-package-tools (1.93.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0608468Z   - Installing spatie/invade (2.1.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0609735Z   - Installing ryangjchandler/blade-capture-directive (v1.1.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0611006Z   - Installing nette/php-generator (v4.2.1): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0612118Z   - Installing livewire/livewire (v4.1.4): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0613224Z   - Installing league/uri-components (7.8.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0614559Z   - Installing kirschbaum-development/eloquent-power-joins (4.2.11): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0615995Z   - Installing filament/support (v5.2.2): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0617236Z   - Installing openspout/openspout (v4.32.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0638083Z   - Installing league/csv (9.28.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0639267Z   - Installing filament/actions (v5.2.2): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0640530Z   - Installing filament/notifications (v5.2.2): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0641766Z   - Installing filament/schemas (v5.2.2): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0642892Z   - Installing filament/infolists (v5.2.2): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0644029Z   - Installing spatie/shiki-php (2.3.3): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0645221Z   - Installing scrivo/highlight.php (v9.18.1.10): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0646449Z   - Installing ueberdosis/tiptap-php (2.1.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0647797Z   - Installing filament/forms (v5.2.2): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0649065Z   - Installing filament/widgets (v5.2.2): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0650252Z   - Installing filament/query-builder (v5.2.2): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0651407Z   - Installing filament/tables (v5.2.2): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0652552Z   - Installing chillerlan/php-qrcode (5.0.5): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0653715Z   - Installing filament/filament (v5.2.2): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0654954Z   - Installing inertiajs/inertia-laravel (v2.0.20): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0656170Z   - Installing laravel/sanctum (v4.3.1): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0657336Z   - Installing nikic/php-parser (v5.7.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0659251Z   - Installing psy/psysh (v0.12.20): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0660432Z   - Installing laravel/tinker (v2.11.1): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0661894Z   - Installing predis/predis (v3.4.1): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:48.0662979Z   - Installing tightenco/ziggy (v2.6.0): Extracting archive
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:50.1082452Z Generating optimized autoload files
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.5361402Z > Illuminate\Foundation\ComposerScripts::postAutoloadDump
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.5517062Z > @php artisan package:discover --ansi
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.7993327Z 
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.7994802Z   [37;44m INFO [39;49m Discovering packages.  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.7996004Z 
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8041148Z   anourvalar/eloquent-serialize [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8060097Z   blade-ui-kit/blade-heroicons [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8078953Z   blade-ui-kit/blade-icons [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8100333Z   filament/actions [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8122521Z   filament/filament [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8145740Z   filament/forms [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8166795Z   filament/infolists [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8190645Z   filament/notifications [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8211263Z   filament/query-builder [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8233527Z   filament/schemas [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8255364Z   filament/support [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8277869Z   filament/tables [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8299853Z   filament/widgets [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8318886Z   inertiajs/inertia-laravel [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8344034Z   kirschbaum-development/eloquent-power-joins [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8364741Z   laravel/sanctum [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8389928Z   laravel/tinker [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8411411Z   livewire/livewire [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8435784Z   nesbot/carbon [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8456657Z   nunomaduro/termwind [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8469609Z   ryangjchandler/blade-capture-directive [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8492223Z   tightenco/ziggy [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;***m
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8498483Z 
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:51.8590685Z > @php artisan filament:upgrade
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1611870Z   ⇂ public/js/filament/forms/components/checkbox-list.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1617751Z   ⇂ public/js/filament/forms/components/code-editor.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1623302Z   ⇂ public/js/filament/forms/components/color-picker.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1626604Z   ⇂ public/js/filament/forms/components/date-time-picker.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1627985Z   ⇂ public/js/filament/forms/components/file-upload.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1629107Z   ⇂ public/js/filament/forms/components/key-value.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1630233Z   ⇂ public/js/filament/forms/components/markdown-editor.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1631413Z   ⇂ public/js/filament/forms/components/rich-editor.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1632473Z   ⇂ public/js/filament/forms/components/select.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1633493Z   ⇂ public/js/filament/forms/components/slider.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1634537Z   ⇂ public/js/filament/forms/components/tags-input.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1635601Z   ⇂ public/js/filament/forms/components/textarea.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1636675Z   ⇂ public/js/filament/schemas/components/actions.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1637880Z   ⇂ public/js/filament/schemas/components/tabs.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1638935Z   ⇂ public/js/filament/schemas/components/wizard.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1640068Z   ⇂ public/js/filament/tables/components/columns/checkbox.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1641250Z   ⇂ public/js/filament/tables/components/columns/select.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1642434Z   ⇂ public/js/filament/tables/components/columns/text-input.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1643618Z   ⇂ public/js/filament/tables/components/columns/toggle.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1644727Z   ⇂ public/js/filament/widgets/components/chart.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1645943Z   ⇂ public/js/filament/widgets/components/stats-overview/stat/chart.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1647127Z   ⇂ public/fonts/filament/filament/inter/index.css  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1648686Z   ⇂ public/fonts/filament/filament/inter/inter-cyrillic-ext-wght-normal-IYF56FF6.woff2  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1650370Z   ⇂ public/fonts/filament/filament/inter/inter-cyrillic-wght-normal-JEOLYBOO.woff2  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1652400Z   ⇂ public/fonts/filament/filament/inter/inter-greek-ext-wght-normal-EOVOK2B5.woff2  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1654006Z   ⇂ public/fonts/filament/filament/inter/inter-greek-wght-normal-IRE366VL.woff2  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1655675Z   ⇂ public/fonts/filament/filament/inter/inter-latin-ext-wght-normal-HA***NDSG.woff2  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1657301Z   ⇂ public/fonts/filament/filament/inter/inter-latin-wght-normal-NRMW37G5.woff2  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1662316Z   ⇂ public/fonts/filament/filament/inter/inter-vietnamese-wght-normal-CE5GGD3W.woff2  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1663874Z   ⇂ public/js/filament/actions/actions.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1664790Z   ⇂ public/js/filament/filament/app.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1665685Z   ⇂ public/js/filament/filament/echo.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1666690Z   ⇂ public/js/filament/notifications/notifications.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1667859Z   ⇂ public/js/filament/schemas/schemas.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1668800Z   ⇂ public/js/filament/support/support.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1669714Z   ⇂ public/js/filament/tables/tables.js  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1670627Z   ⇂ public/css/filament/filament/app.css  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1699756Z 
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1710374Z    INFO  Successfully published assets!  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1710991Z 
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1711559Z    INFO  Configuration cache cleared successfully.  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1726152Z 
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1726643Z    INFO  Route cache cleared successfully.  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1727232Z 
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1743131Z    INFO  Compiled views cleared successfully.  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1747824Z 
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1760115Z    INFO  Successfully upgraded!  
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1761473Z 
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1932277Z 71 packages you are using are looking for funding.
+deploy-backend	Install backend PHP dependencies	2026-03-17T07:50:52.1938779Z Use the `composer fund` command to find out more!
+deploy-backend	Install backend frontend dependencies	﻿2026-03-17T07:50:52.2288402Z ##[group]Run npm ci
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:50:52.2288872Z [36;1mnpm ci[0m
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:50:52.2339058Z shell: /usr/bin/bash -e {0}
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:50:52.2339455Z env:
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:50:52.2339965Z   DEPLOY_PATH: ***
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:50:52.2340326Z   SSH_HOST: ***
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:50:52.2340669Z   SSH_PORT: ***
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:50:52.2341021Z   SSH_USER: ***
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:50:52.2341377Z   COMPOSER_PROCESS_TIMEOUT: 0
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:50:52.2341781Z   COMPOSER_NO_INTERACTION: 1
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:50:52.2342166Z   COMPOSER_NO_AUDIT: 1
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:50:52.2342526Z ##[endgroup]
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:50:53.8870177Z npm warn EBADENGINE Unsupported engine {
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:50:53.8873498Z npm warn EBADENGINE   package: 'rollup-plugin-visualizer@7.0.0',
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:50:53.8882016Z npm warn EBADENGINE   required: { node: '>=***' },
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:50:53.8883249Z npm warn EBADENGINE   current: { node: 'v20.20.1', npm: '10.8.2' }
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:50:53.8884360Z npm warn EBADENGINE }
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:51:01.2609496Z 
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:51:01.2614845Z added 317 packages, and audited 318 packages in 9s
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:51:01.2616860Z 
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:51:01.2617314Z 70 packages are looking for funding
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:51:01.2618312Z   run `npm fund` for details
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:51:01.2659796Z 
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:51:01.2662872Z 1 high severity vulnerability
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:51:01.2665289Z 
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:51:01.2667259Z To address all issues, run:
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:51:01.2683626Z   npm audit fix
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:51:01.2686105Z 
+deploy-backend	Install backend frontend dependencies	2026-03-17T07:51:01.2688793Z Run `npm audit` for details.
+deploy-backend	Build backend assets	﻿2026-03-17T07:51:01.3063654Z ##[group]Run npm run build
+deploy-backend	Build backend assets	2026-03-17T07:51:01.3064425Z [36;1mnpm run build[0m
+deploy-backend	Build backend assets	2026-03-17T07:51:01.3170557Z shell: /usr/bin/bash -e {0}
+deploy-backend	Build backend assets	2026-03-17T07:51:01.3171259Z env:
+deploy-backend	Build backend assets	2026-03-17T07:51:01.3172089Z   DEPLOY_PATH: ***
+deploy-backend	Build backend assets	2026-03-17T07:51:01.3172764Z   SSH_HOST: ***
+deploy-backend	Build backend assets	2026-03-17T07:51:01.3173396Z   SSH_PORT: ***
+deploy-backend	Build backend assets	2026-03-17T07:51:01.3174041Z   SSH_USER: ***
+deploy-backend	Build backend assets	2026-03-17T07:51:01.3174675Z   COMPOSER_PROCESS_TIMEOUT: 0
+deploy-backend	Build backend assets	2026-03-17T07:51:01.3175390Z   COMPOSER_NO_INTERACTION: 1
+deploy-backend	Build backend assets	2026-03-17T07:51:01.3176074Z   COMPOSER_NO_AUDIT: 1
+deploy-backend	Build backend assets	2026-03-17T07:51:01.3176714Z ##[endgroup]
+deploy-backend	Build backend assets	2026-03-17T07:51:01.4565932Z 
+deploy-backend	Build backend assets	2026-03-17T07:51:01.4571619Z > build
+deploy-backend	Build backend assets	2026-03-17T07:51:01.4577387Z > tsc -p tsconfig.laravel.json && vite build
+deploy-backend	Build backend assets	2026-03-17T07:51:01.4581796Z 
+deploy-backend	Build backend assets	2026-03-17T07:51:08.9784928Z [36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+deploy-backend	Build backend assets	2026-03-17T07:51:09.0409990Z transforming...
+deploy-backend	Build backend assets	2026-03-17T07:51:14.5917188Z [32m✓[39m 2981 modules transformed.
+deploy-backend	Build backend assets	2026-03-17T07:51:14.9671124Z rendering chunks...
+deploy-backend	Build backend assets	2026-03-17T07:51:18.3998403Z computing gzip size...
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4181700Z [2mpublic/build/[***m[32mmanifest.json                          [39m[1m[2m 16.73 kB[***m[1m[***m[2m │ gzip:   1.80 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4194528Z [2mpublic/build/[***m[2massets/[***m[35mapp-D_zPc8_K.css                [39m[1m[2m  5.95 kB[***m[1m[***m[2m │ gzip:   1.82 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4197252Z [2mpublic/build/[***m[2massets/[***m[36mx-BalLxKex.js                   [39m[1m[2m  0.16 kB[***m[1m[***m[2m │ gzip:   0.15 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4200194Z [2mpublic/build/[***m[2massets/[***m[36marrow-right-CofQm5CX.js         [39m[1m[2m  0.17 kB[***m[1m[***m[2m │ gzip:   0.16 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4213359Z [2mpublic/build/[***m[2massets/[***m[36mchevron-right-B6_4ghPG.js       [39m[1m[2m  0.21 kB[***m[1m[***m[2m │ gzip:   0.18 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4222006Z [2mpublic/build/[***m[2massets/[***m[36mindex-BbBo7SpN.js               [39m[1m[2m  0.40 kB[***m[1m[***m[2m │ gzip:   0.27 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4224519Z [2mpublic/build/[***m[2massets/[***m[36msparkles-DoSKuWeO.js            [39m[1m[2m  0.50 kB[***m[1m[***m[2m │ gzip:   0.28 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4226875Z [2mpublic/build/[***m[2massets/[***m[36mSegmentedTabs-DQ4FHUwd.js       [39m[1m[2m  0.59 kB[***m[1m[***m[2m │ gzip:   0.38 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4229342Z [2mpublic/build/[***m[2massets/[***m[36mPrimaryCTA-BazXfLTQ.js          [39m[1m[2m  0.60 kB[***m[1m[***m[2m │ gzip:   0.39 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4231328Z [2mpublic/build/[***m[2massets/[***m[36mapp-D3VqKPQN.js                 [39m[1m[2m  0.72 kB[***m[1m[***m[2m │ gzip:   0.17 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4233356Z [2mpublic/build/[***m[2massets/[***m[36minput-BJOTg8qq.js               [39m[1m[2m  0.72 kB[***m[1m[***m[2m │ gzip:   0.44 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4235377Z [2mpublic/build/[***m[2massets/[***m[36mLessonIndex-DpOGCHfm.js         [39m[1m[2m  0.87 kB[***m[1m[***m[2m │ gzip:   0.53 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4237773Z [2mpublic/build/[***m[2massets/[***m[36mAppIcons-DbGIv9rW.js            [39m[1m[2m  0.93 kB[***m[1m[***m[2m │ gzip:   0.36 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4239893Z [2mpublic/build/[***m[2massets/[***m[36mcard-COPiDadA.js                [39m[1m[2m  1.05 kB[***m[1m[***m[2m │ gzip:   0.39 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4246744Z [2mpublic/build/[***m[2massets/[***m[36mShow-vE_4AXhY.js                [39m[1m[2m  1.05 kB[***m[1m[***m[2m │ gzip:   0.58 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4249350Z [2mpublic/build/[***m[2massets/[***m[36mDayIndex-CtfAXNCu.js            [39m[1m[2m  1.20 kB[***m[1m[***m[2m │ gzip:   0.61 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4251520Z [2mpublic/build/[***m[2massets/[***m[36mListItemWithChips-BrFxvbcc.js   [39m[1m[2m  1.29 kB[***m[1m[***m[2m │ gzip:   0.54 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4254042Z [2mpublic/build/[***m[2massets/[***m[36mLibrary-CKkJJBQK.js             [39m[1m[2m  1.51 kB[***m[1m[***m[2m │ gzip:   0.80 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4257148Z [2mpublic/build/[***m[2massets/[***m[36mTwoFactorChallenge-B2gr1dLP.js  [39m[1m[2m  1.62 kB[***m[1m[***m[2m │ gzip:   0.83 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4260001Z [2mpublic/build/[***m[2massets/[***m[36mConfirmPassword-CKvHmUJh.js     [39m[1m[2m  1.93 kB[***m[1m[***m[2m │ gzip:   0.93 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4262444Z [2mpublic/build/[***m[2massets/[***m[36mShow-C2dtNZaL.js                [39m[1m[2m  1.93 kB[***m[1m[***m[2m │ gzip:   0.93 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4264887Z [2mpublic/build/[***m[2massets/[***m[36mIndex-Dx_Dv_4P.js               [39m[1m[2m  1.95 kB[***m[1m[***m[2m │ gzip:   0.89 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4267845Z [2mpublic/build/[***m[2massets/[***m[36mForgotPassword-D3Z2LL-O.js      [39m[1m[2m  2.01 kB[***m[1m[***m[2m │ gzip:   0.98 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4270274Z [2mpublic/build/[***m[2massets/[***m[36mTerms-KCmBmZsU.js               [39m[1m[2m  2.12 kB[***m[1m[***m[2m │ gzip:   0.94 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4272687Z [2mpublic/build/[***m[2massets/[***m[36mIndex-CAmLi74M.js               [39m[1m[2m  2.13 kB[***m[1m[***m[2m │ gzip:   0.94 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4297353Z [2mpublic/build/[***m[2massets/[***m[36mVisitors-h1Wi0Vo_.js            [39m[1m[2m  2.17 kB[***m[1m[***m[2m │ gzip:   1.00 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4300259Z [2mpublic/build/[***m[2massets/[***m[36mPrivacy-B8Ytlk93.js             [39m[1m[2m  2.19 kB[***m[1m[***m[2m │ gzip:   0.99 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4302775Z [2mpublic/build/[***m[2massets/[***m[36mGateUpdates-o1UFeMXi.js         [39m[1m[2m  2.32 kB[***m[1m[***m[2m │ gzip:   0.90 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4305354Z [2mpublic/build/[***m[2massets/[***m[36mResetPassword-DCWHFAYQ.js       [39m[1m[2m  2.96 kB[***m[1m[***m[2m │ gzip:   1.05 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4307945Z [2mpublic/build/[***m[2massets/[***m[36mLogin-CcndOwL5.js               [39m[1m[2m  3.18 kB[***m[1m[***m[2m │ gzip:   1.25 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4310336Z [2mpublic/build/[***m[2massets/[***m[36mbutton-BfuGo5hE.js              [39m[1m[2m  3.62 kB[***m[1m[***m[2m │ gzip:   1.63 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4312732Z [2mpublic/build/[***m[2massets/[***m[36mRegister-QWN2bJlk.js            [39m[1m[2m  3.63 kB[***m[1m[***m[2m │ gzip:   1.18 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4315207Z [2mpublic/build/[***m[2massets/[***m[36mVerifyEmail-Cok2vYlc.js         [39m[1m[2m  3.78 kB[***m[1m[***m[2m │ gzip:   1.50 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4321211Z [2mpublic/build/[***m[2massets/[***m[36mKpiDashboard-imW_e2aJ.js        [39m[1m[2m  4.49 kB[***m[1m[***m[2m │ gzip:   1.20 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4323858Z [2mpublic/build/[***m[2massets/[***m[36mAuthShell-B5WJ3RRY.js           [39m[1m[2m  4.64 kB[***m[1m[***m[2m │ gzip:   1.58 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4326302Z [2mpublic/build/[***m[2massets/[***m[36mShow-C41fYuzJ.js                [39m[1m[2m  4.67 kB[***m[1m[***m[2m │ gzip:   2.04 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4329942Z [2mpublic/build/[***m[2massets/[***m[36mindex-BkmS0qiu.js               [39m[1m[2m  6.20 kB[***m[1m[***m[2m │ gzip:   2.54 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4332497Z [2mpublic/build/[***m[2massets/[***m[36mMobileAppLayout-C1IYe2Ab.js     [39m[1m[2m 13.00 kB[***m[1m[***m[2m │ gzip:   4.77 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4335011Z [2mpublic/build/[***m[2massets/[***m[36mQuarterIndex-D5c2-s7W.js        [39m[1m[2m 13.96 kB[***m[1m[***m[2m │ gzip:   4.07 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4337655Z [2mpublic/build/[***m[2massets/[***m[36mFacilities-fU8y6cI5.js          [39m[1m[2m 14.12 kB[***m[1m[***m[2m │ gzip:   4.93 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4340128Z [2mpublic/build/[***m[2massets/[***m[36mutils-BQHNewu7.js               [39m[1m[2m 26.69 kB[***m[1m[***m[2m │ gzip:   8.42 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4342567Z [2mpublic/build/[***m[2massets/[***m[36mWelcome-BOmUWq1m.js             [39m[1m[2m 29.68 kB[***m[1m[***m[2m │ gzip:  10.46 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4345447Z [2mpublic/build/[***m[2massets/[***m[36mOpsVisibility-BgEVQK0O.js       [39m[1m[2m 31.45 kB[***m[1m[***m[2m │ gzip:   9.36 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4348056Z [2mpublic/build/[***m[2massets/[***m[36mDayShow-Dwx6AhOu.js             [39m[1m[2m 32.99 kB[***m[1m[***m[2m │ gzip:   9.82 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4350449Z [2mpublic/build/[***m[2massets/[***m[36mProfile-sSwqNJW9.js             [39m[1m[2m 74.02 kB[***m[1m[***m[2m │ gzip:  24.71 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4352890Z [2mpublic/build/[***m[2massets/[***m[36musers-D11f1hqG.js               [39m[1m[2m120.48 kB[***m[1m[***m[2m │ gzip:  39.77 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4355555Z [2mpublic/build/[***m[2massets/[***m[36mapp-BnsWGRTV.js                 [39m[1m[2m342.25 kB[***m[1m[***m[2m │ gzip: 114.43 kB[***m
+deploy-backend	Build backend assets	2026-03-17T07:51:18.4357074Z [32m✓ built in 9.42s[39m
+deploy-backend	Create backend release artifact	﻿2026-03-17T07:51:18.4847768Z ##[group]Run tar -czf ../build.tar.gz \
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4848533Z [36;1mtar -czf ../build.tar.gz \[0m
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4848971Z [36;1m  --exclude=.git \[0m
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4849372Z [36;1m  --exclude=node_modules \[0m
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4849789Z [36;1m  --exclude=tests \[0m
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4850187Z [36;1m  --exclude=storage/logs \[0m
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4850625Z [36;1m  --exclude=storage/framework/cache \[0m
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4851130Z [36;1m  --exclude=database/database.sqlite \[0m
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4851590Z [36;1m  --exclude=.env \[0m
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4851961Z [36;1m  .[0m
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4852456Z [36;1msha256sum ../build.tar.gz | awk '{print $1}' > ../build.tar.gz.sha256[0m
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4902068Z shell: /usr/bin/bash -e {0}
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4902475Z env:
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4902966Z   DEPLOY_PATH: ***
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4903336Z   SSH_HOST: ***
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4903681Z   SSH_PORT: ***
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4904028Z   SSH_USER: ***
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4904402Z   COMPOSER_PROCESS_TIMEOUT: 0
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4904796Z   COMPOSER_NO_INTERACTION: 1
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4905182Z   COMPOSER_NO_AUDIT: 1
+deploy-backend	Create backend release artifact	2026-03-17T07:51:18.4905539Z ##[endgroup]
+deploy-backend	Start SSH agent	﻿2026-03-17T07:51:20.4919955Z ##[group]Run webfactory/ssh-agent@v0.9.0
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.4920426Z with:
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.4935332Z   ssh-private-key: ***
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.4935749Z   log-public-key: true
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.4936112Z env:
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.4936554Z   DEPLOY_PATH: ***
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.4936921Z   SSH_HOST: ***
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.4937274Z   SSH_PORT: ***
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.4937951Z   SSH_USER: ***
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.4938340Z   COMPOSER_PROCESS_TIMEOUT: 0
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.4938755Z   COMPOSER_NO_INTERACTION: 1
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.4939154Z   COMPOSER_NO_AUDIT: 1
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.4939523Z ##[endgroup]
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.5299447Z Starting ssh-agent
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.5458637Z SSH_AUTH_SOCK=/tmp/ssh-KD7129dvXkeD/agent.2817
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.5464820Z SSH_AGENT_PID=2818
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.5465615Z Adding private key(s) to agent
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.5670375Z Identity added: (stdin) (***@s8255.sgp1.stableserver.net)
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.5671347Z Key(s) added:
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.5708297Z 4096 SHA256:aCjj/zMahZ7WCxC8k4bMoDdiNOJbpROqopJ9DbVP7pU ***@s8255.sgp1.stableserver.net (RSA)
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.5712590Z Configuring deployment key(s)
+deploy-backend	Start SSH agent	2026-03-17T07:51:20.5775003Z Comment for (public) key 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDRyY9WD+jUu9YNs3f2LFssN6jvt6jprTVMqb8NEX5+2JnZwo3QKZDt2pkFuaSzcxiZ4E1DEcf9qkS9NAwaaYwBhoPorXkdxIIeOlWqxCecO5B***u0vnK/0T5g7yNqOR7+SzF0D4GR4UpL+z5brxfmSG9FJTDFSq0G3v4lN4xCETq1PQv0N6fEgio/SdPmc0g+iBpvtSCOaKHU9luvO5rYqHzubyO3u3C/GS3QVeMiB3zk4xgs+PFG0wiNv+GrwecSymoP18fqizZEA9DO1R61m/5P6eLzpoKKLMH2IVF6fqL6567E0JfneGhiXtAhTtSTXneDf3VRLdHriEOMs6jIM9wl2hkzVhc19EdaMMwGZWdQ1+fELwFiTVyWxwZo2mnt4JJkWPf2syFyRbrAF8KIuxledoeoDN8K20q1uY8tjO4LOizBeZtBheYRwjx/cxrEavJRq7RxkxkSrc4Z+r9VXFkiliGnHlGKDKQelzSOpESdQH1toq4ZvnuwHfo71d29/4Xx47OsOe8UK/2sxpfr9xOYYlqXtJck9Y99roFWGcTi/RdZUpbTeazDm6la99zkljbVTOthXWE0rzctZuhOmK6GXgLbiimXdo05JBQws9OZ51ZkFM4GsdWnHIm1oJqcVbidWDE8***gWbYxGXWLfW8Xss9OgVSGIuHKLiLVcKjw== ***@s8255.sgp1.stableserver.net' does not match GitHub URL pattern. Not treating it as a GitHub deploy key.
+deploy-backend	Upload artifact and deploy scripts	﻿2026-03-17T07:51:20.5851063Z ##[group]Run # Added ConnectTimeout to prevent hanging jobs
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5851712Z [36;1m# Added ConnectTimeout to prevent hanging jobs[0m
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5852410Z [36;1mSCP_OPTIONS="-P $SSH_PORT -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15"[0m
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5853201Z [36;1mscp $SCP_OPTIONS build.tar.gz "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/build.tar.gz"[0m
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5854181Z [36;1mscp $SCP_OPTIONS build.tar.gz.sha256 "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/build.tar.gz.sha256"[0m
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5854995Z [36;1mscp $SCP_OPTIONS backend-api/deploy.sh "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/deploy.sh"[0m
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5855820Z [36;1mscp $SCP_OPTIONS backend-api/healthcheck.sh "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/healthcheck.sh"[0m
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5856660Z [36;1mscp $SCP_OPTIONS backend-api/rollback.sh "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/rollback.sh"[0m
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5915591Z shell: /usr/bin/bash -e {0}
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5916348Z env:
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5917296Z   DEPLOY_PATH: ***
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5918228Z   SSH_HOST: ***
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5918882Z   SSH_PORT: ***
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5919562Z   SSH_USER: ***
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5920225Z   COMPOSER_PROCESS_TIMEOUT: 0
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5921038Z   COMPOSER_NO_INTERACTION: 1
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5921797Z   COMPOSER_NO_AUDIT: 1
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5922561Z   SSH_AUTH_SOCK: /tmp/ssh-KD7129dvXkeD/agent.2817
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5923456Z   SSH_AGENT_PID: 2818
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:20.5924107Z ##[endgroup]
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:21.3745912Z Warning: Permanently added '***' (ED25519) to the list of known hosts.
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:52.5477157Z ssh: connect to host *** port ***: Connection timed out
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:52.5486097Z scp: Connection closed
+deploy-backend	Upload artifact and deploy scripts	2026-03-17T07:51:52.5505961Z ##[error]Process completed with exit code 255.
+deploy-backend	Local Workspace Hygiene Cleanup	﻿2026-03-17T07:51:52.5563000Z ##[group]Run echo "Cleaning up heavy local build artifacts to save GitHub Storage..."
+deploy-backend	Local Workspace Hygiene Cleanup	2026-03-17T07:51:52.5563888Z [36;1mecho "Cleaning up heavy local build artifacts to save GitHub Storage..."[0m
+deploy-backend	Local Workspace Hygiene Cleanup	2026-03-17T07:51:52.5564909Z [36;1mrm -f build.tar.gz build.tar.gz.sha256[0m
+deploy-backend	Local Workspace Hygiene Cleanup	2026-03-17T07:51:52.5622423Z shell: /usr/bin/bash -e {0}
+deploy-backend	Local Workspace Hygiene Cleanup	2026-03-17T07:51:52.5622821Z env:
+deploy-backend	Local Workspace Hygiene Cleanup	2026-03-17T07:51:52.5623291Z   DEPLOY_PATH: ***
+deploy-backend	Local Workspace Hygiene Cleanup	2026-03-17T07:51:52.5623662Z   SSH_HOST: ***
+deploy-backend	Local Workspace Hygiene Cleanup	2026-03-17T07:51:52.5624074Z   SSH_PORT: ***
+deploy-backend	Local Workspace Hygiene Cleanup	2026-03-17T07:51:52.5624569Z   SSH_USER: ***
+deploy-backend	Local Workspace Hygiene Cleanup	2026-03-17T07:51:52.5624939Z   COMPOSER_PROCESS_TIMEOUT: 0
+deploy-backend	Local Workspace Hygiene Cleanup	2026-03-17T07:51:52.5625333Z   COMPOSER_NO_INTERACTION: 1
+deploy-backend	Local Workspace Hygiene Cleanup	2026-03-17T07:51:52.5625716Z   COMPOSER_NO_AUDIT: 1
+deploy-backend	Local Workspace Hygiene Cleanup	2026-03-17T07:51:52.5626120Z   SSH_AUTH_SOCK: /tmp/ssh-KD7129dvXkeD/agent.2817
+deploy-backend	Local Workspace Hygiene Cleanup	2026-03-17T07:51:52.5626564Z   SSH_AGENT_PID: 2818
+deploy-backend	Local Workspace Hygiene Cleanup	2026-03-17T07:51:52.5626920Z ##[endgroup]
+deploy-backend	Local Workspace Hygiene Cleanup	2026-03-17T07:51:52.5701093Z Cleaning up heavy local build artifacts to save GitHub Storage...
+deploy-backend	Post Start SSH agent	﻿2026-03-17T07:51:52.5786105Z Post job cleanup.
+deploy-backend	Post Start SSH agent	2026-03-17T07:51:52.6139242Z Stopping SSH agent
+deploy-backend	Post Start SSH agent	2026-03-17T07:51:52.6151248Z The "file" argument must be of type string. Received undefined
+deploy-backend	Post Start SSH agent	2026-03-17T07:51:52.6152719Z Error stopping the SSH agent, proceeding anyway
+deploy-backend	Post Checkout repository	﻿2026-03-17T07:51:52.6277727Z Post job cleanup.
+deploy-backend	Post Checkout repository	2026-03-17T07:51:52.7265693Z [command]/usr/bin/git version
+deploy-backend	Post Checkout repository	2026-03-17T07:51:52.7310390Z git version 2.53.0
+deploy-backend	Post Checkout repository	2026-03-17T07:51:52.7360797Z Temporarily overriding HOME='/home/runner/work/_temp/afa1793d-b6ac-4ed2-b0cd-12f5867323f4' before making global git config changes
+deploy-backend	Post Checkout repository	2026-03-17T07:51:52.7363287Z Adding repository directory to the temporary git global config as a safe directory
+deploy-backend	Post Checkout repository	2026-03-17T07:51:52.7369212Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/TCT--Hybrid--Monorepo/TCT--Hybrid--Monorepo
+deploy-backend	Post Checkout repository	2026-03-17T07:51:52.7422126Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+deploy-backend	Post Checkout repository	2026-03-17T07:51:52.7462399Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+deploy-backend	Post Checkout repository	2026-03-17T07:51:52.7842622Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+deploy-backend	Post Checkout repository	2026-03-17T07:51:52.7888800Z http.https://github.com/.extraheader
+deploy-backend	Post Checkout repository	2026-03-17T07:51:52.7911909Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+deploy-backend	Post Checkout repository	2026-03-17T07:51:52.7968532Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+deploy-backend	Post Checkout repository	2026-03-17T07:51:52.8376826Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+deploy-backend	Post Checkout repository	2026-03-17T07:51:52.8443718Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+deploy-backend	Complete job	﻿2026-03-17T07:51:52.9024327Z Cleaning up orphan processes
+deploy-backend	Complete job	2026-03-17T07:51:52.9325716Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v4, actions/setup-node@v4, webfactory/ssh-agent@v0.9.0. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

@@ -60,14 +60,10 @@
         *Rekomendasi Reguler:* Otomasi daftarkan Meta rentang IP Github Actions ke file `csf.allow` (`/etc/csf/csf.allow`).
         *Opsi Pengganti Buntut:* Batalkan Push Deploy, ubah ke Arsitektur Pull Deploy (*WebHook script* pemicu dari dalam).
 - re-test checklist & success criteria:
-  - [x] Admin VPS mengkonfirmasi mitigasi mod_security/firewall telah aktif sepenuhnya. (ASUMSI DIBATALKAN KARENA GAGAL)
-  - [x] Pemanggilan *Re-run* pada *Deploy Job* `backend-cpanel-deploy.yml` dari panel GitHub Actions ditekankan manual.
-  - [ ] **Evidence 1:** Mata rantai langkah `Upload artifact and deploy scripts` melepaskan jebakan *timeout*, log `scp` mengalir lancar ke server.
-  - [ ] **Evidence 2:** Eksekusi `ssh` remote bash script menggapai baris final: `Deployment completed successfully`.
-  - **HASIL TERBARU (2026-03-17):** Log terbaru menunjukkan `Preflight TCP Reachability Check` **BERHASIL** (`Network reachable.`), namun gagal seketika di langkah berikutnya pada eksekusi `scp` (`ssh: connect to host *** port ***: Connection timed out`).
-- akar masalah sebenarnya: Koneksi TCP dari Github Actions ke peladen secara fundamental tembus. Kegagalan *timeout* sesaat setelahnya kuat mengindikasikan fitur firewall dinamis LFD (Login Failure Daemon) cPanel salah mendiagnosis `Preflight TCP Reachability Check` (yang membuat koneksi TCP kosong/buntung) sebagai *port-scanning* atau tindakan berbahaya (*abuse*), yang memicu sanksi IP-blocking detik itu juga, mencekik alur *scp* dan bash script setelahnya.
-- action taken: Job `Preflight TCP Reachability Check` dihapus dari berkas `backend-cpanel-deploy.yml` secara permanen untuk memblokir pemicu rate-limit.
-- status: **READY FOR RE-RUN**
+  - **HASIL TERBARU (2026-03-17 Re-run):** Workflow dieksekusi ulang tanpa *Preflight TCP probe*. Ternyata eksekusi log terbaru (Run #23188599919) kembali mogok mutlak di `Upload artifact and deploy scripts` via `scp` (`ssh: connect to host *** port ***: Connection timed out`).
+- akar masalah final: Firewall IP/TCP cPanel (CSF/LFD) menolak secara statis terhadap IP luar tanpa VPN (termasuk GitHub Runner IP ranges). Ini berarti pemblokiran adalah prosedur keamanan *default*, bukan *rate-limit* aktif.
+- transisi arsitektur (2026-03-17): Repositori beralih ke arsitektur **Pull-Based Deployment** termutakhir (Hardened). Memisahkan file PHP *webhook* rahasia murni di luar repositori (atau bernama *hash unguessable*), mencegah eksploitasi URL, menggunakan metode log asinkron minimal (tanpa *echo* bash), *git reset --hard* (mencegah *stash conflict*), serta strategi *cache* konservatif (menghindari `route:cache` tahap awal).
+- status: **READY FOR PATCH (Pull Deploy Redesign)**
 
 - context: Akses publik `www.thechoosentalks.org` mengalami `ERR_CERT_COMMON_NAME_INVALID`. Error ini murni konfigurasi rilis eksternal. Repo code tidak membutuhkan *patch* atau perbaikan. Titik masalah terisolasi pada sisi DNS, CDN Binding, atau SAN TLS.
 - exact checks by layer:

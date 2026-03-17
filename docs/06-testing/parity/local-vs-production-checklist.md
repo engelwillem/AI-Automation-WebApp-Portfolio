@@ -183,9 +183,10 @@ Dokumen ini adalah checklist release gate, bukan catatan opini.
 - Local: CSR & Next.js proxying API tervalidasi `npm run dev`.
 - Production: Deployment #21 via GitHub Actions `backend-cpanel-deploy.yml` secara inheren dilarang (TCP Drop) akibat mitigasi proaktif pada *runner*. Status repositori sudah mendapat perlindungan kebersihan memori (`concurrency` mitigasi ganda/tabrakan deploy & pembatalan gantung). 
 - Action Plan cPanel: Eksekusi *Server Validation Checklist* (Buka Blokade CSF Port 22/2121 via VPN / Whitelist) agar IP Github *runner* sah menembus tembok api.
-- Re-Test Deploy: GAGAL. Berdasarkan log terbaru (2026-03-17), `Preflight TCP Reachability Check` lolos (`Network reachable.`), tetapi eksekusi `scp` terdekat ditendang mati seketika (`ssh: connect to host *** port ***: Connection timed out`). Hal ini mengonfirmasi blokade perlindungan akibat "Port Scan" palsu yang dilakukan *preflight* tadi.
-- Action Taken (2026-03-17): Rantai komando TCP raw *Preflight* dicabut dan dibuang seluruhnya dari `backend-cpanel-deploy.yml` untuk mencegah trigger ban LFD cPanel saat *workflow* merapat secara sah ke peladen SSH.
-- Status: READY FOR RE-RUN
+- Re-Test Deploy (2026-03-17): GAGAL. Menghapus job *Preflight TCP Reachability Check* dari berkas `backend-cpanel-deploy.yml` ternyata **tidak memecahkan masalah**. Eksekusi log terbaru masih mogok persis pada langkah `scp` di urutan `Upload artifact and deploy scripts` (`ssh: connect to host *** port ***: Connection timed out`).
+- Kesimpulan Lanjutan: Penolakan TCP *timeout* murni berasal dari aturan tembok api *cPanel (CSF/mod_security)* blokir IP default, BUKAN akibat sekadar *false positive rate-limit port scan*. Server secara absolut tidak mengizinkan satupun *IP range* Github Runner untuk melakukan koneksi SSH ke nomor IP/Port tersebut.
+- Action Plan cPanel: Mempertahankan arsitektur *Push Deploy* memaksakan admin VPS memelihara *whitelist* IP Github Action yang terus berubah secara konstan. Disarankan beralih ke arsitektur **Pull-Based Deploy** yang di-*harden* secara keamanan: Endpoint *webhook* dienkripsi dengan *unguessable hash path* (`deploy-[hash].php`), metode respons minimal, tidak ada `git stash` acak (harus `reset --hard`), serta secret token murni lokal tanpa ada di *repository*.
+- Status: READY FOR PATCH
 
 ---
 
