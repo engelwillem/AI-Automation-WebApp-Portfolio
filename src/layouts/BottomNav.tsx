@@ -34,7 +34,7 @@ type NavVisualPreset = {
 const NAV_PRESETS: Record<'ultra-subtle' | 'high-contrast', NavVisualPreset> = {
     'ultra-subtle': {
         shell:
-            'border-white/40 bg-white/70 dark:bg-black/40 shadow-[0_24px_48px_-26px_rgba(2,6,23,0.3),0_10px_24px_-16px_rgba(2,6,23,0.15)]',
+            'border-white/40 bg-white/70 shadow-[0_24px_48px_-26px_rgba(2,6,23,0.3),0_10px_24px_-16px_rgba(2,6,23,0.15)]',
         shellInnerStroke: 'border-white/70',
         activePill:
             'bg-[linear-gradient(180deg,rgba(255,255,255,0.96)_0%,rgba(248,250,252,0.86)_100%)] ring-1 ring-black/[0.08] shadow-[0_14px_22px_-14px_rgba(2,6,23,0.72),inset_0_1px_0_rgba(255,255,255,0.94)]',

@@ -16,7 +16,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const isAuthenticated = Boolean(user);
   const navItems = getUiNavItems(isAuthenticated);
 
-  const activeNavId = navItems.find(item => pathname.startsWith(item.href))?.id || 'home';
+  const activeNavId = navItems.find(item => pathname.startsWith(item.href))?.id || 'today';
 
   const [mounted, setMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -55,11 +55,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground touch-pan-y">
-      {/* Ambient Background Layers (100% legacy parity from app.blade.php) */}
-      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-mesh">
-        <div className="absolute -right-[5%] top-[10%] h-[50%] w-[50%] rounded-full bg-brand/5 blur-[100px]" />
-        <div className="absolute bottom-[10%] left-[20%] h-[40%] w-[40%] rounded-full bg-amber-500/5 blur-[110px]" />
-      </div>
+
 
       <div
         className={cn(

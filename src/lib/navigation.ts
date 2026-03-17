@@ -1,7 +1,7 @@
-import { BookOpenText, Grid2x2, House, Settings, Users } from 'lucide-react';
+import { BookOpenText, House, Settings, Users, Route } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
-export type UiNavId = 'home' | 'channels' | 'community' | 'bible' | 'profile';
+export type UiNavId = 'today' | 'versehub' | 'paths' | 'community' | 'profile';
 
 export type UiNavItem = {
     id: UiNavId;
@@ -11,10 +11,10 @@ export type UiNavItem = {
 };
 
 export const uiNavItems: UiNavItem[] = [
-    { id: 'home', label: 'Home', icon: House, href: '/today' },
-    { id: 'channels', label: 'Channels', icon: Grid2x2, href: '/channels' },
+    { id: 'today', label: 'Today', icon: House, href: '/today' },
+    { id: 'versehub', label: 'VerseHub', icon: BookOpenText, href: '/versehub' },
+    { id: 'paths', label: 'Paths', icon: Route, href: '/paths' },
     { id: 'community', label: 'Community', icon: Users, href: '/community' },
-    { id: 'bible', label: 'Bible', icon: BookOpenText, href: '/versehub/id' },
     { id: 'profile', label: 'Profile', icon: Settings, href: '/profile' },
 ];
 

@@ -24,10 +24,10 @@ const APP_NAME = 'TheChosenTalks';
 const TAGLINE = 'The Chosen People';
 const DEFAULT_TITLE = `${APP_NAME} - ${TAGLINE}`;
 const DEFAULT_DESCRIPTION = 'Komunitas web app untuk Chosen People: ayat harian, komunitas iman, dan perjalanan rohani bertumbuh bersama.';
-const DEFAULT_OG_IMAGE = 'https://thechoosentalks.com/og/versehub-bg.png';
+const DEFAULT_OG_IMAGE = 'https://www.thechoosentalks.org/og/versehub-bg.png';
 
 export const viewport: Viewport = {
-  themeColor: '#0f172a',
+  themeColor: '#f8fafc',
   width: 'device-width',
   initialScale: 1,
 };
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     template: `%s — ${APP_NAME}`,
   },
   description: DEFAULT_DESCRIPTION,
-  metadataBase: new URL('https://thechoosentalks.com'),
+  metadataBase: new URL('https://www.thechoosentalks.org'),
   alternates: {
     canonical: '/',
   },

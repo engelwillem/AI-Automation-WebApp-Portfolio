@@ -88,7 +88,7 @@ export default function MobileAppLayout({
                                 initial={false}
                                 animate={{ y: isVisible ? 0 : -100, opacity: isVisible ? 1 : 0 }}
                                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                                className="sticky top-0 z-40 bg-surface-muted/80 backdrop-blur-sm md:static md:bg-transparent md:backdrop-blur-none"
+                                className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl md:static md:bg-transparent md:backdrop-blur-none"
                             >
                                 {header}
                             </motion.div>
@@ -97,7 +97,7 @@ export default function MobileAppLayout({
                                 initial={false}
                                 animate={{ y: isVisible ? 0 : -80, opacity: isVisible ? 1 : 0 }}
                                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                                className="sticky top-0 z-40 flex items-center justify-between bg-surface-muted/80 py-2 backdrop-blur-sm md:static md:bg-transparent md:backdrop-blur-none"
+                                className="sticky top-0 z-40 flex items-center justify-between bg-background/80 py-2 backdrop-blur-xl md:static md:bg-transparent md:backdrop-blur-none"
                             >
                                 <button
                                     type="button"

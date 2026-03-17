@@ -15,9 +15,10 @@ Dua track utama masih berlaku:
 
 ## What Is Active Now
 - **Track 3: Frontend Visual Reset & Application Shell Redesign** (In Progress)
-- `Dawn Theme` semantic styling for primary active screens (`/today`, `/versehub`, `/community`, `/paths`).
-- Eradicating legacy layout fragments to enforce a pure, light, non-fragmented design architecture.
-- Continuing resolving parity action items strictly isolated around EdgeOne and cPanel external configs.
+- [x] Lock Navigation Model & UI Architecture Docs.
+- [x] Build `Dawn Theme` semantic styling base in `globals.css` and `AppShell.tsx`.
+- [ ] Next: Implement Dawn theme explicitly on individual core screens (Today, VerseHub, Community).
+- Continued resolving parity action items strictly isolated around EdgeOne and cPanel external configs.
 
 ## Current Priority
 1. Rapikan dan samakan sumber kebenaran dokumentasi agar status lokal yang sudah selesai tidak tetap tercatat sebagai blocker.

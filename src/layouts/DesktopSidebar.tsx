@@ -35,7 +35,7 @@ export default function DesktopSidebarNav({
     communityName = 'Chosen People',
     className,
 }: DesktopSidebarNavProps) {
-    const isTodaySidebar = activeId === 'home';
+    const isTodaySidebar = activeId === 'today';
 
     return (
         <aside
@@ -65,10 +65,10 @@ export default function DesktopSidebarNav({
                     const isActive = item.id === activeId;
                     
                     const routeMap: Record<string, string> = {
-                        home: '/today',
-                        channels: '/channels',
+                        today: '/today',
+                        versehub: '/versehub',
+                        paths: '/paths',
                         community: '/community',
-                        bible: '/versehub/id',
                         profile: '/profile',
                     };
                     const href = item.href || routeMap[item.id] || '/';
@@ -76,7 +76,7 @@ export default function DesktopSidebarNav({
                     const baseClass = cn(
                         'group flex items-center gap-3 rounded-full px-4 py-3 text-sm font-medium transition-all duration-200',
                         isActive
-                            ? 'bg-surface/70 text-foreground ring-1 ring-black/5 dark:ring-white/10'
+                            ? 'bg-surface/70 text-foreground ring-1 ring-black/5'
                             : 'text-muted-foreground hover:bg-surface-muted hover:text-foreground',
                     );
 
