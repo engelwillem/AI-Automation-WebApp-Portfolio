@@ -206,7 +206,11 @@ export function VersehubReaderPage({ lang: initialLang, mode = 'landing', initia
 
     useEffect(() => {
         if (mode !== 'landing') return;
-        const rawRef = searchParams.get('ref');
+        const fromHook = searchParams.get('ref');
+        const fromWindow = typeof window !== 'undefined'
+            ? new URLSearchParams(window.location.search).get('ref')
+            : null;
+        const rawRef = fromHook || fromWindow;
         if (!rawRef) return;
 
         const normalized = rawRef.trim().toLowerCase();
