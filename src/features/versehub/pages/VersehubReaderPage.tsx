@@ -12,10 +12,6 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
-// Layout & UI Components
-import DesktopSidebarNav from '@/components/core/DesktopSidebarNav';
-import FloatingBottomNav from '@/components/core/FloatingBottomNav';
-
 // UI Primitives
 import { Badge } from '@/components/ui/badge';
 
@@ -24,7 +20,6 @@ import MentorPanel from '@/components/versehub/MentorPanel';
 import EndOfChapterPrompt from '@/components/versehub/EndOfChapterPrompt';
 import SharePanel from '@/components/versehub/SharePanel';
 import { getAppAccessToken } from '@/services/app-auth-token';
-import { getUiNavItems } from '@/lib/navigation';
 
 interface Verse {
     key: string;
@@ -370,7 +365,6 @@ export function VersehubReaderPage({ lang: initialLang, mode = 'landing', initia
         router.push(toVersehubRefHref(`${bookCode}-${chapter}`));
     };
 
-    const navItems = getUiNavItems(isAuthenticated);
     const selectedVerse = useMemo(() => verses.find(v => v.key === activeVerseKey), [verses, activeVerseKey]);
     
     const fallback_reflection_question = 'Bagaimana ayat-ayat ini menguatkan imanmu hari ini?';
@@ -407,93 +401,85 @@ export function VersehubReaderPage({ lang: initialLang, mode = 'landing', initia
             "min-h-screen transition-colors duration-500",
             readingMode === 'dark' ? "bg-background text-foreground" : "bg-background text-foreground"
         )}>
-            <div className="mx-auto w-full max-w-6xl px-4 py-4 md:py-6">
-                <div className="flex w-full">
-                    {/* Desktop Navigation */}
-                    <div className="hidden md:block w-72">
-                        <DesktopSidebarNav activeId="bible" />
+            <div className="mx-auto w-full max-w-3xl py-2 md:py-4">
+                <div className={cn(
+                    "sticky top-0 z-30 border-b backdrop-blur-xl transition-all",
+                    readingMode === 'dark' ? "border-border/50 bg-background/80" : "border-border/50 bg-background/80"
+                )}>
+                    <div className="flex items-center justify-between px-4 py-3.5">
+                        <button onClick={() => router.back()} className="h-10 w-10 flex items-center justify-center rounded-full bg-surface-muted border border-border/50 hover:bg-surface-elevated active:scale-90 transition-all text-muted-foreground">
+                            <ChevronLeft className="h-5 w-5" />
+                        </button>
+                        <h1 className="tct-brand-gradient text-xl font-bold tracking-tight">
+                            {chapter_label || (isId ? 'Alkitab' : 'Bible')}
+                        </h1>
+                        <button onClick={() => setPickerOpen(true)} className="flex items-center gap-2 rounded-2xl px-4 py-2 text-[10px] font-bold border border-border/50 bg-surface-muted hover:bg-surface-elevated transition-all text-foreground shadow-sm">
+                            <BookOpenText className="h-3.5 w-3.5 text-brand" />
+                            {isId ? 'Pilih Kitab' : 'Choose Book'}
+                        </button>
                     </div>
-
-                    {/* Main Content */}
-                    <div className="w-full md:flex-1 md:ml-8">
-                        <div className={cn(
-                            "sticky top-0 z-30 border-b backdrop-blur-xl transition-all",
-                            readingMode === 'dark' ? "border-border/50 bg-background/80" : "border-border/50 bg-background/80"
-                        )}>
-                            <div className="flex items-center justify-between px-4 py-3.5">
-                                <button onClick={() => router.back()} className="h-10 w-10 flex items-center justify-center rounded-full bg-surface-muted border border-border/50 hover:bg-surface-elevated active:scale-90 transition-all text-muted-foreground">
-                                    <ChevronLeft className="h-5 w-5" />
-                                </button>
-                                <h1 className="tct-brand-gradient text-xl font-bold tracking-tight">
-                                    {chapter_label || (isId ? 'Alkitab' : 'Bible')}
-                                </h1>
-                                <button onClick={() => setPickerOpen(true)} className="flex items-center gap-2 rounded-2xl px-4 py-2 text-[10px] font-bold border border-border/50 bg-surface-muted hover:bg-surface-elevated transition-all text-foreground shadow-sm">
-                                    <BookOpenText className="h-3.5 w-3.5 text-brand" />
-                                    {isId ? 'Pilih Kitab' : 'Choose Book'}
-                                </button>
+                    
+                    {isChapter && (
+                        <div className="px-4 pb-2 flex items-center gap-2">
+                            <div className="h-1 flex-1 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                                <div 
+                                    className="h-full bg-brand transition-all duration-300" 
+                                    style={{ width: `${scrollProgressPercent}%` }} 
+                                />
                             </div>
-                            
-                            {isChapter && (
-                                <div className="px-4 pb-2 flex items-center gap-2">
-                                    <div className="h-1 flex-1 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                                        <div 
-                                            className="h-full bg-brand transition-all duration-300" 
-                                            style={{ width: `${scrollProgressPercent}%` }} 
-                                        />
-                                    </div>
-                                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest whitespace-nowrap">
-                                        Verse {progressVerse} of {progressTotal}
-                                    </span>
-                                </div>
-                            )}
+                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest whitespace-nowrap">
+                                Verse {progressVerse} of {progressTotal}
+                            </span>
                         </div>
+                    )}
+                </div>
 
-                        <main className="mx-auto max-w-3xl px-4 py-8">
-                            {error === 'books_fetch_failed' || (error === 'fetch_error' && !isChapter) ? (
-                                <div className="rounded-[2.5rem] bg-rose-500/5 border border-rose-500/10 p-10 text-center">
-                                    <div className="h-16 w-16 rounded-full bg-rose-500/10 flex items-center justify-center mx-auto mb-6 text-rose-500">
-                                        <RefreshCcw size={32} />
-                                    </div>
-                                    <h3 className="text-xl font-bold mb-2">Gagal Memuat Daftar Kitab</h3>
-                                    <p className="text-slate-500 text-sm mb-8">Maaf, terjadi kesalahan saat mengambil data dari server.</p>
-                                    <button 
-                                        onClick={() => { setError(null); fetchBooks(); }}
-                                        className="px-8 py-3 rounded-full bg-foreground text-background font-bold hover:bg-foreground/90 transition-all shadow-sm"
-                                    >
-                                        Coba Lagi
-                                    </button>
+                <main className="mx-auto max-w-3xl px-4 py-8">
+                    {error === 'books_fetch_failed' || (error === 'fetch_error' && !isChapter) ? (
+                        <div className="rounded-[2.5rem] bg-rose-500/5 border border-rose-500/10 p-10 text-center">
+                            <div className="h-16 w-16 rounded-full bg-rose-500/10 flex items-center justify-center mx-auto mb-6 text-rose-500">
+                                <RefreshCcw size={32} />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2">Gagal Memuat Daftar Kitab</h3>
+                            <p className="text-slate-500 text-sm mb-8">Maaf, terjadi kesalahan saat mengambil data dari server.</p>
+                            <button 
+                                onClick={() => { setError(null); fetchBooks(); }}
+                                className="px-8 py-3 rounded-full bg-foreground text-background font-bold hover:bg-foreground/90 transition-all shadow-sm"
+                            >
+                                Coba Lagi
+                            </button>
+                        </div>
+                    ) : !isChapter ? (
+                        <section className="space-y-10">
+                            <div className="px-1 space-y-1">
+                                <p className="text-[11px] font-black uppercase tracking-[0.16em] text-muted-foreground">
+                                    Gerbang VerseHub
+                                </p>
+                                <p className="text-xs leading-relaxed text-muted-foreground">
+                                    Temukan ayat dengan cepat, lalu masuk ke mode baca yang tenang dan fokus.
+                                </p>
+                            </div>
+
+                            {/* Search Anchor */}
+                            <div className="relative group">
+                                <div className="mb-3 flex items-center justify-between">
+                                    <p className="text-[11px] font-black uppercase tracking-[0.14em] text-muted-foreground">
+                                        Cari Cepat
+                                    </p>
+                                    <p className="text-[10px] font-semibold text-muted-foreground/80">
+                                        Contoh: mazmur 23, yoh 3:16
+                                    </p>
                                 </div>
-                            ) : !isChapter ? (
-                                <section className="space-y-10">
-                                    <div className="px-1 space-y-1">
-                                        <p className="text-[11px] font-black uppercase tracking-[0.16em] text-muted-foreground">
-                                            Gerbang VerseHub
-                                        </p>
-                                        <p className="text-xs leading-relaxed text-muted-foreground">
-                                            Temukan ayat dengan cepat, lalu masuk ke mode baca yang tenang dan fokus.
-                                        </p>
-                                    </div>
-
-                                    {/* Search Anchor */}
-                                    <div className="relative group">
-                                        <div className="mb-3 flex items-center justify-between">
-                                            <p className="text-[11px] font-black uppercase tracking-[0.14em] text-muted-foreground">
-                                                Cari Cepat
-                                            </p>
-                                            <p className="text-[10px] font-semibold text-muted-foreground/80">
-                                                Contoh: mazmur 23, yoh 3:16
-                                            </p>
-                                        </div>
-                                        <form onSubmit={handleSearch} className="relative w-full">
-                                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                                            <input 
-                                                value={query}
-                                                onChange={(e) => setQuery(e.target.value)}
-                                                onFocus={() => query.length >= 2 && setSuggestOpen(true)}
-                                                placeholder={isId ? "Cari kitab, pasal, atau ayat..." : "Search book, chapter, verse..."}
-                                                className="h-14 w-full rounded-3xl border border-border bg-white dark:bg-white/5 pl-12 pr-4 text-sm outline-none focus:ring-4 focus:ring-brand/10 transition-all shadow-sm"
-                                            />
-                                        </form>
+                                <form onSubmit={handleSearch} className="relative w-full">
+                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                                    <input 
+                                        value={query}
+                                        onChange={(e) => setQuery(e.target.value)}
+                                        onFocus={() => query.length >= 2 && setSuggestOpen(true)}
+                                        placeholder={isId ? "Cari kitab, pasal, atau ayat..." : "Search book, chapter, verse..."}
+                                        className="h-14 w-full rounded-3xl border border-border bg-white dark:bg-white/5 pl-12 pr-4 text-sm outline-none focus:ring-4 focus:ring-brand/10 transition-all shadow-sm"
+                                    />
+                                </form>
 
                                         {/* Suggestions Dropdown */}
                                         <AnimatePresence>
@@ -601,9 +587,9 @@ export function VersehubReaderPage({ lang: initialLang, mode = 'landing', initia
                                             </button>
                                         </div>
                                     )}
-                                </section>
-                            ) : (
-                                <div className="space-y-8">
+                        </section>
+                    ) : (
+                        <div className="space-y-8">
                                     {error ? (
                                         <div className="rounded-[2.5rem] bg-rose-500/5 border border-rose-500/10 p-10 text-center">
                                             <div className="h-16 w-16 rounded-full bg-rose-500/10 flex items-center justify-center mx-auto mb-6 text-rose-500">
@@ -667,11 +653,9 @@ export function VersehubReaderPage({ lang: initialLang, mode = 'landing', initia
                                             )}
                                         </>
                                     )}
-                                </div>
-                            )}
-                        </main>
-                    </div>
-                </div>
+                        </div>
+                    )}
+                </main>
             </div>
 
             {/* Picker Modal */}
@@ -745,11 +729,6 @@ export function VersehubReaderPage({ lang: initialLang, mode = 'landing', initia
                     </motion.div>
                 )}
             </AnimatePresence>
-
-            {/* Floating Mobile Nav */}
-            <div className="fixed inset-x-0 z-40 flex justify-center md:hidden" style={{ bottom: 'calc(24px + env(safe-area-inset-bottom))' }}>
-                <FloatingBottomNav items={navItems} activeId="bible" />
-            </div>
 
             {/* Verse Action Sheet (Mobile) */}
             <AnimatePresence>
