@@ -558,37 +558,45 @@ export function VersehubReaderPage({ lang: initialLang, mode = 'landing', initia
                                         </div>
                                     </div>
 
-                                    {/* Landing Hero */}
-                                    <div className="rounded-[3rem] p-7 md:p-10 bg-slate-900 border border-white/5 shadow-2xl relative overflow-hidden text-white">
-                                        <div className="absolute top-0 right-0 w-64 h-64 bg-brand/10 rounded-full blur-3xl -mr-32 -mt-32" />
-                                        <div className="relative z-10">
-                                            <Badge className="bg-brand/20 text-brand border-none mb-4">Daily Rhythm</Badge>
-                                            <h2 className="text-3xl font-bold mb-4 tracking-tight">Masuk ke ruang baca firman yang tenang.</h2>
-                                            <p className="text-white/60 mb-8 max-w-lg font-medium leading-relaxed">
-                                                Mulai dari Perjanjian Lama atau Baru, lalu lanjutkan satu pasal demi satu pasal dengan ritme yang lebih hening dan intentional.
+                                    {/* Content Entry — Start Reading (replaces dark hero card) */}
+                                    <div className="space-y-3">
+                                        <div className="flex items-center gap-3 px-1">
+                                            <p className="text-[11px] font-black uppercase tracking-[0.16em] text-muted-foreground">
+                                                Mulai Membaca
                                             </p>
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                <button onClick={() => {setTab('ot'); setPickerOpen(true);}} className="p-6 rounded-3xl bg-white/5 border border-white/5 text-left hover:bg-white/10 transition-all group">
-                                                    <div className="flex items-center justify-between mb-2">
-                                                        <p className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Old Testament</p>
-                                                        <Scroll className="h-4 w-4 text-amber-500/50 group-hover:rotate-12 transition-transform" />
-                                                    </div>
-                                                    <p className="font-bold text-lg">Kejadian 1</p>
-                                                    <p className="mt-1 text-[11px] text-white/60">{otBooksCount} kitab tersedia</p>
-                                                </button>
-                                                <button onClick={() => {setTab('nt'); setPickerOpen(true);}} className="p-6 rounded-3xl bg-white/5 border border-white/5 text-left hover:bg-white/10 transition-all group">
-                                                    <div className="flex items-center justify-between mb-2">
-                                                        <p className="text-[10px] font-bold text-sky-400 uppercase tracking-widest">New Testament</p>
-                                                        <ArrowRightCircle className="h-4 w-4 text-sky-400/50 group-hover:translate-x-1 transition-transform" />
-                                                    </div>
-                                                    <p className="font-bold text-lg">Matius 1</p>
-                                                    <p className="mt-1 text-[11px] text-white/60">{ntBooksCount} kitab tersedia</p>
-                                                </button>
-                                            </div>
-                                            <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs text-white/70">
-                                                Arah cepat untuk pengguna baru: ketuk <span className="font-bold text-white">Pilih Kitab</span>, pilih pasal, lalu ketuk ayat untuk membuka tools refleksi.
-                                            </div>
+                                            <div className="h-px flex-1 bg-border/50" />
                                         </div>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <button
+                                                onClick={() => {setTab('ot'); setPickerOpen(true);}}
+                                                className="group flex items-start gap-4 rounded-[28px] border border-border/60 bg-surface-muted/40 p-6 text-left transition-all hover:bg-surface-muted hover:border-border active:scale-[0.98]"
+                                            >
+                                                <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-amber-500/10">
+                                                    <Scroll className="h-5 w-5 text-amber-600 group-hover:rotate-12 transition-transform" />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-amber-600/80 mb-1">Perjanjian Lama</p>
+                                                    <p className="text-base font-bold text-foreground tracking-tight">Kejadian 1</p>
+                                                    <p className="text-[11px] text-muted-foreground mt-0.5">{otBooksCount > 0 ? `${otBooksCount} kitab tersedia` : 'Mulai dari awal'}</p>
+                                                </div>
+                                            </button>
+                                            <button
+                                                onClick={() => {setTab('nt'); setPickerOpen(true);}}
+                                                className="group flex items-start gap-4 rounded-[28px] border border-border/60 bg-surface-muted/40 p-6 text-left transition-all hover:bg-surface-muted hover:border-border active:scale-[0.98]"
+                                            >
+                                                <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-sky-500/10">
+                                                    <ArrowRightCircle className="h-5 w-5 text-sky-600 group-hover:translate-x-1 transition-transform" />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-sky-600/80 mb-1">Perjanjian Baru</p>
+                                                    <p className="text-base font-bold text-foreground tracking-tight">Matius 1</p>
+                                                    <p className="text-[11px] text-muted-foreground mt-0.5">{ntBooksCount > 0 ? `${ntBooksCount} kitab tersedia` : 'Masuk Injil'}</p>
+                                                </div>
+                                            </button>
+                                        </div>
+                                        <p className="px-1 text-[10px] text-muted-foreground/70 leading-relaxed">
+                                            Tip: Ketuk <span className="font-bold text-foreground/70">Pilih Kitab</span> di atas → pilih pasal → ketuk ayat untuk membuka tools refleksi dan Mentor.
+                                        </p>
                                     </div>
 
                                     {!hasBooks && (
