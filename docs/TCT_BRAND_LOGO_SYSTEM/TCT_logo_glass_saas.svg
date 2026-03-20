@@ -1,0 +1,12 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs>
+<linearGradient id="glass" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#3ecbff"/>
+<stop offset="100%" stop-color="#4f7cff"/>
+</linearGradient>
+</defs>
+<rect width="512" height="512" rx="120" fill="url(#glass)" opacity="0.85"/>
+<text x="256" y="310" font-size="250" text-anchor="middle" fill="white" font-family="Arial">T</text>
+<circle cx="360" cy="340" r="22" fill="white"/>
+</svg>

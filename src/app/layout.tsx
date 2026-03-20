@@ -50,9 +50,13 @@ export const metadata: Metadata = {
     images: [DEFAULT_OG_IMAGE],
   },
   icons: {
-    icon: '/brand/favicon-premium.svg',
-    shortcut: '/brand/favicon-premium.svg',
-    apple: '/brand/favicon-premium.svg',
+    icon: [
+      { url: '/brand/favicon-premium.svg', type: 'image/svg+xml' },
+      { url: '/favicon.png', type: 'image/png', sizes: '32x32' },
+      { url: '/favicon.ico' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/favicon.png',
   },
   other: {
     'app-name': APP_NAME,
