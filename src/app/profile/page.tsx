@@ -56,38 +56,87 @@ type ApiProfilePayload = {
     };
 };
 
-function resolveSafeAvatarUrl(rawUrl: string | null | undefined): string | null {
+const API_BASE_FALLBACK = 'https://api.thechoosentalks.org';
+const WEB_BASE_FALLBACK = 'https://www.thechoosentalks.org';
+
+function resolveBaseUrl(
+    raw: string | undefined,
+    fallback: string,
+): string {
+    const value = String(raw || '').trim();
+    if (!value) return fallback;
+    try {
+        return new URL(value).origin;
+    } catch {
+        return fallback;
+    }
+}
+
+function dedupeCandidates(values: Array<string | null | undefined>): string[] {
+    const seen = new Set<string>();
+    const result: string[] = [];
+    for (const raw of values) {
+        const value = String(raw || '').trim();
+        if (!value || seen.has(value)) continue;
+        seen.add(value);
+        result.push(value);
+    }
+    return result;
+}
+
+function buildAvatarCandidates(rawUrl: string | null | undefined): string[] {
     const candidate = String(rawUrl || '').trim();
-    if (!candidate) return null;
+    if (!candidate) return [];
 
     if (candidate.startsWith('data:image/')) {
-        return candidate;
+        return [candidate];
     }
 
+    const apiBase = resolveBaseUrl(
+        process.env.NEXT_PUBLIC_LARAVEL_API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL,
+        API_BASE_FALLBACK,
+    );
+    const webBase = resolveBaseUrl(process.env.NEXT_PUBLIC_APP_URL, WEB_BASE_FALLBACK);
+
     try {
-        return new URL(candidate).toString();
-    } catch {
-        const apiBase =
-            process.env.NEXT_PUBLIC_LARAVEL_API_BASE_URL ||
-            process.env.NEXT_PUBLIC_API_BASE_URL ||
-            'https://api.thechoosentalks.org';
-        if (candidate.startsWith('/')) {
-            if (!apiBase) return candidate;
-            try {
-                return new URL(candidate, apiBase).toString();
-            } catch {
-                return candidate;
-            }
+        const url = new URL(candidate);
+        const path = `${url.pathname}${url.search}${url.hash}`;
+        if (!url.pathname.startsWith('/storage/')) {
+            return [url.toString()];
         }
-        if (apiBase) {
+        return dedupeCandidates([
+            url.toString(),
+            new URL(path, apiBase).toString(),
+            new URL(path, webBase).toString(),
+        ]);
+    } catch {
+        const path = candidate.startsWith('/') ? candidate : `/${candidate.replace(/^\/+/, '')}`;
+        const withApi = (() => {
             try {
-                return new URL(`/${candidate.replace(/^\/+/, '')}`, apiBase).toString();
+                return new URL(path, apiBase).toString();
             } catch {
                 return null;
             }
-        }
-        return null;
+        })();
+        const withWeb = (() => {
+            try {
+                return new URL(path, webBase).toString();
+            } catch {
+                return null;
+            }
+        })();
+        return dedupeCandidates([withApi, withWeb, path]);
     }
+}
+
+function getInitials(rawName: string): string {
+    const parts = String(rawName || '')
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+    if (parts.length === 0) return 'U';
+    if (parts.length === 1) return parts[0].slice(0, 1).toUpperCase();
+    return `${parts[0].slice(0, 1)}${parts[1].slice(0, 1)}`.toUpperCase();
 }
 
 export default function ProfilePage() {
@@ -105,6 +154,7 @@ export default function ProfilePage() {
         name: authUser?.displayName || 'Guest User',
         email: authUser?.email || 'guest@example.com',
         avatarUrl: null as string | null,
+        avatarCandidates: [] as string[],
         is_admin: false,
         email_verified_at: authUser?.emailVerified ? 'verified' : null,
     });
@@ -152,9 +202,13 @@ export default function ProfilePage() {
     };
 
     useEffect(() => {
-        const authAvatar = resolveSafeAvatarUrl(authUser?.photoURL || null);
-        if (authAvatar) {
-            setUser((prev) => ({ ...prev, avatarUrl: prev.avatarUrl || authAvatar }));
+        const authAvatarCandidates = buildAvatarCandidates(authUser?.photoURL || null);
+        if (authAvatarCandidates.length > 0) {
+            setUser((prev) => ({
+                ...prev,
+                avatarCandidates: prev.avatarCandidates.length > 0 ? prev.avatarCandidates : authAvatarCandidates,
+                avatarUrl: prev.avatarUrl || authAvatarCandidates[0] || null,
+            }));
         }
 
         const token = getAppAccessToken();
@@ -179,13 +233,14 @@ export default function ProfilePage() {
                 const payload = (await response.json()) as ApiProfilePayload;
                 const apiUser = payload?.data?.user;
                 if (!isActive || !apiUser) return;
-                const safeAvatarUrl = resolveSafeAvatarUrl(apiUser.avatar_url || authUser?.photoURL || null);
+                const avatarCandidates = buildAvatarCandidates(apiUser.avatar_url || authUser?.photoURL || null);
                 if (!isActive) return;
 
                 const nextUser = {
                     name: apiUser.name || 'Guest User',
                     email: apiUser.email || 'guest@example.com',
-                    avatarUrl: safeAvatarUrl,
+                    avatarUrl: avatarCandidates[0] || null,
+                    avatarCandidates,
                     is_admin: Boolean(apiUser.is_admin),
                     email_verified_at: apiUser.email_verified_at || null,
                 };
@@ -282,8 +337,8 @@ export default function ProfilePage() {
 
             if (response.ok) {
                 if (payload?.data?.avatar_url) {
-                    const safeAvatarUrl = resolveSafeAvatarUrl(payload.data.avatar_url);
-                    setUser(prev => ({ ...prev, avatarUrl: safeAvatarUrl }));
+                    const avatarCandidates = buildAvatarCandidates(payload.data.avatar_url);
+                    setUser(prev => ({ ...prev, avatarUrl: avatarCandidates[0] || null, avatarCandidates }));
                     showToast('Foto profil diperbarui');
                 }
             } else {
@@ -332,8 +387,16 @@ export default function ProfilePage() {
             }
 
             const payload = await response.json();
+            const nextAvatarCandidates = buildAvatarCandidates(payload?.data?.avatar_url || user.avatarUrl);
             showToast('Profil berhasil disimpan');
-            setUser(prev => ({ ...prev, ...payload.data }));
+            setUser(prev => ({
+                ...prev,
+                name: payload?.data?.name ?? prev.name,
+                email: payload?.data?.email ?? prev.email,
+                email_verified_at: payload?.data?.email_verified_at ?? prev.email_verified_at,
+                avatarUrl: nextAvatarCandidates[0] || prev.avatarUrl,
+                avatarCandidates: nextAvatarCandidates.length > 0 ? nextAvatarCandidates : prev.avatarCandidates,
+            }));
         } catch {
             showToast('Terjadi gangguan sistem', 'error');
         } finally {
@@ -581,8 +644,8 @@ export default function ProfilePage() {
                     
                     <div className="relative z-10 flex flex-col items-center text-center">
                         <div className="relative">
-                            <div className="absolute -inset-2 rounded-full bg-brand/20 opacity-20 blur-xl animate-pulse" />
-                            <div className="relative h-28 w-28 rounded-[2rem] bg-surface-muted flex items-center justify-center overflow-hidden ring-4 ring-border/50 shadow-soft">
+                            <div className="absolute -inset-3 rounded-[2.2rem] bg-gradient-to-br from-brand/25 via-cyan-300/20 to-transparent opacity-50 blur-xl" />
+                            <div className="relative h-[7.5rem] w-[7.5rem] rounded-[2.2rem] bg-surface-muted flex items-center justify-center overflow-hidden ring-1 ring-white/60 shadow-premium border border-border/60">
                                 {submittingAvatar && (
                                     <div className="absolute inset-0 bg-background/60 backdrop-blur-sm flex items-center justify-center z-20">
                                         <Loader2 className="h-6 w-6 text-brand animate-spin" />
@@ -593,17 +656,31 @@ export default function ProfilePage() {
                                         src={user.avatarUrl}
                                         alt={user.name}
                                         className="h-full w-full object-cover"
-                                        onError={() => setUser(prev => ({ ...prev, avatarUrl: null }))}
+                                        onError={() =>
+                                            setUser((prev) => {
+                                                const [, ...rest] = prev.avatarCandidates;
+                                                return {
+                                                    ...prev,
+                                                    avatarCandidates: rest,
+                                                    avatarUrl: rest[0] || null,
+                                                };
+                                            })
+                                        }
                                     />
                                 ) : (
-                                    <span className="text-4xl font-black text-brand tracking-tighter">
-                                        {user.name.slice(0, 1).toUpperCase()}
-                                    </span>
+                                    <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-surface to-surface-elevated">
+                                        <span className="text-3xl font-black text-brand tracking-tight">
+                                            {getInitials(user.name)}
+                                        </span>
+                                        <span className="mt-1 text-[9px] font-black uppercase tracking-[0.22em] text-muted-foreground/80">
+                                            TCT
+                                        </span>
+                                    </div>
                                 )}
                             </div>
                             <button 
                                 onClick={() => avatarInputRef.current?.click()}
-                                className="absolute bottom-0 right-0 h-10 w-10 rounded-full bg-brand text-brand-foreground flex items-center justify-center shadow-lg transform transition-all hover:scale-110 active:scale-90"
+                                className="absolute -bottom-1 -right-1 h-11 w-11 rounded-full bg-brand text-brand-foreground flex items-center justify-center shadow-lg ring-4 ring-background transform transition-all hover:scale-105 active:scale-90"
                             >
                                 <Camera className="h-4 w-4" />
                             </button>
