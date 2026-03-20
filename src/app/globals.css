@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "DM Serif Display", serif;
+  --font-sans: "Inter", "Plus Jakarta Sans", "Segoe UI", "Helvetica Neue", Arial, ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "DM Serif Display", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
 
   --color-background: hsl(210 20% 98%);
   --color-foreground: hsl(215 25% 15%);
@@ -92,7 +92,7 @@
     --chip-foreground: 215 25% 15%;
     --outline-soft: 214 32% 91%;
     --nav-glass: 0 0% 100% / 0.7;
-    --font-serif: "DM Serif Display", serif;
+    --font-serif: "DM Serif Display", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
   }
 
 }

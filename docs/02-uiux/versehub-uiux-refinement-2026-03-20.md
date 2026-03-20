@@ -53,14 +53,15 @@
 
 - **Post to Today:** Tombol ini sudah ada di UI Journey tetapi belum dikoneksikan ke backend (Logic Post-to-Feed).
 - **Edit Note:** Masih berupa placeholder UI; membutuhkan integrasi API PUT/PATCH.
-- **Live Data:** Sinkronisasi penuh dengan Laravel API masih dalam status PARTIAL (beberapa field masih fallback ke mock jika API tidak merespons atau token expired).
+- **Live Data:** Sinkronisasi penuh dengan Laravel API sudah aktif. Data yang ditampilkan adalah profil aktivitas riil dari backend.
+- **Reflection Detail Emulation:** Menunggu API dedicated untuk deep-link detail.
 
 ## 7. Final UX Status per Surface
 
 | Surface | Status | Catatan |
 | :--- | :---: | :--- |
-| **Reflections Listing** | **PARTIAL** | UI sudah live & premium, data terintegrasi API (dengan fallback mock). |
-| **Reflection Detail** | **PARTIAL** | Logika navigasi & UI detail sudah FIXED, konten dinamis mengikuti ID/Slug. |
-| **My Spiritual Journey** | **PARTIAL** | UI Dashboard & Feed sudah premium, beberapa action (Edit/Post) masih MOCK. |
+| **Reflections Journal** | **LIVE** | UI premium + Integrasi data nyata `/reflections`. |
+| **Reflection Detail** | **PARTIAL** | UI detail live, resolusi data dari list koleksi. |
+| **My Spiritual Journey** | **LIVE** | UI Dashboard + Integrasi data nyata `/summary`. |
 
-**Status Akhir: PASS (UI/UX Refined & Reality-Synced)**
+**Status Akhir: PASS (UI/UX Refined & Data Live)**

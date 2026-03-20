@@ -1,18 +1,8 @@
 # Active & Resolved Blockers
 
-## 1. Frontend Monorepo Checks Failing (Fix Identification/VERIFYING)
-**Status:** VERIFYING (Fix pending CI pass)  
-**Type:** CI/Build Pipeline Blocker  
-**Owner:** frontend/Codex + Verification Analyst
-
-### Why it is still open
-Akar masalah (`lucide-center` typo) telah dikonfirmasi dan diperbaiki. Kami saat ini menunggu hasil build otomatis dari GitHub Actions untuk memastikan tidak ada regresi tambahan sebelum secara resmi menutup blocker ini.
-
-### Impact
-Rilis update frontend terbaru, termasuk pengerjaan visual parity dan perbaikan UI/UX pada modul Community dan Profile, tidak bisa dilanjutkan secara otomatis ke production (Tencent Edge). (Patch Profile & VerseHub sudah siap "mengantre" di branch).
-
-### Path to Resolution
-Codex sedang melacak output `lint` dan `build` untuk memperbaiki *type errors*, *missing imports*, atau *syntax errors*. Setelah diperbaiki, verifikasi harus berurut: `lint` -> `typecheck` -> `build`.
+## RESOLVED BLOCKERS (2026-03-20 - Build Stability)
+- [x] **Frontend Monorepo Checks (Source-level)**: **FIXED**. Akar masalah Google Fonts dependency (`next/font/google`) telah diputus dan diganti dengan system font fallback. local `npm run build` PASS.
+- [ ] **Production Deployment Rerun**: **DRIFT** (Not yet revalidated). Menunggu pemicuan ulang otomatis dari GitHub Actions untuk memvalidasi build di environment Tencent Edge.
 
 ---
 
@@ -64,24 +54,23 @@ Issue profile readability (kontras teks) dan avatar resolution (URL storage) tel
 - [x] **Webhook Strategy Alignment**: Keputusan teknis pemicu asinkron sudah diambil; implementasi webhook tidak lagi menghambat rilis harian (karena manual deploy sudah stabil).
 - [x] **Admin Login Recovery (Filament Production)**: `https://admin.thechoosentalks.org/admintalk/login` sudah pulih; blocker `Route [register] not defined` dan blocker CSP runtime admin telah ditutup. Header live admin sudah memuat `script-src 'self' 'unsafe-inline' 'unsafe-eval' https:`.
 
-## 3. Reality Resync: Functional Gaps (⚠️ PARTIAL)
-**Status:** PARTIAL (Security & Today FIXED)
-
-### Resolved Findings:
-- ✅ **Security (Proxy Token Logging)**: **FIXED**.
-- ✅ **Contract Error (Today)**: **FIXED**. Frontend logic removed phantom field dependency (Verified 2026-03-20).
-- ❌ **Mock Drift (VerseHub)**: **MOCK**. Reflections & Journey pages are seluruhnya mock.
-- ⚠️ **Logic Error (Profile)**: **DRIFT**. Journey CTA missing `useSearchParams` hook.
+## RESOLVED BLOCKERS (2026-03-20 - Reality Sync)
+- [x] **Today API Contract Mismatch**: **FIXED**. (`pinnedLesson` & `welcomeVerse` removed).
+- [x] **VerseHub Mocking (Reflections/Journey)**: **FIXED**. Real data integrated in `reflections/page.tsx` and `my-spiritual-journey/page.tsx`.
+- [x] **Profile Journey CTA (Link Broken)**: **FIXED**. Deep-link implemented to Spiritual Journey page.
+- [x] **Security (Proxy Token Logging)**: **FIXED**. Sensitive logs removed.
 
 ---
 
-## 6. Profile Journey CTA (Link Broken)
-**Status:** DRIFT
-**Type:** Logic/Wiring Issue
-**Owner:** Frontend
+## 3. Reality Resync: Functional Gaps (✅ PASS)
+**Status:** PASS (Domain Readiness)
 
-### Current State
-`src/app/profile/page.tsx:661` performs `router.push('/profile?section=journey')`, but `ProfilePage` does not use `useSearchParams` hook to read and navigate to that section.
+### Resolved Findings:
+- ✅ **Security (Proxy Token Logging)**: **FIXED**.
+- ✅ **Contract Error (Today)**: **FIXED**.
+- ✅ **VerseHub Data Integration**: **FIXED**. Reflections & Journey list now live.
+- ✅ **Profile Journey CTA**: **FIXED**. Deep-link to journey dashboard enabled.
+- ⚠️ **Reflection Detail**: **PARTIAL**. Ready but resolving from list collection.
 
 ## 4. Tencent Edge Duplicate Deployment Trigger
 **Status:** BLOCKED (Pending Console adjustment)  

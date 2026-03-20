@@ -3,14 +3,15 @@
 ## Update 2026-03-19 (Frontend CI Fix Incoming / Verification Phase)
 ## Update 2026-03-20 (Frontend-Backend Reality Matrix Audit)
 - **Audit Case:** `docs/01-audits/overall/2026-03-20-master-reality-resync-report.md`
-- **Status:** **BLOCKED**. Ditemukan Reality Drift pada Today API Contract dan Mocking pada Reflections/Journey.
+- **Status:** **PASS (Reality Synced)**. Today Contract Synced & VerseHub Data Integrated.
 - **Reality Matrix Summary:**
   - ✅ Auth/Login: LIVE
-  - ✅ Profile: LIVE
-  - ✅ Today: **LIVE** (Contract Synced/Verified)
+  - ✅ Profile Core: LIVE (Fixed Deep-link)
+  - ✅ Today Dashboard: **LIVE** (Contract Synced/Verified)
   - ✅ VerseHub Core: LIVE
-  - ❌ Reflections: **MOCK**
-  - ❌ My Spiritual Journey: **MOCK**
+  - ✅ Reflections List: **LIVE** (Real Data Integrated)
+  - ✅ My Spiritual Journey: **LIVE** (Real Summary Integrated)
+  - ⚠️ Reflection Detail: **PARTIAL** (Resolving from list)
 - **Contract Gap Audit:** `docs/01-audits/security/2026-03-20-proxy-token-logging-remediation.md`
 - **Status:** **FIXED (Security)**. Blocker kritis pada logging token sudah diperbaiki (Verified 2026-03-20). Mismatch fungsional lain masih DRIFT.
 
@@ -18,10 +19,12 @@
 - **Profile:** ✅ **PATCHED IN SOURCE**. Menunggu validasi live untuk kontras teks dan resolusi URL avatar relatif.
 - **VerseHub:** ✅ **STABILIZED**. Masalah *double sidebar* desktop ditutup per tanggal 2026-03-19.
 
-## Update 2026-03-19 (Frontend CI Fix Incoming)
-Akar masalah kegagalan **Frontend Monorepo Checks** telah diperbaiki di source code (`lucide-react` typo).
-- **Status:** 🔴 **BLOCKED**. Menunggu status CI kembali Hijau untuk mendeploy patch Profile & VerseHub secara otomatis.
-- Dokumentasi pemulihan: `docs/01-audits/overall/frontend-ci-recovery-verification.md`
+## Update 2026-03-20 (Build & Deploy Stability)
+- **Status:** **FIXED (Source)**. Akar masalah `next/font/google` (Google Fonts dependency) telah dihapus dan diganti dengan system font fallback.
+- **Verification:** local `npm run build` PASS.
+- **Remediation Report:** `docs/01-audits/deploy/2026-03-20-build-font-network-remediation-report.md`.
+- **Deploy Status:** 🔵 **DRIFT**. Menunggu verifikasi otomatisasi di environment produksi (Tencent EO rerun).
+- **Frontend Monorepo Checks (GitHub Actions):** Status source saat ini hijau (FIXED).
 
 ## Update 2026-03-19 (Deployment Hygiene)
 - **Tencent Edge:** Terdeteksi isu *duplicate deployment target*. Satu commit memicu dua build paralel (Git Auto-deploy vs Webhook).

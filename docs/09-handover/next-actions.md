@@ -1,10 +1,10 @@
 # Next Actions
 
 ## Eksekusi Prioritas (CI/Build Pipeline Recovery)
-- [x] Identifikasi masalah source code pada `Frontend Monorepo Checks`: `lucide-center` (Root Cause Found).
-- [/] Sedang berjalan: Pantau status repositori commit untuk memastikan Action CI kembali menjadi **Hijau (Passing)**.
-- [ ] Verifikasi hasil eksekusi CI: `lint` -> `typecheck` -> `build` (Pasca-fix).
-- [ ] Lanjutkan deploy ke production (Tencent Edge) apabila *green build* terkonfirmasi.
+- [x] Identifikasi masalah source code pada `Frontend Monorepo Checks`: `Google Fonts Network Dependency` (DONE 2026-03-20).
+- [x] Implementasi Remediasi: System Fonts Fallback (DONE 2026-03-20).
+- [x] Verifikasi lokal: `npm run typecheck` & `npm run build` PASS.
+- [ ] Lanjutkan deploy ke production (Tencent Edge) via **Manual Rerun** atau GitHub Action trigger (PENDING).
 
 ## Eksekusi Prioritas (Production Recovery)
 - [x] Selesaikan blocker Edge artifact drift: Implementasi `generateBuildId` unik untuk memaksa update bundle.
@@ -16,12 +16,12 @@
 - [x] Verifikasi header live admin login memuat `script-src 'self' 'unsafe-inline' 'unsafe-eval' https:`.
 - [x] **SECURITY HOTFIX**: Hapus logging token di `src/lib/proxy-laravel.ts` (RESOLVED 2026-03-20).
 - [x] **Contract Fix (Today API)**: Penyesuaian frontend mengikuti backend nyata (RESOLVED 2026-03-20).
-- [ ] **Wiring Reflections**: Sambungkan UI `/reflections` ke backend API (Ganti MOCK).
-- [ ] **Logic Fix (Profile)**: Tambahkan `useSearchParams` untuk aktivasi Journey CTA.
+- [x] **Wiring Reflections**: Sambungkan UI `/reflections` ke backend API (DONE 2026-03-20).
+- [x] **Logic Fix (Profile)**: Tambahkan deep-link untuk aktivasi Journey CTA (DONE 2026-03-20).
 - [ ] Stabilisasi Data: Mengisi konten utama (Daily Verse, Rituals, Study Paths) di database produksi via Filament.
 - [x] Audit & Patch `/profile` (Readability & Avatar issue) - **PATCHED IN SOURCE**.
 - [ ] Validasi live profile readability & avatar resolution (Awaiting CI Green).
-- [ ] Implementasi *Reflections API* (Status saat ini: MOCK).
+- [x] Implementasi *Reflections API* (RESOLVED 2026-03-20).
 - [ ] Refactor Community Types: standarisasi *ApiPost* interface (Backend Contract Cleanup).
 - [ ] Hardening observability: tambah smoke script otomatis (login, today, community, versehub) pasca deploy.
 - [x] Deploy frontend patch (VerseHub route/nav, OG card source, login parser, profile logout).
@@ -36,11 +36,11 @@
 - [x] Logout API untuk sesi admin tervalidasi.
 
 ## Reality Matrix & Contract Gap Resolution
-- [ ] **Priority 1**: Implement real API integration for Reflections and My Spiritual Journey
+- [x] **Priority 1**: Implement real API integration for Reflections and My Spiritual Journey (DONE).
 - [ ] **Priority 2**: Reduce fallback dependency in Today dashboard
 - [ ] **Priority 3**: Standardize field naming conventions between frontend and backend
-- [ ] **Priority 4**: Implement real API integration for Reflections (`src/app/reflections/[slug]/page.tsx`)
-- [ ] **Priority 5**: Implement real API integration for My Spiritual Journey (`src/app/versehub/[lang]/my-spiritual-journey/page.tsx`)
+- [x] **Priority 4**: Implement real API integration for Reflections (`src/app/reflections/[slug]/page.tsx`) (FIXED).
+- [x] **Priority 5**: Implement real API integration for My Spiritual Journey (`src/app/versehub/[lang]/my-spiritual-journey/page.tsx`) (FIXED).
 
 ## Operasional Deploy
 - [ ] Nonaktifkan "Automatic Deployment" di Tencent Console untuk project Edge Pages (Penerapan Opsi B - One-Way Webhook).

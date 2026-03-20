@@ -12,8 +12,9 @@
 | **Today Dashboard**| LIVE | LIVE | **CLEAN (FIXED)** | REAL | ✅ PASS |
 | **Community** | LIVE (with Fallback) | LIVE | CLEAN | PARTIAL | ⚠️ PARTIAL |
 | **VerseHub Reader** | LIVE | LIVE | CLEAN | REAL | ✅ PASS |
-| **Reflections** | **MOCK** | LIVE | **NOT WIRED** | MOCK | ❌ MOCK |
-| **Spiritual Journey**| **MOCK** (Page) | PARTIAL (Summary) | **NOT WIRED** | MOCK | ❌ MOCK |
+| **Reflections List** | LIVE | LIVE | CLEAN | REAL | ✅ PASS |
+| **Spiritual Journey**| LIVE | LIVE | CLEAN | REAL | ✅ PASS |
+| **Reflection Detail**| PARTIAL| PARTIAL (List) | DRIFT | PARTIAL | ⚠️ PARTIAL |
 | **Proxy Gateway** | LIVE | N/A | **CLEAN (FIXED)** | REAL | ✅ PASS |
 
 ---
@@ -25,15 +26,18 @@
 - **Remediation Report:** `docs/01-audits/today/2026-03-20-today-contract-remediation-report.md`.
 - **Note:** Kontrak frontend diturunkan agar mengikuti backend nyata (`dailyVerse`, `rituals`, `highlights`, `spiritual_state`). Field phantom `pinnedLesson` dan `welcomeVerse` telah dihapus.
 
-### B. Reflections & Journey Mocking
-- **Temuan:** Fitur Reflections dan Journey sering diklaim "LIVE secara fungsional" di beberapa sync docs, padahal kenyataannya seluruhnya data statis.
-- **Bukti File:**
-  - `src/app/versehub/[lang]/reflections/page.tsx:28-30` (Hardcoded array + `setTimeout`).
-  - `src/app/versehub/[lang]/my-spiritual-journey/page.tsx:180-183` (Hardcoded array + `setTimeout`).
-- **Dokumen yang Salah:** `docs/02-uiux/versehub-final-status-sync.md`.
-- **Status:** **MOCK**.
+### B. Reflections & Journey Data Integration (RESOLVED)
+- **Status:** **FIXED**.
+- **Remediation Report:** `docs/01-audits/versehub/2026-03-20-versehub-data-integration-finalization-report.md`.
+- **Note:** Seluruh hardcoded mock dan `setTimeout` di Reflections list dan Journey telah digantikan dengan fetch nyata ke API backend Laravel.
+- **Surface Status:** Reflections List (LIVE), Spiritual Journey (LIVE).
 
-### C. Security Blocker: Proxy Token Logging (RESOLVED)
+### C. Reflection Detail (PARTIAL)
+- **Status:** **PARTIAL**.
+- **Evidence:** `src/app/reflections/[slug]/page.tsx`.
+- **Note:** Belum memiliki endpoint detail dedicated di backend. Logika frontend saat ini me-resolve detail dari list utama (match by ID / verse_ref).
+
+### D. Security Blocker: Proxy Token Logging (RESOLVED)
 - **Status:** **FIXED**.
 - **Remediation Report:** `docs/01-audits/security/2026-03-20-proxy-token-logging-remediation.md`.
 - **Note:** Seluruh debug log sensitif di `proxy-laravel.ts` dan `laravel-api.ts` telah dibersihkan.
@@ -44,10 +48,12 @@
 
 | Severity | Blocker Description | Evidence |
 | :--- | :--- | :--- |
-| **FIXED** | Authorization Token Logging in Proxy | `proxy-laravel.ts` |
-| **FIXED** | Today API Missing `pinnedLesson` & `welcomeVerse` | `docs/01-audits/today/2026-03-20-today-contract-remediation-report.md` |
-| **DRIFT** | Reflections Page wiring to backend | `reflections/page.tsx:28-30` |
-| **DRIFT** | Profile Journey CTA (Broken SearchParams) | `src/app/profile/page.tsx:661` |
+| **FIXED** | Build Network fonts dependency | `docs/01-audits/deploy/2026-03-20-build-font-network-remediation-report.md` |
+| **FIXED** | Reflections Page wiring to backend | `src/app/versehub/[lang]/reflections/page.tsx` |
+| **FIXED** | Spiritual Journey Page wiring to backend | `src/app/versehub/[lang]/my-spiritual-journey/page.tsx` |
+| **FIXED** | Profile Journey CTA (Deep-link Fixed) | `src/app/profile/page.tsx:661` |
+| **DRIFT** | Production deployment rerun verification | `HANDOVER_DRIVE` |
+| **DRIFT** | Reflection Detail dedicated API endpoint | `src/app/reflections/[slug]/page.tsx` |
 | **LOW** | Dead Code Cleanup (`GreetingHeader.tsx`, `mock.ts`) | `src/components/core/GreetingHeader.tsx` |
 
 ---
@@ -64,14 +70,14 @@
 
 ## 6. Development Constraints
 - **DARE NOT Claim "LIVE" on Today for Legacy Parity:** Sangat berbahaya karena user tidak akan melihat lesson yang seharusnya dipinned meskipun sudah diatur di Admin (karena field dihapus dari kontrak).
-- **DARE NOT Claim "LIVE" on Reflections:** Backend API ada tapi frontend sama sekali belum memanggilnya. Ini adalah *dead-end* fitur.
+- **DARE NOT Claim "LIVE" on Reflection Detail:** Masih bersifat emulasi dari list data; membutuhkan API dedicated untuk status LIVE penuh.
 
 ---
 
 ## 7. Next Highest-Leverage Fix
-1. **WIRING `reflections/page.tsx`**: Ganti `setReflections([...])` statis dengan `fetch('/api/versehub/[lang]/reflections')`. Kabel backend sudah siap.
-2. **Logic Fix (Profile)**: Tambahkan `useSearchParams` untuk aktivasi Journey CTA.
+1. **Database Content Population**: Memastikan konten production di Laravel (Paths, Lessons, Reflections) terisi data nyata untuk menghindari "Empty State" yang berkepanjangan.
+2. **Mobile Responsiveness Polish**: Audit detail untuk layout `Grid` pada Reflections Journal di perangkat mobile layar kecil.
 
 ---
-**Status Akhir Audit: PARTIAL**
-*Alasan: Security Blocker dan Today Contract Mismatch telah ditutup (FIXED). Fokus beralih ke aktivasi fitur Reflections & Journey yang masih berupa MOCK.*
+**Status Akhir Audit: PASS (with DRIFT for Rerun)**
+*Alasan: Blocker kritis (Security, Today Contract, VerseHub Integration, Build Font Dependency) telah ditutup (FIXED). Status proyek stabil di level source; verifikasi sisa pada rerun pipeline eksternal.*

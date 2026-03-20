@@ -1,24 +1,10 @@
 import type { Metadata, Viewport } from 'next';
 import React from 'react';
-import { DM_Serif_Display, Inter } from 'next/font/google';
 import './globals.css';
 import { AppShell } from '@/layouts/AppShell';
 import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { FirebaseAuthSync } from '@/components/FirebaseAuthSync';
-
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
-});
-
-const dmSerifDisplay = DM_Serif_Display({
-  weight: '400',
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-serif',
-});
 
 const APP_NAME = 'TheChosenTalks';
 const TAGLINE = 'The Chosen People';
@@ -79,7 +65,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className={`${inter.variable} ${dmSerifDisplay.variable}`} suppressHydrationWarning>
+    <html lang="id" suppressHydrationWarning>
       <body className="font-sans antialiased tct-body" suppressHydrationWarning>
         <FirebaseClientProvider>
           <FirebaseAuthSync />
