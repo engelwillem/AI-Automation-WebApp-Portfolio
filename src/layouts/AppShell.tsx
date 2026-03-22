@@ -32,23 +32,43 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // Full-screen routes manage their own layout — shell provides no columns or padding
   const isTodayRitual = pathname === '/today';
   // Landing renders its own full-viewport layout
-  const isFullBleed = isLanding || isTodayRitual;
+  const isFullBleed = isLanding;
 
   if (isFullBleed) {
     return (
       <div className="tct-global-background relative min-h-screen overflow-x-hidden text-foreground touch-pan-y">
-        <div
-          style={
-            isTodayRitual
-              ? { paddingBottom: 'calc(116px + env(safe-area-inset-bottom))' }
-              : undefined
-          }
-        >
-          {children}
+        {children}
+      </div>
+    );
+  }
+
+  if (isTodayRitual) {
+    return (
+      <div className="tct-global-background relative min-h-screen overflow-x-hidden text-foreground touch-pan-y">
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-0 md:px-6 lg:px-8">
+          <div className="flex items-start gap-6 lg:gap-8">
+            {activeNavId && (
+              <div className="hidden md:flex md:w-[248px] md:flex-col md:gap-4 md:pt-6 sticky top-6 h-fit align-start">
+                <DesktopSidebarNav
+                  activeId={activeNavId}
+                  navItems={navItems}
+                  isAuthenticated={isAuthenticated}
+                  userName={user?.displayName || ''}
+                  userEmail={user?.email || ''}
+                  initials={user?.displayName?.slice(0, 1).toUpperCase() || 'U'}
+                />
+              </div>
+            )}
+
+            <div className="w-full min-w-0 md:flex-1">
+              <div style={{ paddingBottom: 'calc(116px + env(safe-area-inset-bottom))' }}>
+                {children}
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Safe navigation dock for daily ritual screen so users aren't trapped without an exit */}
-        {isTodayRitual && activeNavId && (
+        {activeNavId && (
           <div
             className="inset-x-0 z-[100] flex justify-center pointer-events-none md:hidden"
             style={{

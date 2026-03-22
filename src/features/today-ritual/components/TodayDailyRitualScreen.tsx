@@ -87,7 +87,9 @@ export default function TodayDailyRitualScreen({ sessionContent }: TodayDailyRit
         transition={hydrationMode === 'restored' ? m.tx.slow : m.tx.calm}
       />
 
-      <div className={`relative z-10 w-full max-w-[480px] mx-auto min-h-screen bg-transparent ${isHydrating ? 'pointer-events-none' : ''}`}>
+      <div
+        className={`relative z-10 w-full max-w-[480px] md:max-w-[620px] mx-auto md:mx-0 min-h-screen bg-transparent ${isHydrating ? 'pointer-events-none' : ''}`}
+      >
         
         <TodayHeader
           greeting={sessionContent.greeting}
