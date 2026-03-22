@@ -158,6 +158,40 @@ function buildAvatarCandidates(rawUrl: string | null | undefined): string[] {
     }
 }
 
+function canRenderAvatarImmediately(url: string): boolean {
+    return url.startsWith('blob:') || url.startsWith('data:image/');
+}
+
+function probeAvatarImage(url: string, timeoutMs = 6000): Promise<boolean> {
+    if (canRenderAvatarImmediately(url)) return Promise.resolve(true);
+
+    return new Promise((resolve) => {
+        const img = new Image();
+        let settled = false;
+        const done = (ok: boolean) => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            resolve(ok);
+        };
+
+        const timer = window.setTimeout(() => done(false), timeoutMs);
+        img.onload = () => done(true);
+        img.onerror = () => done(false);
+        img.src = url;
+    });
+}
+
+async function pickRenderableAvatarCandidate(candidates: string[]): Promise<string | null> {
+    const deduped = dedupeCandidates(candidates);
+    for (const candidate of deduped) {
+        // eslint-disable-next-line no-await-in-loop
+        const ok = await probeAvatarImage(candidate);
+        if (ok) return candidate;
+    }
+    return null;
+}
+
 function getInitials(rawName: string): string {
     const parts = String(rawName || '')
         .trim()
@@ -424,6 +458,17 @@ export default function ProfilePage() {
         const token = getAppAccessToken();
         if (!token) return;
 
+        const previousAvatarUrl = user.avatarUrl;
+        const previousAvatarCandidates = user.avatarCandidates;
+
+        const rollbackAvatar = () => {
+            setUser((prev) => ({
+                ...prev,
+                avatarUrl: previousAvatarUrl,
+                avatarCandidates: previousAvatarCandidates,
+            }));
+        };
+
         setSubmittingAvatar(true);
         if (avatarPreviewBlobRef.current) {
             URL.revokeObjectURL(avatarPreviewBlobRef.current);
@@ -454,29 +499,37 @@ export default function ProfilePage() {
             const payload = await response.json().catch(() => null);
 
             if (response.ok) {
-                if (payload?.data?.avatar_url) {
-                    const avatarCandidates = buildAvatarCandidates(payload.data.avatar_url);
-                    const mergedCandidates = dedupeCandidates([
-                        ...avatarCandidates,
-                        localPreview,
-                        ...user.avatarCandidates,
-                    ]);
-                    const persistedAvatar = avatarCandidates[0] || mergedCandidates[0] || null;
-                    setUser(prev => ({ ...prev, avatarUrl: persistedAvatar, avatarCandidates: mergedCandidates }));
-                    if (avatarCandidates.length > 0 && avatarPreviewBlobRef.current) {
-                        URL.revokeObjectURL(avatarPreviewBlobRef.current);
-                        avatarPreviewBlobRef.current = null;
-                    }
-                    showToast('Foto profil diperbarui');
+                const persistedAvatarRaw = String(payload?.data?.avatar_url || '').trim();
+                if (!persistedAvatarRaw) {
+                    rollbackAvatar();
+                    showToast('Upload diterima, tetapi URL avatar belum tersedia. Coba lagi.', 'error');
                 } else {
-                    setUser(prev => ({
-                        ...prev,
-                        avatarUrl: prev.avatarUrl || localPreview,
-                        avatarCandidates: dedupeCandidates([prev.avatarUrl, localPreview, ...prev.avatarCandidates]),
-                    }));
-                    showToast('Foto profil diperbarui');
+                    const persistedCandidates = buildAvatarCandidates(persistedAvatarRaw);
+                    const mergedCandidates = dedupeCandidates([
+                        ...persistedCandidates,
+                        localPreview,
+                        ...previousAvatarCandidates,
+                    ]);
+                    const renderableAvatar = await pickRenderableAvatarCandidate(persistedCandidates);
+
+                    if (!renderableAvatar) {
+                        rollbackAvatar();
+                        showToast('Foto tersimpan, tetapi belum bisa ditampilkan. Periksa storage/public URL avatar.', 'error');
+                    } else {
+                        setUser(prev => ({
+                            ...prev,
+                            avatarUrl: renderableAvatar,
+                            avatarCandidates: dedupeCandidates([renderableAvatar, ...mergedCandidates]),
+                        }));
+                        if (avatarPreviewBlobRef.current) {
+                            URL.revokeObjectURL(avatarPreviewBlobRef.current);
+                            avatarPreviewBlobRef.current = null;
+                        }
+                        showToast('Foto profil diperbarui');
+                    }
                 }
             } else {
+                rollbackAvatar();
                 if (payload?.errors?.avatar?.[0]) {
                     showToast(payload.errors.avatar[0], 'error');
                 } else {
@@ -484,6 +537,7 @@ export default function ProfilePage() {
                 }
             }
         } catch {
+            rollbackAvatar();
             showToast('Terjadi gangguan sistem saat mengupload', 'error');
         } finally {
             setSubmittingAvatar(false);
