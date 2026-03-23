@@ -3,8 +3,11 @@ import type { Metadata } from 'next';
 import { TCTLogo } from '@/components/brand/TCTLogo';
 
 export const metadata: Metadata = {
-  title: 'The Chosen Talks',
-  description: 'Ritual harian untuk menerima, merenung, dan berdoa.',
+  title: 'Renungan Harian Kristen untuk Menerima Firman dan Berdoa',
+  description: 'The Chosen Talks membantu Anda menerima firman, merenungkan ayat harian, dan bertumbuh bersama komunitas iman setiap hari.',
+  alternates: {
+    canonical: '/',
+  },
 };
 
 export default function HomePage() {
@@ -27,11 +30,11 @@ export default function HomePage() {
 
         {/* Headline — one thought, not a pitch */}
         <h1 className="tct-serif text-[38px] leading-[1.15] tracking-tight text-foreground/90 mb-4">
-          Mulai dari<br />hari ini.
+          Renungan harian Kristen<br />untuk memulai hari ini.
         </h1>
 
         <p className="text-[15px] leading-[1.65] text-foreground/55 mb-12 font-medium">
-          Terima firman, renungkan,<br />dan berdoa bersama.
+          Terima firman, renungkan ayat harian,<br />dan berdoa bersama komunitas iman.
         </p>
 
         {/* Primary CTA */}
@@ -48,6 +51,26 @@ export default function HomePage() {
           <span aria-hidden="true" className="opacity-30">·</span>
           <Link href="/login" className="hover:text-foreground/70 transition-colors">Login</Link>
         </div>
+
+        <nav aria-label="Link utama" className="mt-10 w-full max-w-[320px]">
+          <ul className="grid gap-3 text-left text-[13px]">
+            <li>
+              <Link href="/today" className="block rounded-2xl border border-black/[0.06] bg-white/80 px-4 py-3 text-foreground/75 transition-colors hover:text-foreground">
+                Renungan harian dan doa di Today
+              </Link>
+            </li>
+            <li>
+              <Link href="/versehub/id" className="block rounded-2xl border border-black/[0.06] bg-white/80 px-4 py-3 text-foreground/75 transition-colors hover:text-foreground">
+                Baca dan renungkan ayat Alkitab di VerseHub
+              </Link>
+            </li>
+            <li>
+              <Link href="/community" className="block rounded-2xl border border-black/[0.06] bg-white/80 px-4 py-3 text-foreground/75 transition-colors hover:text-foreground">
+                Bergabung dengan komunitas iman di Community
+              </Link>
+            </li>
+          </ul>
+        </nav>
 
       </main>
     </div>
