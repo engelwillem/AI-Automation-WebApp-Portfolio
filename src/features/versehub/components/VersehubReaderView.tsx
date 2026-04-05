@@ -4,7 +4,6 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { VersehubCompletionRitual } from "@/features/versehub/components/VersehubCompletionRitual";
 import type { Verse } from "@/features/versehub/types";
 
@@ -112,22 +111,18 @@ export function VersehubReaderView({
                 animate={shouldShowChrome ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 className={cn(
-                    "relative z-40 border-b bg-[var(--vh-bg)]/80 pt-[env(safe-area-inset-top,0px)] backdrop-blur-2xl",
+                    "relative z-40 border-b border-white/5 bg-[var(--vh-bg)]/80 pt-[env(safe-area-inset-top,0px)] backdrop-blur-2xl",
                     !shouldShowChrome && "pointer-events-none"
                 )}
-                style={{ borderColor: "var(--vh-topbar-border)" }}
             >
                 <div className="mx-auto flex max-w-4xl items-start justify-between gap-4 px-6 py-4">
-                    <div className="flex items-center gap-3">
-                        <button
-                            type="button"
-                            onClick={onBack}
-                            className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--vh-surface)]/60 text-[var(--vh-accent)] ring-1 ring-[var(--vh-border)] shadow-[0_18px_36px_-26px_rgba(0,0,0,0.5)] backdrop-blur-xl transition hover:bg-[var(--vh-surface)]/80 active:scale-95"
-                        >
-                            <ChevronLeft className="h-5 w-5" />
-                        </button>
-                        <ThemeToggle className="h-11 w-11" />
-                    </div>
+                    <button
+                        type="button"
+                        onClick={onBack}
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--vh-surface)]/60 text-[var(--vh-accent)] ring-1 ring-[var(--vh-border)] shadow-[0_18px_36px_-26px_rgba(0,0,0,0.5)] backdrop-blur-xl transition hover:bg-[var(--vh-surface)]/80 active:scale-95"
+                    >
+                        <ChevronLeft className="h-5 w-5" />
+                    </button>
 
                     <div className="ml-auto flex flex-col text-right">
                         <span className="mb-0.5 text-[8px] font-bold uppercase tracking-[0.2em] text-[var(--vh-text-muted)] md:text-[9px]">
@@ -143,11 +138,11 @@ export function VersehubReaderView({
             <main ref={(node) => { scrollViewportRef.current = node; }} className="relative z-10 flex-1 overflow-y-auto px-4 py-6 md:px-6 md:py-8">
                 <div className="mx-auto max-w-4xl pb-[calc(180px+env(safe-area-inset-bottom,24px))]">
                     <section className="overflow-hidden rounded-[34px] bg-[var(--vh-surface)]/40 p-5 shadow-[0_24px_60px_rgba(0,0,0,0.5)] ring-1 ring-white/5 backdrop-blur-2xl md:p-7">
-                        <div className="flex flex-col items-center justify-center border-b border-[var(--vh-topbar-border)] pb-10 pt-4 text-center">
+                        <div className="flex flex-col items-center justify-center border-b border-white/5 pb-10 pt-4 text-center">
                             <p className="text-[11px] font-black uppercase tracking-[0.3em] text-[var(--vh-text-muted)]">Pasal Bacaan</p>
-                            <h2 className="mt-3 font-serif text-[42px] italic leading-[1.1] tracking-[-0.03em] text-[var(--vh-text-primary)] md:text-[54px]">{chapterLabel}</h2>
+                            <h2 className="mt-3 font-serif text-[42px] italic leading-[1.1] tracking-[-0.03em] text-white md:text-[54px]">{chapterLabel}</h2>
                             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                                <span className="inline-flex items-center rounded-full bg-[var(--vh-surface-elevated)]/65 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[var(--vh-text-secondary)] ring-1 ring-[var(--vh-border)]">
+                                <span className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[var(--vh-text-secondary)] ring-1 ring-white/10">
                                     {verses.length} Ayat
                                 </span>
                                 <span className="inline-flex items-center rounded-full bg-[var(--vh-accent)]/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[var(--vh-accent)] ring-1 ring-[var(--vh-accent)]/20">

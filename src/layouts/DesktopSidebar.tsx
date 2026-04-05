@@ -6,7 +6,6 @@ import Link from 'next/link';
 import type { LucideIcon } from 'lucide-react';
 import { TCTLogo } from '@/components/brand/TCTLogo';
 import { useCurrentUserAvatarStyle } from '@/lib/avatar-presentation';
-import { ThemeToggle } from '@/components/ThemeToggle';
 
 type NavItem = {
     id: string;
@@ -60,9 +59,9 @@ export default function DesktopSidebarNav({
         <aside
             className={cn(
                 'flex flex-col gap-2 rounded-3xl p-5',
-                'bg-white/60 dark:bg-[hsl(var(--surface-elevated)/0.72)]',
+                'bg-white/60 dark:bg-[hsl(240_5%_8%/0.6)]',
                 'backdrop-blur-xl',
-                'border border-black/[0.04] dark:border-white/[0.06]',
+                'border border-black/[0.04] dark:border-white/[0.04]',
                 className,
             )}
             style={{ position: 'sticky', top: '2rem', alignSelf: 'start' }}
@@ -128,7 +127,6 @@ export default function DesktopSidebarNav({
                             {isGuest ? 'Chosen People' : (userEmail || 'Chosen People')}
                         </p>
                     </div>
-                    <ThemeToggle />
                 </div>
             </div>
         </aside>

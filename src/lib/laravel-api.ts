@@ -9,6 +9,36 @@ const trimTrailingSlash = (value: string) => value.replace(/\/+$/, "");
 const MISSING_BASE_PLACEHOLDER = "http://missing-laravel-api-base-url.local";
 const DEFAULT_PRODUCTION_API_BASE_URL = "https://api.thechoosentalks.org";
 const DEFAULT_LOCAL_BASES = ["http://127.0.0.1:8000", "http://localhost:8000"];
+const LOCAL_HOSTS = new Set(["127.0.0.1", "localhost"]);
+
+function extractHostname(value: string): string | null {
+  try {
+    return new URL(value).hostname.toLowerCase();
+  } catch {
+    return null;
+  }
+}
+
+function isLoopbackBaseUrl(value: string): boolean {
+  const hostname = extractHostname(value);
+  return hostname ? LOCAL_HOSTS.has(hostname) : false;
+}
+
+function isDeveloperMachineContext(): boolean {
+  const appUrl = String(process.env.NEXT_PUBLIC_APP_URL || "").trim();
+  const appHost = appUrl ? extractHostname(appUrl) : null;
+  const hasLocalAppUrl = appHost ? LOCAL_HOSTS.has(appHost) : true;
+  const isHostedEnvironment =
+    process.env.VERCEL === "1" ||
+    process.env.VERCEL_ENV !== undefined ||
+    process.env.CI === "true";
+
+  return hasLocalAppUrl && !isHostedEnvironment;
+}
+
+export function isExpectedLocalLoopbackBackend(baseUrl: string): boolean {
+  return isLoopbackBaseUrl(baseUrl) && isDeveloperMachineContext();
+}
 
 function pickConfiguredBaseUrl(): string {
   const candidates = [
@@ -123,10 +153,12 @@ export async function callLaravelApi(path: string, init?: RequestInit): Promise<
     } catch (error) {
       lastError = error;
       const isLast = baseUrl === baseCandidates[baseCandidates.length - 1];
-      console.warn("[laravel-api] request_failed", {
+      const logMethod = isExpectedLocalLoopbackBackend(baseUrl) ? console.info : console.warn;
+      logMethod("[laravel-api] request_failed", {
         baseUrl,
         targetPath: targetPathname,
         isLastCandidate: isLast,
+        expectedLocalFallback: isExpectedLocalLoopbackBackend(baseUrl),
       });
       if (isLast) {
         throw error;

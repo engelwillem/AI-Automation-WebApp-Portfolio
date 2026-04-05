@@ -47,7 +47,7 @@ export default function FloatingBottomNav({
                 // Slightly wider shell keeps /renungan aligned with the more generous nav feel used elsewhere.
                 'relative mx-auto w-[calc(100vw-28px)] max-w-[420px] rounded-[30px]',
                 'border border-black/[0.06] dark:border-white/[0.06]',
-                'bg-white/84 dark:bg-[hsl(var(--surface-elevated)/0.88)]',
+                'bg-white/84 dark:bg-[hsl(240_5%_8%/0.88)]',
                 'backdrop-blur-3xl',
                 'shadow-[0_24px_52px_-20px_rgba(15,23,42,0.22),0_10px_22px_-14px_rgba(15,23,42,0.08)]',
                 'dark:shadow-[0_24px_52px_-20px_rgba(0,0,0,0.6),0_10px_22px_-14px_rgba(0,0,0,0.4)]',

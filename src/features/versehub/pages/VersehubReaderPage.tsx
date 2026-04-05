@@ -756,9 +756,9 @@ export function VersehubReaderPage({
                 }}
             />
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                <div className="absolute inset-x-0 top-0 h-full" style={{ backgroundImage: "var(--vh-canvas-gradient)" }} />
-                <div className="absolute -top-40 left-1/2 h-[500px] w-[800px] -translate-x-1/2 rounded-full blur-[120px]" style={{ backgroundColor: "var(--vh-orb-primary)" }} />
-                <div className="absolute bottom-[-20%] left-[-10%] h-[400px] w-[400px] rounded-full blur-[100px]" style={{ backgroundColor: "var(--vh-orb-secondary)" }} />
+                <div className="absolute inset-x-0 top-0 h-full bg-[radial-gradient(circle_at_top,rgba(22,22,24,0.8)_0%,#0A0A0B_60%)]" />
+                <div className="absolute -top-40 left-1/2 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-[#2A67FF]/[0.03] blur-[120px]" />
+                <div className="absolute bottom-[-20%] left-[-10%] h-[400px] w-[400px] rounded-full bg-white/[0.015] blur-[100px]" />
                 <div className="absolute left-[12%] top-[28%] h-56 w-56 rounded-full bg-[var(--vh-accent)]/[0.01] blur-3xl" />
             </div>
 
@@ -1096,7 +1096,7 @@ export function VersehubReaderPage({
                             exit={{ opacity: 0, scale: 0.97, y: 12 }}
                             className="relative flex h-[min(82dvh,760px)] w-full max-w-2xl flex-col overflow-hidden rounded-[36px] bg-[var(--vh-surface)] shadow-2xl ring-1 ring-[var(--vh-border)]"
                         >
-                            <div className="flex items-center justify-between border-b border-[var(--vh-topbar-border)] px-6 py-5">
+                            <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#91A0C7]">VerseHub</p>
                                     <h3 className="mt-1 text-xl font-black tracking-tight text-[var(--vh-text-primary)]">Koleksi Kitab</h3>
@@ -1110,7 +1110,7 @@ export function VersehubReaderPage({
                                 </button>
                             </div>
 
-                            <div className="flex gap-2 border-b border-[var(--vh-topbar-border)] px-6 py-4">
+                            <div className="flex gap-2 border-b border-slate-100 px-6 py-4">
                                 {(["ot", "nt"] as const).map((item) => (
                                     <button
                                         key={item}
@@ -1129,7 +1129,7 @@ export function VersehubReaderPage({
                             </div>
 
                             <div className="grid min-h-0 flex-1 gap-0 md:grid-cols-[1.15fr,0.85fr]">
-                                <div className="min-h-0 overflow-y-auto border-b border-[var(--vh-topbar-border)] p-5 text-[var(--vh-text-primary)] md:border-b-0 md:border-r">
+                                <div className="min-h-0 overflow-y-auto border-b border-slate-100 p-5 text-[var(--vh-text-primary)] md:border-b-0 md:border-r">
                                     <div className="grid grid-cols-2 gap-3">
                                         {books.filter((book) => book.testament === tab).map((book) => (
                                             <button

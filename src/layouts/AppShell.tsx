@@ -9,7 +9,6 @@ import DesktopSidebarNav from "@/layouts/DesktopSidebar";
 import { cn } from "@/lib/utils";
 import { getUiNavItems } from "@/lib/navigation";
 import { TCTLogo } from "@/components/brand/TCTLogo";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -166,7 +165,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                           The Chosen Talks
                       </p>
                   </div>
-                  <ThemeToggle />
               </div>
             )}
 

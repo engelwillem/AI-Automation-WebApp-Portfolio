@@ -4,7 +4,7 @@ import type { ContentFieldIssue } from './today-session.diagnostics';
 import { summarizeDiagnostics } from './today-session.diagnostics';
 import { FetchBoundaryError } from './fetch-json';
 import { mapRawToTodaySessionContentWithDiagnostics } from './today-session.mapper';
-import { fetchTodaySessionRaw } from './today-session.source';
+import { fetchTodaySessionRaw, isTodaySessionUsingExpectedLocalFallback } from './today-session.source';
 
 type LoadTodaySessionContentOptions = {
   previewDate?: string | null;
@@ -27,6 +27,7 @@ export async function loadTodaySessionContentWithDiagnostics(
 
   let rawSession = null;
   let sourceIssue: ContentFieldIssue | null = null;
+  const expectedLocalFallback = isTodaySessionUsingExpectedLocalFallback();
 
   try {
     rawSession = await fetchTodaySessionRaw({
@@ -36,12 +37,16 @@ export async function loadTodaySessionContentWithDiagnostics(
   } catch (error) {
     if (error instanceof FetchBoundaryError) {
       sourceIssue = {
-        owner: 'backend',
+        owner: expectedLocalFallback ? 'frontend' : 'backend',
         category: 'source_reliability',
-        severity: 'warn',
+        severity: expectedLocalFallback ? 'info' : 'warn',
         field: '$source',
-        message: `${error.code}: ${error.message}`,
-        recommendedAction: 'Check Laravel/CMS endpoint reliability, timeout, and response status.',
+        message: expectedLocalFallback
+          ? `LOCAL_FALLBACK_ACTIVE: ${error.code}: ${error.message}`
+          : `${error.code}: ${error.message}`,
+        recommendedAction: expectedLocalFallback
+          ? 'Start Laravel locally or point LARAVEL_API_BASE_URL to a reachable parity backend before release verification.'
+          : 'Check Laravel/CMS endpoint reliability, timeout, and response status.',
       };
     } else {
       sourceIssue = {
@@ -63,13 +68,16 @@ export async function loadTodaySessionContentWithDiagnostics(
     diagnostics.issues.push(sourceIssue);
   } else if (diagnostics.sourceStatus === 'fallback_only') {
     diagnostics.issues.push({
-      owner: 'backend',
+      owner: expectedLocalFallback ? 'frontend' : 'backend',
       category: 'source_reliability',
       severity: 'info',
       field: '$source',
-      message: 'No external payload available, using fallback defaults',
-      recommendedAction:
-        'Check Laravel API connectivity or set TODAY_SESSION_ENDPOINT when needed.',
+      message: expectedLocalFallback
+        ? 'LOCAL_FALLBACK_ACTIVE: No external payload available, using fallback defaults'
+        : 'No external payload available, using fallback defaults',
+      recommendedAction: expectedLocalFallback
+        ? 'Use local fallback during UI work, then reconnect Laravel or staging before parity validation.'
+        : 'Check Laravel API connectivity or set TODAY_SESSION_ENDPOINT when needed.',
     });
   }
 

@@ -104,59 +104,51 @@
     --vh-text-muted: hsl(var(--muted-foreground)); /* Fallback safely without calc */
     --vh-accent: hsl(var(--accent));
     --vh-accent-glow: hsl(var(--accent) / 0.15);
-    --vh-canvas-gradient: radial-gradient(circle at top, rgba(232, 240, 255, 0.96) 0%, rgba(250, 252, 255, 0.98) 42%, #f7fbff 100%);
-    --vh-orb-primary: rgba(42, 103, 255, 0.08);
-    --vh-orb-secondary: rgba(255, 255, 255, 0.46);
-    --vh-topbar-border: hsl(var(--border) / 0.6);
   }
 
   .dark {
-    --background: 240 6% 4%;
-    --foreground: 220 15% 94%;
-    --card: 240 5% 7%;
-    --card-foreground: 220 15% 94%;
-    --popover: 240 5% 8%;
-    --popover-foreground: 220 15% 94%;
-    --primary: 220 20% 94%;
-    --primary-foreground: 240 6% 4%;
-    --secondary: 240 4% 12%;
-    --secondary-foreground: 220 15% 94%;
-    --muted: 240 4% 10%;
-    --muted-foreground: 220 8% 68%;
+    --background: 240 5% 4%;
+    --foreground: 240 5% 90%;
+    --card: 240 5% 6%;
+    --card-foreground: 240 5% 90%;
+    --popover: 240 5% 9%;
+    --popover-foreground: 240 5% 90%;
+    --primary: 220 10% 90%;
+    --primary-foreground: 240 5% 4%;
+    --secondary: 240 5% 12%;
+    --secondary-foreground: 240 5% 90%;
+    --muted: 240 5% 12%;
+    --muted-foreground: 240 5% 65%;
     --accent: 223 100% 58%;
     --accent-foreground: 0 0% 100%;
     --destructive: 348 83% 58%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 5% 16%;
-    --input: 240 5% 16%;
+    --border: 240 5% 14%;
+    --input: 240 5% 14%;
     --ring: 223 100% 58%;
     --brand: 223 100% 58%;
     --brand-foreground: 0 0% 100%;
-    --surface: 240 5% 8%;
-    --surface-foreground: 220 15% 94%;
-    --surface-muted: 240 6% 5%;
-    --surface-elevated: 240 5% 10%;
-    --surface-dark: 240 8% 3%;
-    --surface-dark-foreground: 220 15% 94%;
-    --chip: 240 5% 11%;
-    --chip-foreground: 220 15% 94%;
-    --outline-soft: 240 5% 18%;
-    --nav-glass: 240 6% 4% / 0.78;
+    --surface: 240 5% 9%;
+    --surface-foreground: 240 5% 90%;
+    --surface-muted: 240 5% 6%;
+    --surface-elevated: 240 5% 12%;
+    --surface-dark: 240 5% 2%;
+    --surface-dark-foreground: 240 5% 90%;
+    --chip: 240 5% 12%;
+    --chip-foreground: 240 5% 90%;
+    --outline-soft: 240 5% 14%;
+    --nav-glass: 240 5% 4% / 0.7;
 
     /* VerseHub legacy aliases — auto-inherit dark palette */
-    --vh-bg: #0a0a0b;
-    --vh-surface: hsl(240 5% 8%);
-    --vh-surface-elevated: hsl(240 5% 10%);
-    --vh-border: hsl(240 5% 18% / 0.95);
-    --vh-text-primary: hsl(220 15% 94%);
-    --vh-text-secondary: hsl(220 8% 72%);
-    --vh-text-muted: hsl(220 6% 52%);
+    --vh-bg: hsl(240 5% 4%);
+    --vh-surface: hsl(240 5% 9%);
+    --vh-surface-elevated: hsl(240 5% 12%);
+    --vh-border: hsl(240 5% 18%);
+    --vh-text-primary: hsl(240 5% 90%);
+    --vh-text-secondary: hsl(240 5% 65%);
+    --vh-text-muted: hsl(240 5% 46%);
     --vh-accent: hsl(223 100% 58%);
-    --vh-accent-glow: hsl(223 100% 58% / 0.18);
-    --vh-canvas-gradient: radial-gradient(circle at top, rgba(22, 22, 24, 0.8) 0%, #0a0a0b 60%, #0a0a0b 100%);
-    --vh-orb-primary: rgba(42, 103, 255, 0.12);
-    --vh-orb-secondary: rgba(255, 255, 255, 0.018);
-    --vh-topbar-border: hsl(240 5% 18% / 0.7);
+    --vh-accent-glow: hsl(223 100% 58% / 0.15);
   }
 }
 
@@ -220,10 +212,10 @@ body {
 
   .dark .tct-global-background {
     /* Dark mode: deep charcoal premium palette */
-    background-color: #0a0a0b;
+    background-color: hsl(240 5% 4%);
     background-image:
-      radial-gradient(ellipse 60% 40% at 15% 5%, hsl(223 100% 58% / 0.08) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 35% at 88% 8%, hsl(240 5% 8% / 0.82) 0%, transparent 65%);
+      radial-gradient(ellipse 60% 40% at 15% 5%, hsl(223 100% 58% / 0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 35% at 88% 8%, hsl(240 5% 8% / 0.8) 0%, transparent 65%);
   }
 
   .tct-global-background > * {
@@ -288,8 +280,8 @@ body {
   }
 
   .dark .glass-card {
-    background: hsl(240 5% 8% / 0.78);
-    @apply ring-1 ring-white/[0.06] shadow-glass;
+    background: hsl(240 5% 9% / 0.75);
+    @apply ring-1 ring-white/5 shadow-glass;
   }
 
   .glass-nav {
@@ -308,8 +300,8 @@ body {
   }
 
   .dark .glass-panel {
-    background: hsl(240 5% 8% / 0.84);
-    @apply ring-1 ring-white/[0.06] shadow-[0_24px_60px_rgba(0,0,0,0.46)];
+    background: hsl(240 5% 9% / 0.84);
+    @apply ring-1 ring-white/[0.06] shadow-[0_24px_60px_rgba(0,0,0,0.4)];
   }
 
   .safe-bottom {

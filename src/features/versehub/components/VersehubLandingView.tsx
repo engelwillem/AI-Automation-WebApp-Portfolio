@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { ArrowRight, BookOpenText, ChevronLeft, Sparkles } from "lucide-react";
 import { MOOD_QUICK_STARTS } from "@/features/versehub/constants";
 import { MoodQuickStart } from "@/features/versehub/components/MoodQuickStart";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import type { SanctuaryScene } from "@/features/versehub/types";
 
 interface VersehubLandingViewProps {
@@ -51,16 +50,13 @@ export function VersehubLandingView({
                 className="absolute inset-x-0 top-0 z-40 pt-[env(safe-area-inset-top,0px)]"
             >
                 <div className="mx-auto flex max-w-4xl items-start justify-between gap-4 px-6 pt-5 md:px-6">
-                    <div className="flex items-center gap-3">
-                        <button
-                            type="button"
-                            onClick={onBackToday}
-                            className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--vh-surface)]/60 text-[var(--vh-accent)] ring-1 ring-[var(--vh-border)] shadow-[0_18px_36px_-26px_rgba(0,0,0,0.5)] backdrop-blur-xl transition hover:bg-[var(--vh-surface)]/80 active:scale-95"
-                        >
-                            <ChevronLeft className="h-5 w-5" />
-                        </button>
-                        <ThemeToggle className="h-11 w-11" />
-                    </div>
+                    <button
+                        type="button"
+                        onClick={onBackToday}
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--vh-surface)]/60 text-[var(--vh-accent)] ring-1 ring-[var(--vh-border)] shadow-[0_18px_36px_-26px_rgba(0,0,0,0.5)] backdrop-blur-xl transition hover:bg-[var(--vh-surface)]/80 active:scale-95"
+                    >
+                        <ChevronLeft className="h-5 w-5" />
+                    </button>
 
                     <div className="ml-auto flex max-w-[24rem] flex-col text-right">
                         <span className="mb-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--vh-text-muted)]">

@@ -1,4 +1,4 @@
-import { callLaravelApi } from '@/lib/laravel-api';
+import { callLaravelApi, getLaravelApiBaseUrl, isExpectedLocalLoopbackBackend } from '@/lib/laravel-api';
 import { FetchBoundaryError, fetchJsonObjectWithTimeout } from './fetch-json';
 import type { TodaySessionApiPayloadV1 } from './today-session.contract';
 
@@ -7,6 +7,10 @@ export type FetchTodaySessionRawOptions = {
   previewDate?: string | null;
   forwardedHeaders?: HeadersInit;
 };
+
+export function isTodaySessionUsingExpectedLocalFallback(): boolean {
+  return isExpectedLocalLoopbackBackend(getLaravelApiBaseUrl());
+}
 
 function normalizePreviewDate(previewDate?: string | null): string | null {
   if (!previewDate) return null;
@@ -110,4 +114,3 @@ export async function fetchTodaySessionRaw(
 
   return payload as RawTodaySessionPayload;
 }
-
