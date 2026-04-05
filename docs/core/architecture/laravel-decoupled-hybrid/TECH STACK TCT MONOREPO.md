@@ -18,7 +18,7 @@ Berdasarkan audit mendalam terhadap struktur repositori monorepo, konfigurasi se
 *   **Framework Utama:** [Laravel](cci:1://file:///e:/thechoosentalksnext/src/lib/proxy-laravel.ts:3:0-132:1) (PHP 8.x+) sebagai mesin utama API dan logika bisnis.
 *   **Admin Dashboard:** `Filament` (TALL Stack: Tailwind, Alpine.js, Laravel, Livewire) untuk manajemen konten *VerseHub* dan *Today Ritual* secara internal.
 *   **Arsitektur API:** `RESTful API` dengan autentikasi berbasis *Bearer Token* menggunakan `Laravel Sanctum`.
-*   **Database:** `MySQL` / `MariaDB` untuk penyimpanan data relasional (Bible Verses, Community Posts, User Profiles).
+*   **Database:** `MariaDB` untuk penyimpanan data relasional (Bible Verses, Community Posts, User Profiles). Laravel tetap memakai konektor `DB_CONNECTION=mysql`.
 *   **Hosting:** `cPanel` (Linux Based) dengan akses SSH terautentikasi kunci.
 *   **Strategi Deployment:** **Atomic Release-based Deploy**, menggunakan sistem folder berbasis *timestamp* dan *symlink* (`current`) untuk memastikan *zero-downtime* saat pembaharuan kode.
 
