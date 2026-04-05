@@ -37,12 +37,19 @@ function Invoke-SmokeCheck {
             $headers["Accept"] = "application/json"
         }
 
-        $res = Invoke-WebRequest `
-            -Uri $Url `
-            -UseBasicParsing `
-            -TimeoutSec $RequestTimeoutSec `
-            -MaximumRetryCount 0 `
-            -Headers $headers
+        $invokeParams = @{
+            Uri = $Url
+            UseBasicParsing = $true
+            TimeoutSec = $RequestTimeoutSec
+            Headers = $headers
+        }
+
+        # `MaximumRetryCount` exists in newer PowerShell, but not in Windows PowerShell 5.1.
+        if ($PSVersionTable.PSVersion.Major -ge 6) {
+            $invokeParams["MaximumRetryCount"] = 0
+        }
+
+        $res = Invoke-WebRequest @invokeParams
         $status = [int]$res.StatusCode
         $ok = $ExpectedStatus -contains $status
         $preview = ""

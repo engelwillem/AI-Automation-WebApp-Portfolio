@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { getAppAccessToken } from '@/services/app-auth-token';
 
 interface MentorInsights {
@@ -100,6 +100,34 @@ export default function MentorPanel({
     const [askError, setAskError] = useState<string | null>(null);
 
     const questionInputRef = useRef<HTMLTextAreaElement>(null);
+    const mentorRequestContext = useMemo(
+        () => ({
+            mood: activeMood,
+            intent: 'deep_study',
+            screen_context: 'versehub_reader',
+        }),
+        [activeMood]
+    );
+
+    const moodLead = useMemo(() => {
+        const normalizedMood = activeMood.trim().toLowerCase();
+        if (normalizedMood === 'sedih' || normalizedMood === 'grieving') {
+            return {
+                badge: 'Mode Empati',
+                subtitle: 'Guide akan menanggapi dengan nada yang lebih lembut dan menguatkan sebelum masuk ke wawasan.',
+            };
+        }
+        if (normalizedMood === 'weary' || normalizedMood === 'anxious') {
+            return {
+                badge: 'Mode Tenang',
+                subtitle: 'Guide akan menjaga ritme jawaban tetap pelan dan tidak membanjiri kamu dengan terlalu banyak detail sekaligus.',
+            };
+        }
+        return {
+            badge: 'Mode Studi',
+            subtitle: 'Guide akan menolongmu masuk lebih dalam ke ayat ini dengan konteks, kaitan, dan langkah studi berikutnya.',
+        };
+    }, [activeMood]);
 
     // Fetch insights lazily on first open or tab switch.
     function ensureInsights() {
@@ -159,10 +187,8 @@ export default function MentorPanel({
             },
             body: JSON.stringify({ 
                 question: q,
-                context: 'versehub_reader',
-                mood: activeMood,
                 verse_id: verseRef,
-                intent: 'deep_study'
+                ...mentorRequestContext,
             }),
         })
             .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
@@ -224,6 +250,10 @@ export default function MentorPanel({
                 <div className="shrink-0 border-b border-slate-100 bg-slate-50/60 px-5 py-2">
                     <p className="text-[11px] font-semibold text-slate-500">{verseLabel}</p>
                     <p className="mt-0.5 line-clamp-2 text-xs text-slate-400">{verseText}</p>
+                    <div className="mt-2 rounded-xl bg-white/80 px-3 py-2 ring-1 ring-slate-200/80">
+                        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">{moodLead.badge}</p>
+                        <p className="mt-1 text-[11px] leading-relaxed text-slate-500">{moodLead.subtitle}</p>
+                    </div>
 
                     {activeStudyPaths.length > 0 && (
                         <div className="mt-2 flex items-center gap-2 rounded-lg bg-emerald-50 px-2 py-1.5 ring-1 ring-emerald-100">

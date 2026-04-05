@@ -5,6 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, VolumeX, Play, Pause, Loader2, Music, Waves, Mic2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+const PLAYBACK_RETRY_ERROR_NAMES = new Set([
+    'NotAllowedError',
+    'NotSupportedError',
+    'AbortError',
+]);
+const MARQUEE_STYLE_ELEMENT_ID = 'versehub-ambience-marquee-styles';
+
 // ==========================================
 // AMBIENCE_LIBRARY: Data Suara & Emosi Lagusion
 // (Siap diganti/divalidasi oleh Supervisor)
@@ -113,6 +120,8 @@ interface AmbienceControllerProps {
     activeMoodKey?: string;
     dayIndex?: number;
     onMenuOpen?: (isOpen: boolean) => void;
+    menuOpen?: boolean;
+    hideTrigger?: boolean;
 }
 
 const WaveformIndicator = () => (
@@ -128,7 +137,7 @@ const WaveformIndicator = () => (
     </div>
 );
 
-export default function AmbienceController({ className, isDucking = false, activeMoodKey = 'daily', dayIndex = 0, onMenuOpen }: AmbienceControllerProps) {
+export default function AmbienceController({ className, isDucking = false, activeMoodKey = 'daily', dayIndex = 0, onMenuOpen, menuOpen, hideTrigger = false }: AmbienceControllerProps) {
     const audioA = useRef<HTMLAudioElement | null>(null);
     const audioB = useRef<HTMLAudioElement | null>(null);
     
@@ -136,6 +145,7 @@ export default function AmbienceController({ className, isDucking = false, activ
     const [isPlaying, setIsPlaying] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [playbackUnavailable, setPlaybackUnavailable] = useState(false);
+    const [requiresUserGesture, setRequiresUserGesture] = useState(false);
     const [baseVolume, setBaseVolume] = useState(0.5);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeEngine, setActiveEngine] = useState<'A' | 'B'>('A');
@@ -153,38 +163,142 @@ export default function AmbienceController({ className, isDucking = false, activ
     const hasPlayableTarget = typeof targetedTrackUrl === 'string' && /^https?:\/\//i.test(targetedTrackUrl);
 
     // Advanced Ducking (0.4 volume when panel is open, 1.0 multiplier when closed)
-    const targetMasterVolume = isDucking ? baseVolume * 0.4 : baseVolume;
+    const isMuted = baseVolume <= 0.001;
+    const targetMasterVolume = isMuted ? 0 : isDucking ? baseVolume * 0.4 : baseVolume;
 
     const internalVolumes = useRef({ A: 0, B: 0 });
     const fadeAnimationRef = useRef<number | null>(null);
     const engineUrlTargetRef = useRef<string>(targetedTrackUrl);
+    const activeEngineRef = useRef<'A' | 'B'>('A');
+    const pendingPlayRef = useRef(false);
+    const volumeDirectionRef = useRef<{ A: 'idle' | 'up' | 'down'; B: 'idle' | 'up' | 'down' }>({ A: 'idle', B: 'idle' });
+
+    const getEngine = (engine: 'A' | 'B') => (engine === 'A' ? audioA.current : audioB.current);
+    const resolvedMenuOpen = menuOpen ?? isMenuOpen;
+
+    const setMenuState = (next: boolean) => {
+        if (menuOpen === undefined) {
+            setIsMenuOpen(next);
+        }
+        if (onMenuOpen) onMenuOpen(next);
+    };
+
+    const cleanupAudioElement = (audio: HTMLAudioElement | null) => {
+        if (!audio) return;
+        try {
+            audio.pause();
+        } catch {
+            // Ignore pause teardown errors.
+        }
+        audio.removeAttribute('src');
+        audio.src = "";
+        audio.load();
+    };
+
+    const primeAudioElement = (audio: HTMLAudioElement | null, nextUrl: string) => {
+        if (!audio) return;
+        cleanupAudioElement(audio);
+        audio.src = nextUrl;
+        audio.load();
+    };
+
+    const handlePlaybackFailure = (error: unknown) => {
+        const name = error instanceof DOMException ? error.name : error instanceof Error ? error.name : '';
+        console.warn('Ambience playback unavailable:', error);
+        setIsLoading(false);
+        setIsPlaying(false);
+        setPlaybackUnavailable(true);
+        if (PLAYBACK_RETRY_ERROR_NAMES.has(name)) {
+            pendingPlayRef.current = true;
+            setRequiresUserGesture(true);
+        }
+    };
+
+    const attemptPlay = async (audio: HTMLAudioElement | null) => {
+        if (!audio) return false;
+
+        try {
+            await audio.play();
+            pendingPlayRef.current = false;
+            setRequiresUserGesture(false);
+            setPlaybackUnavailable(false);
+            return true;
+        } catch (error) {
+            handlePlaybackFailure(error);
+            return false;
+        }
+    };
+
+    useEffect(() => {
+        activeEngineRef.current = activeEngine;
+    }, [activeEngine]);
+
+    useEffect(() => {
+        if (menuOpen === undefined) return;
+        setIsMenuOpen(menuOpen);
+    }, [menuOpen]);
+
+    useEffect(() => {
+        if (typeof document === 'undefined') return;
+
+        const existing = document.getElementById(MARQUEE_STYLE_ELEMENT_ID);
+        if (existing) return;
+
+        const style = document.createElement('style');
+        style.id = MARQUEE_STYLE_ELEMENT_ID;
+        style.innerHTML = `
+            @keyframes marquee {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-50%); }
+            }
+            .animate-marquee {
+                animation: marquee 10s linear infinite;
+            }
+            .mask-image-fade {
+                mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+                -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            }
+        `;
+        document.head.appendChild(style);
+
+        return () => {
+            style.remove();
+        };
+    }, []);
 
     // Sync state to engine targets
     useEffect(() => {
         if (targetedTrackUrl !== engineUrlTargetRef.current) {
             engineUrlTargetRef.current = targetedTrackUrl;
             setPlaybackUnavailable(false);
+            pendingPlayRef.current = false;
+            setRequiresUserGesture(false);
             
+            const inactiveEngine = activeEngineRef.current === 'A' ? 'B' : 'A';
+            const inactiveAudio = getEngine(inactiveEngine);
+
+            cleanupAudioElement(inactiveAudio);
+
             // Cross-Fade Trigger
             if (isPlaying && hasPlayableTarget) {
-                const nextEngine = activeEngine === 'A' ? 'B' : 'A';
-                const nextAudio = nextEngine === 'A' ? audioA.current : audioB.current;
+                const nextEngine = activeEngineRef.current === 'A' ? 'B' : 'A';
+                const nextAudio = getEngine(nextEngine);
                 
                 if (nextAudio) {
                     setIsLoading(true);
-                    nextAudio.src = targetedTrackUrl;
-                    nextAudio.play()
-                        .then(() => setActiveEngine(nextEngine))
-                        .catch(e => {
-                            console.warn('Crossfade auto-play blocked:', e);
-                            setPlaybackUnavailable(true);
-                            setIsPlaying(false);
-                            setIsLoading(false);
-                        });
+                    primeAudioElement(nextAudio, targetedTrackUrl);
+                    void attemptPlay(nextAudio).then((didPlay) => {
+                        if (didPlay) {
+                            setIsPlaying(true);
+                            setActiveEngine(nextEngine);
+                        }
+                    });
                 }
+            } else if (hasPlayableTarget) {
+                primeAudioElement(getEngine(activeEngineRef.current), targetedTrackUrl);
             }
         }
-    }, [targetedTrackUrl, activeEngine, hasPlayableTarget, isPlaying]);
+    }, [targetedTrackUrl, hasPlayableTarget, isPlaying]);
 
     // Initializer
     useEffect(() => {
@@ -193,6 +307,9 @@ export default function AmbienceController({ className, isDucking = false, activ
                 const audio = new Audio();
                 audio.crossOrigin = "anonymous";
                 audio.loop = true;
+                audio.preload = "none";
+                audio.setAttribute('playsinline', 'true');
+                audio.setAttribute('webkit-playsinline', 'true');
                 audio.volume = 0;
                 return audio;
             };
@@ -216,22 +333,47 @@ export default function AmbienceController({ className, isDucking = false, activ
             
             engineUrlTargetRef.current = targetedTrackUrl;
             if (hasPlayableTarget) {
-                audioA.current.src = targetedTrackUrl;
+                primeAudioElement(audioA.current, targetedTrackUrl);
             }
 
             return () => {
                 [audioA.current, audioB.current].forEach(a => {
                     if (a) {
-                        a.pause();
                         a.removeEventListener('waiting', handleWait);
                         a.removeEventListener('playing', handlePlay);
                         a.removeEventListener('error', handleError);
-                        a.src = "";
+                        cleanupAudioElement(a);
                     }
                 });
             };
         }
-    }, [hasPlayableTarget, targetedTrackUrl]);
+    }, []);
+
+    useEffect(() => {
+        if (!requiresUserGesture || !hasPlayableTarget) return;
+
+        const retryPlayback = () => {
+            if (!pendingPlayRef.current) return;
+            const activeAudio = getEngine(activeEngineRef.current);
+            if (!activeAudio) return;
+            setIsLoading(true);
+            void attemptPlay(activeAudio).then((didPlay) => {
+                if (didPlay) {
+                    setIsPlaying(true);
+                }
+            });
+        };
+
+        window.addEventListener('pointerdown', retryPlayback, { passive: true, once: false });
+        window.addEventListener('touchstart', retryPlayback, { passive: true, once: false });
+        window.addEventListener('keydown', retryPlayback);
+
+        return () => {
+            window.removeEventListener('pointerdown', retryPlayback);
+            window.removeEventListener('touchstart', retryPlayback);
+            window.removeEventListener('keydown', retryPlayback);
+        };
+    }, [requiresUserGesture, hasPlayableTarget]);
 
     // RequestAnimationFrame Volume & Crossfade Loop
     useEffect(() => {
@@ -251,12 +393,19 @@ export default function AmbienceController({ className, isDucking = false, activ
             const targetVolB = activeEngine === 'B' && isPlaying ? targetMasterVolume : 0;
 
             const processVolume = (currVol: number, targetVol: number, engineKey: 'A'|'B') => {
-                const isTargetEngine = activeEngine === engineKey;
-                const step = isTargetEngine ? duckingStepRate : crossfadeStepRate;
-                
-                if (currVol < targetVol) return Math.min(targetVol, currVol + step);
-                if (currVol > targetVol) return Math.max(targetVol, currVol - step);
-                return currVol;
+                if (Math.abs(currVol - targetVol) <= 0.0005) {
+                    volumeDirectionRef.current[engineKey] = 'idle';
+                    return targetVol;
+                }
+
+                const direction = currVol < targetVol ? 'up' : 'down';
+                volumeDirectionRef.current[engineKey] = direction;
+                const step = direction === 'up' ? duckingStepRate : crossfadeStepRate;
+                const nextVol = direction === 'up'
+                    ? Math.min(targetVol, currVol + step)
+                    : Math.max(targetVol, currVol - step);
+
+                return nextVol <= 0.001 ? 0 : nextVol;
             };
 
             internalVolumes.current.A = processVolume(internalVolumes.current.A, targetVolA, 'A');
@@ -265,9 +414,13 @@ export default function AmbienceController({ className, isDucking = false, activ
             if (audioA.current) audioA.current.volume = internalVolumes.current.A;
             if (audioB.current) audioB.current.volume = internalVolumes.current.B;
 
-            // Stop paused tracks to free resources once volume hits 0
-            if (audioA.current && internalVolumes.current.A === 0 && activeEngine === 'B' && !audioA.current.paused) audioA.current.pause();
-            if (audioB.current && internalVolumes.current.B === 0 && activeEngine === 'A' && !audioB.current.paused) audioB.current.pause();
+            // Stop and unload inactive tracks once volume hits 0 to free memory and prevent audio leaks on mobile.
+            if (audioA.current && internalVolumes.current.A === 0 && activeEngine === 'B' && audioA.current.src) {
+                cleanupAudioElement(audioA.current);
+            }
+            if (audioB.current && internalVolumes.current.B === 0 && activeEngine === 'A' && audioB.current.src) {
+                cleanupAudioElement(audioB.current);
+            }
 
             fadeAnimationRef.current = requestAnimationFrame(animateVolume);
         };
@@ -291,30 +444,27 @@ export default function AmbienceController({ className, isDucking = false, activ
         
         if (isPlaying) {
             setIsPlaying(false);
+            setRequiresUserGesture(false);
+            pendingPlayRef.current = false;
         } else {
             const activeAudio = activeEngine === 'A' ? audioA.current : audioB.current;
             if (!activeAudio) return;
             
             if (!activeAudio.src.includes(engineUrlTargetRef.current)) {
-                activeAudio.src = engineUrlTargetRef.current;
+                primeAudioElement(activeAudio, engineUrlTargetRef.current);
             }
             setIsLoading(true);
             setPlaybackUnavailable(false);
-            activeAudio.play().then(() => {
-                setIsPlaying(true);
-            }).catch(e => {
-                console.warn("Audio playback unavailable", e);
-                setPlaybackUnavailable(true);
-                setIsPlaying(false);
-                setIsLoading(false);
+            void attemptPlay(activeAudio).then((didPlay) => {
+                if (didPlay) {
+                    setIsPlaying(true);
+                }
             });
         }
     };
 
     const handleMenuToggle = () => {
-        const newState = !isMenuOpen;
-        setIsMenuOpen(newState);
-        if (onMenuOpen) onMenuOpen(newState);
+        setMenuState(!resolvedMenuOpen);
     };
 
     const handleTrackSelect = (url: string) => {
@@ -323,31 +473,33 @@ export default function AmbienceController({ className, isDucking = false, activ
             [currentMoodContextKey]: url
         }));
         setPlaybackUnavailable(false);
+        setRequiresUserGesture(false);
+        pendingPlayRef.current = false;
         
         // Auto play when user selects a track manually if not already playing
         if (!isPlaying && audioA.current && audioB.current && /^https?:\/\//i.test(url)) {
             const activeAudio = activeEngine === 'A' ? audioA.current : audioB.current;
-            activeAudio.src = url;
+            primeAudioElement(activeAudio, url);
             setIsLoading(true);
-            activeAudio.play()
-                .then(() => setIsPlaying(true))
-                .catch(() => {
-                    setPlaybackUnavailable(true);
-                    setIsLoading(false);
+            void attemptPlay(activeAudio)
+                .then((didPlay) => {
+                    if (didPlay) {
+                        setIsPlaying(true);
+                    }
                 });
         }
     };
 
     return (
-        <div className={cn("fixed bottom-8 right-8 z-[100] flex flex-col items-end gap-3", className)}>
+        <div className={cn("fixed right-4 bottom-[calc(16px+env(safe-area-inset-bottom))] z-[100] flex flex-col items-end gap-3 md:right-8 md:bottom-8", className)}>
             <AnimatePresence>
-                {isMenuOpen && (
+                {resolvedMenuOpen && (
                     <>
                         <motion.div 
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            onClick={handleMenuToggle}
+                            onClick={() => setMenuState(false)}
                             className="fixed inset-0 z-[105] cursor-default"
                         />
                         <motion.div 
@@ -355,7 +507,7 @@ export default function AmbienceController({ className, isDucking = false, activ
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
                             style={{ transformOrigin: 'bottom right' }}
-                            className="fixed bottom-[100px] left-4 right-4 md:left-auto md:right-8 z-[110] w-[calc(100vw-32px)] max-w-[360px] md:w-80 mx-auto bg-[#0A0A0A]/95 backdrop-blur-3xl border border-white/10 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.9),_0_0_2px_rgba(255,255,255,0.1)] rounded-[32px] p-6 text-slate-200"
+                            className="fixed left-4 right-4 bottom-[calc(80px+env(safe-area-inset-bottom))] z-[110] mx-auto w-[calc(100vw-32px)] max-w-[calc(100dvw-2rem)] md:left-auto md:right-8 md:mx-0 md:w-80 md:max-w-[360px] bg-[#0A0A0A]/95 backdrop-blur-3xl border border-white/10 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.9),_0_0_2px_rgba(255,255,255,0.1)] rounded-[32px] p-5 md:p-6 text-slate-200"
                         >
                             {/* Header & Marquee */}
                         <div className="flex items-center gap-3 w-full mb-5 pb-4 border-b border-slate-900/5">
@@ -385,7 +537,9 @@ export default function AmbienceController({ className, isDucking = false, activ
                         {playbackUnavailable && (
                             <div className="mb-4 rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
                                 <p className="text-[11px] font-semibold text-slate-300">
-                                    Sumber ambience tidak tersedia di perangkat ini saat ini.
+                                    {requiresUserGesture
+                                        ? 'Playback diblokir perangkat. Tap sekali lagi untuk memulai ambience.'
+                                        : 'Sumber ambience tidak tersedia di perangkat ini saat ini.'}
                                 </p>
                             </div>
                         )}
@@ -395,7 +549,7 @@ export default function AmbienceController({ className, isDucking = false, activ
                             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-1">
                                 Rekomendasi Atmosfer
                             </p>
-                            <div className="space-y-1.5 overflow-y-auto max-h-[160px] scrollbar-hide">
+                            <div className="space-y-1.5 overflow-y-auto max-h-[40vh] min-h-0 scrollbar-hide pr-1">
                                 {recommendations.map((track, idx) => {
                                     const isSelected = targetedTrackUrl === track.url;
                                     return (
@@ -442,43 +596,27 @@ export default function AmbienceController({ className, isDucking = false, activ
                 )}
             </AnimatePresence>
 
-            <button 
-                onClick={handleMenuToggle}
-                className={cn(
-                    "h-14 w-14 rounded-full flex items-center justify-center transition-all duration-300 shadow-2xl shadow-black/50 active:scale-90",
-                    isMenuOpen ? "bg-white text-black" : "bg-[#111111]/80 backdrop-blur-2xl text-slate-300 border border-white/10 hover:bg-white/10",
-                    isPlaying && !isMenuOpen && !isLoading ? "ring-2 ring-white/20" : ""
-                )}
-            >
-                {isLoading ? (
-                    <motion.div animate={{ scale: [0.8, 1.2, 0.8] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-                        <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
-                    </motion.div>
-                ) : isPlaying && !isMenuOpen ? (
-                    <WaveformIndicator />
-                ) : (
-                    <Volume2 className={cn("h-6 w-6")} />
-                )}
-            </button>
+            {!hideTrigger && (
+                <button 
+                    onClick={handleMenuToggle}
+                    aria-label={resolvedMenuOpen ? "Close ambience controls" : "Open ambience controls"}
+                    className={cn(
+                        "h-14 w-14 rounded-full flex items-center justify-center transition-all duration-300 shadow-2xl shadow-black/50 active:scale-90",
+                        resolvedMenuOpen ? "bg-white text-black" : "bg-[#111111]/80 backdrop-blur-2xl text-slate-300 border border-white/10 hover:bg-white/10",
+                        isPlaying && !resolvedMenuOpen && !isLoading ? "ring-2 ring-white/20" : ""
+                    )}
+                >
+                    {isLoading ? (
+                        <motion.div animate={{ scale: [0.8, 1.2, 0.8] }} transition={{ repeat: Infinity, duration: 1.5 }}>
+                            <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+                        </motion.div>
+                    ) : isPlaying && !resolvedMenuOpen ? (
+                        <WaveformIndicator />
+                    ) : (
+                        <Volume2 className={cn("h-6 w-6")} />
+                    )}
+                </button>
+            )}
         </div>
     );
-}
-
-// Global CSS animation for Marquee
-if (typeof document !== 'undefined') {
-    const style = document.createElement('style');
-    style.innerHTML = `
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-            animation: marquee 10s linear infinite;
-        }
-        .mask-image-fade {
-            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-        }
-    `;
-    document.head.appendChild(style);
 }
