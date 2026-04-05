@@ -1,6 +1,6 @@
 # Using Docker
 
-Dokumen ini memakai [WEB_STACK_CPHPANEL_PARITY_AUDIT_2026-04-03.md](/e:/thechoosentalksnext/docs/CORE/architecture/WEB_STACK_CPHPANEL_PARITY_AUDIT_2026-04-03.md) sebagai sumber tunggal keputusan parity.
+Dokumen ini mengikuti keputusan parity web-versus-cPanel terbaru yang dipakai tim pada audit lokal April 2026.
 
 ## Tujuan
 
