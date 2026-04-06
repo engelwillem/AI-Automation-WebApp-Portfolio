@@ -73,32 +73,25 @@ export function VersehubLandingView({
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                     >
-                        <div className="rounded-[40px] bg-white p-8 shadow-sm ring-1 ring-slate-100">
-                            <div className="flex items-center gap-4">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-50 text-sky-600">
-                                    <BookOpenText className="h-6 w-6" />
-                                </div>
-                                <div className="flex flex-col">
-                                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-sky-500">
-                                        VerseHub
-                                    </p>
-                                    <p className="text-[14px] font-medium text-slate-400">
-                                        Ritme tenang untuk jiwa yang lelah.
-                                    </p>
-                                </div>
+                        <div className="pb-16 flex flex-col items-center text-center">
+                            <div className="flex flex-col items-center mb-8">
+                                <BookOpenText className="h-8 w-8 text-slate-800 mb-3" />
+                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                                    VerseHub
+                                </p>
                             </div>
 
-                            <h2 className="mt-8 text-[32px] font-semibold leading-[1.2] tracking-[-0.03em] text-slate-900 md:text-[40px]">
+                            <h2 className="tct-serif text-[32px] font-medium leading-[1.2] text-slate-900 md:text-[40px] mb-8">
                                 Buka satu pasal.<br />Tinggal lebih lama di firman.
                             </h2>
 
-                            <blockquote className="mt-8 font-serif text-[26px] leading-[1.7] tracking-tight text-slate-700 italic border-l-2 border-sky-100 pl-6">
-                                {activeScene.quote}
-                            </blockquote>
-
-                            <p className="mt-8 text-[16px] leading-[1.8] text-slate-500">
+                            <p className="text-[16px] leading-[1.8] text-slate-500 max-w-sm mb-4">
                                 {activeScene.invitation}
                             </p>
+
+                            <blockquote className="font-serif text-[20px] leading-[1.7] tracking-tight text-slate-700 italic border-l-2 border-slate-200 pl-4 py-1 my-8 max-w-md">
+                                {activeScene.quote}
+                            </blockquote>
 
                             <MoodQuickStart
                                 options={MOOD_QUICK_STARTS}
@@ -106,42 +99,42 @@ export function VersehubLandingView({
                                 onSelect={onQuickStartMood}
                             />
 
-                            <div className="mt-12 flex flex-col gap-4 sm:flex-row">
+                            <div className="mt-12 flex flex-col items-center gap-4 w-full max-w-[340px]">
                                 <button
                                     type="button"
                                     onClick={onStartFirstChapter}
-                                    className="group flex flex-1 items-center justify-between rounded-full bg-slate-900 px-6 py-4 text-[15px] font-bold text-white shadow-soft transition-all hover:bg-slate-800 active:scale-95"
+                                    className="group flex w-full items-center justify-center gap-3 rounded-full bg-slate-900 px-6 py-[16px] text-[15px] font-bold text-white shadow-2xl shadow-slate-900/10 transition-all hover:bg-slate-800 active:scale-95"
                                 >
-                                    <span>Mulai dari {firstBookLabel}</span>
+                                    <span>Mulai dari {firstBookLabel} 1</span>
                                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                                 </button>
 
                                 <button
                                     type="button"
                                     onClick={onOpenPicker}
-                                    className="flex flex-1 items-center justify-center rounded-full bg-white px-6 py-4 text-[15px] font-bold text-slate-700 ring-1 ring-slate-200 transition-all hover:bg-slate-50 active:scale-95"
+                                    className="flex w-full items-center justify-center rounded-full bg-slate-50 px-6 py-[15px] text-[14px] font-bold text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-900 active:scale-95"
                                 >
-                                    Pilih Kitab
+                                    Eksplorasi Kitab Lain
                                 </button>
                             </div>
 
                             {continueReadingHref && continueReadingLabel ? (
-                                <div className="mt-8">
+                                <div className="mt-8 w-full max-w-[340px]">
                                     <button
                                         type="button"
                                         onClick={onContinueReading}
-                                        className="inline-flex w-full items-center justify-between rounded-2xl bg-slate-50 px-6 py-4 transition-all hover:bg-slate-100 ring-1 ring-slate-100"
+                                        className="inline-flex w-full items-center justify-between rounded-full bg-white px-6 py-[16px] transition-all hover:bg-slate-50 ring-1 ring-slate-200 shadow-sm"
                                     >
                                         <div className="flex flex-col text-left">
-                                            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Lanjutkan</span>
-                                            <span className="text-[15px] font-bold text-slate-700">{continueReadingLabel}</span>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Lanjutkan Terakhir</span>
+                                            <span className="text-[14px] font-bold text-slate-900">{continueReadingLabel}</span>
                                         </div>
                                         <ArrowRight className="h-4 w-4 text-slate-400" />
                                     </button>
                                 </div>
                             ) : null}
 
-                            <p className="mt-10 border-t border-slate-50 pt-8 text-[13px] leading-relaxed text-slate-400">
+                            <p className="mt-12 text-[13px] leading-relaxed text-slate-400 max-w-sm">
                                 {activeScene.reflection}
                             </p>
                         </div>

@@ -46,11 +46,10 @@ export default function FloatingBottomNav({
             className={cn(
                 // Slightly wider shell keeps /renungan aligned with the more generous nav feel used elsewhere.
                 'relative mx-auto w-[calc(100vw-28px)] max-w-[420px] rounded-[30px]',
-                'border border-black/[0.06] dark:border-white/[0.06]',
-                'bg-white/84 dark:bg-[hsl(240_5%_8%/0.88)]',
+                'border border-black/[0.06]',
+                'bg-white/84',
                 'backdrop-blur-3xl',
                 'shadow-[0_24px_52px_-20px_rgba(15,23,42,0.22),0_10px_22px_-14px_rgba(15,23,42,0.08)]',
-                'dark:shadow-[0_24px_52px_-20px_rgba(0,0,0,0.6),0_10px_22px_-14px_rgba(0,0,0,0.4)]',
                 'px-2 pb-2 pt-1.5',
                 className,
             )}
@@ -89,7 +88,7 @@ export default function FloatingBottomNav({
                             {isActive && (
                                 <span
                                     aria-hidden="true"
-                                    className="absolute inset-0 rounded-[20px] bg-white dark:bg-white/[0.06] shadow-[0_10px_24px_-16px_rgba(15,23,42,0.42)] dark:shadow-[0_10px_24px_-16px_rgba(0,0,0,0.6)] ring-1 ring-black/[0.06] dark:ring-white/[0.08]"
+                                    className="absolute inset-0 rounded-[20px] bg-white shadow-[0_10px_24px_-16px_rgba(15,23,42,0.42)] ring-1 ring-black/[0.06]"
                                 />
                             )}
 

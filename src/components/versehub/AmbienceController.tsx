@@ -538,27 +538,26 @@ export default function AmbienceController({
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
                             style={{ transformOrigin: 'bottom right' }}
-                            className="fixed left-4 right-4 bottom-[calc(80px+env(safe-area-inset-bottom))] z-[110] mx-auto w-[calc(100vw-32px)] max-w-[calc(100dvw-2rem)] md:left-auto md:right-8 md:mx-0 md:w-80 md:max-w-[360px] bg-[#0A0A0A]/95 backdrop-blur-3xl border border-white/10 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.9),_0_0_2px_rgba(255,255,255,0.1)] rounded-[32px] p-5 md:p-6 text-slate-200"
+                            className="fixed left-4 right-4 bottom-[calc(80px+env(safe-area-inset-bottom))] z-[110] mx-auto w-[calc(100vw-32px)] max-w-[calc(100dvw-2rem)] md:left-auto md:right-8 md:mx-0 md:w-80 md:max-w-[360px] bg-white/95 backdrop-blur-3xl border border-slate-100 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1),_0_0_4px_rgba(0,0,0,0.05)] rounded-[32px] p-5 md:p-6 text-slate-800"
                         >
                             {/* Header & Marquee */}
-                        <div className="flex items-center gap-3 w-full mb-5 pb-4 border-b border-slate-900/5">
+                        <div className="flex items-center gap-3 w-full mb-5 pb-4 border-b border-slate-100">
                             <button 
                                 onClick={togglePlay}
                                 disabled={!hasPlayableTarget}
                                 className={cn(
-                                    "flex-none h-10 w-10 rounded-full flex items-center justify-center transition-all disabled:cursor-not-allowed disabled:opacity-50",
-                                    isPlaying ? "bg-slate-900 text-white shadow-xl" : "bg-white text-slate-500 shadow-sm hover:scale-105"
+                                    "flex-none h-11 w-11 rounded-full flex items-center justify-center transition-all disabled:cursor-not-allowed disabled:opacity-50 shadow-sm ring-1 ring-slate-100",
+                                    isPlaying ? "bg-slate-900 text-white shadow-xl shadow-slate-900/20" : "bg-white text-slate-600 hover:bg-slate-50 hover:scale-[1.02] active:scale-95"
                                 )}
                             >
-                                {isLoading ? <Loader2 size={16} className="animate-spin" /> : isPlaying ? <Pause size={16}/> : <Play size={16} className="ml-1"/>}
+                                {isLoading ? <Loader2 size={18} className="animate-spin text-slate-400" /> : isPlaying ? <Pause size={18}/> : <Play size={18} className="ml-1"/>}
                             </button>
                             <div className="flex-1 overflow-hidden">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
                                     Now Playing
                                 </p>
-                                {/* Spotify-style Marquee for long text */}
-                                <div className="relative w-full overflow-hidden whitespace-nowrap mask-image-fade text-[13px] font-bold text-slate-200">
-                                    <div className={cn("inline-block", targetedTrack.title.length > 20 && "animate-marquee")}>
+                                <div className="relative w-full overflow-hidden whitespace-nowrap mask-image-fade text-[13px] font-bold text-slate-800">
+                                    <div className={cn("inline-block cursor-default", targetedTrack.title.length > 20 && "animate-marquee")}>
                                         {targetedTrack.title} &nbsp; • &nbsp; {targetedTrack.title}
                                     </div>
                                 </div>
@@ -577,7 +576,7 @@ export default function AmbienceController({
 
                         {/* Smart Recommendations */}
                         <div className="space-y-2 mb-6">
-                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-1">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">
                                 Rekomendasi Atmosfer
                             </p>
                             <div className="space-y-1.5 overflow-y-auto max-h-[40vh] min-h-0 scrollbar-hide pr-1">
@@ -589,15 +588,18 @@ export default function AmbienceController({
                                             onClick={() => handleTrackSelect(track.url)}
                                             className={cn(
                                                 "w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all text-left group",
-                                                isSelected ? "bg-white/10 ring-1 ring-white/5" : "hover:bg-white/5"
+                                                isSelected ? "bg-slate-50 ring-1 ring-slate-200 shadow-sm" : "hover:bg-slate-50/50"
                                             )}
                                         >
-                                            <div className="h-8 w-8 flex items-center justify-center rounded-full bg-black/50 text-slate-400 text-sm border border-white/5 shadow-inner">
+                                            <div className={cn(
+                                                "h-9 w-9 flex items-center justify-center rounded-full text-sm border shadow-sm transition-colors",
+                                                isSelected ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-400 border-slate-200 group-hover:text-slate-600"
+                                            )}>
                                                 {getTypeIcon(track.type)}
                                             </div>
                                             <div className="flex-1 overflow-hidden">
-                                                <p className={cn("text-[12px] font-bold truncate transition-colors", isSelected ? "text-white" : "text-slate-300 group-hover:text-slate-100")}>{track.title}</p>
-                                                <p className="text-[9px] uppercase tracking-widest text-slate-500 mt-0.5">{track.type}</p>
+                                                <p className={cn("text-[13px] font-bold truncate transition-colors", isSelected ? "text-slate-900" : "text-slate-600 group-hover:text-slate-800")}>{track.title}</p>
+                                                <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mt-0.5">{track.type}</p>
                                             </div>
                                         </button>
                                     );
@@ -608,15 +610,15 @@ export default function AmbienceController({
                         {/* Volume Control */}
                         <div className="space-y-3 px-2">
                             <div className="flex justify-between items-center text-slate-400">
-                                <VolumeX size={14} />
-                                <Volume2 size={14} />
+                                <VolumeX size={16} />
+                                <Volume2 size={16} />
                             </div>
                             <input 
                                 type="range" 
                                 min="0" max="1" step="0.01" 
                                 value={baseVolume}
                                 onChange={(e) => setBaseVolume(parseFloat(e.target.value))}
-                                className="w-full h-1.5 bg-white rounded-full appearance-none outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-slate-900 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-lg cursor-pointer"
+                                className="w-full h-1.5 bg-slate-200 rounded-full appearance-none outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-slate-900 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md cursor-pointer"
                             />
                             <p className="text-[9px] font-bold text-slate-400 text-center uppercase tracking-widest mt-2 h-3 transition-opacity">
                                 {isDucking ? "Focus Mode: Ducking Active" : " "}
@@ -632,19 +634,21 @@ export default function AmbienceController({
                     onClick={handleMenuToggle}
                     aria-label={resolvedMenuOpen ? "Close ambience controls" : "Open ambience controls"}
                     className={cn(
-                        "h-14 w-14 rounded-full flex items-center justify-center transition-all duration-300 shadow-2xl shadow-black/50 active:scale-90",
-                        resolvedMenuOpen ? "bg-white text-black" : "bg-[#111111]/80 backdrop-blur-2xl text-slate-300 border border-white/10 hover:bg-white/10",
-                        isPlaying && !resolvedMenuOpen && !isLoading ? "ring-2 ring-white/20" : ""
+                        "h-[52px] w-[52px] rounded-full flex items-center justify-center transition-all duration-300 active:scale-95",
+                        resolvedMenuOpen 
+                            ? "bg-slate-100 text-slate-700 shadow-inner" 
+                            : "bg-white/90 backdrop-blur-2xl text-slate-700 ring-1 ring-slate-200/60 shadow-[0_8px_30px_-6px_rgba(0,0,0,0.15)] hover:bg-white",
+                        isPlaying && !resolvedMenuOpen && !isLoading ? "ring-2 ring-sky-200 shadow-sky-100/50" : ""
                     )}
                 >
                     {isLoading ? (
                         <motion.div animate={{ scale: [0.8, 1.2, 0.8] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-                            <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+                            <Loader2 className="h-5 w-5 animate-spin text-sky-500" />
                         </motion.div>
                     ) : isPlaying && !resolvedMenuOpen ? (
                         <WaveformIndicator />
                     ) : (
-                        <Volume2 className={cn("h-6 w-6")} />
+                        <Volume2 className={cn("h-5 w-5")} />
                     )}
                 </button>
             )}

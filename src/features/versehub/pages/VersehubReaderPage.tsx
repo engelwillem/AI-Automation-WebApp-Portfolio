@@ -9,7 +9,6 @@ import { VerseFocusHeader } from "@/features/versehub/components/VerseFocusHeade
 import { VersehubLoadingScreen } from "@/features/versehub/components/VersehubLoadingScreen";
 import { VersehubOverlayController } from "@/features/versehub/components/VersehubOverlayController";
 import { VersehubReaderView } from "@/features/versehub/components/VersehubReaderView";
-import { type ControlCenterItem } from "@/features/versehub/components/VersehubControlCenter";
 import { useAuthSession } from "@/auth/use-auth-session";
 import { useVersehubReaderActions } from "@/features/versehub/hooks/use-versehub-reader-actions";
 import { useVersehubReaderChrome } from "@/features/versehub/hooks/use-versehub-reader-chrome";
@@ -107,11 +106,9 @@ export function VersehubReaderPage({
 
   const {
     audioMenuOpen,
-    controlCenterOpen,
     handleAmbienceMenuOpen,
     handlePlaybackStateChange,
     scrollViewportRef,
-    setControlCenterOpen,
     shouldShowChrome,
   } = useVersehubReaderChrome({
     activeMood,
@@ -166,52 +163,7 @@ export function VersehubReaderPage({
     verseSegments,
   });
 
-  const floatingMenuItems = useMemo<ControlCenterItem[]>(() => {
-    const items: ControlCenterItem[] = [
-      {
-        key: "explore",
-        label: "Explore",
-        onClick: () => {
-          handleAmbienceMenuOpen(false);
-          setOverlay("explore");
-          setControlCenterOpen(false);
-        },
-      },
-      {
-        key: "kitab",
-        label: "Kitab",
-        onClick: () => {
-          handleAmbienceMenuOpen(false);
-          setOverlay("picker");
-          setControlCenterOpen(false);
-        },
-      },
-      {
-        key: "audio",
-        label: "Audio",
-        onClick: () => {
-          setOverlay(null);
-          handleAmbienceMenuOpen(true);
-          setControlCenterOpen(false);
-        },
-      },
-    ];
 
-    if (mentorPreviewVerse && mentorPreviewLabel) {
-      items.unshift({
-        key: "mentor",
-        label: "Mentor",
-        onClick: () => {
-          setSelectedVerse(mentorPreviewVerse);
-          setOverlay("mentor");
-          handleAmbienceMenuOpen(false);
-          setControlCenterOpen(false);
-        },
-      });
-    }
-
-    return items;
-  }, [handleAmbienceMenuOpen, mentorPreviewLabel, mentorPreviewVerse, setControlCenterOpen, setSelectedVerse]);
 
   const openMentorForVerse = (verse: Verse | null, userReflection?: string | null) => {
     if (!verse) return;
@@ -378,11 +330,9 @@ export function VersehubReaderPage({
         audioMenuOpen={audioMenuOpen}
         books={books}
         chapters={chapters}
-        controlCenterOpen={controlCenterOpen}
         error={error}
         firstBookLabel={firstBookLabel}
         firstChapterHref={firstChapterHref}
-        floatingMenuItems={floatingMenuItems}
         handleAmbienceMenuOpen={handleAmbienceMenuOpen}
         handlePlaybackStateChange={handlePlaybackStateChange}
         isLandingMode={isLandingMode}
@@ -393,7 +343,6 @@ export function VersehubReaderPage({
         mentorPreviewVerse={mentorPreviewVerse}
         ogOpen={ogOpen}
         onNavigate={(href) => router.push(href)}
-        onToggleControlCenter={() => setControlCenterOpen((prev) => !prev)}
         overlay={overlay}
         selectedVerseReflection={selectedVerseReflection}
         setActiveMood={setActiveMood}

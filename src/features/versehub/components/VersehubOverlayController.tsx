@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import AmbienceController from "@/components/versehub/AmbienceController";
 import MentorPanel from "@/components/versehub/MentorPanel";
-import { VersehubControlCenter, type ControlCenterItem } from "@/features/versehub/components/VersehubControlCenter";
 import { cn } from "@/lib/utils";
 import type { Book, OverlayType, SanctuaryScene, Verse, VerseData } from "@/features/versehub/types";
 
@@ -17,11 +16,9 @@ interface VersehubOverlayControllerProps {
   audioMenuOpen: boolean;
   books: Book[];
   chapters: number[];
-  controlCenterOpen: boolean;
   error: string | null;
   firstBookLabel: string;
   firstChapterHref: string | null;
-  floatingMenuItems: ControlCenterItem[];
   handleAmbienceMenuOpen: (isOpen: boolean) => void;
   handlePlaybackStateChange: (args: { isPlaying: boolean; moodKey: string; trackTitle?: string }) => void;
   isLandingMode: boolean;
@@ -32,7 +29,6 @@ interface VersehubOverlayControllerProps {
   mentorPreviewVerse: Verse | null;
   ogOpen: boolean;
   onNavigate: (href: string) => void;
-  onToggleControlCenter: () => void;
   overlay: OverlayType;
   selectedVerseReflection: string | null;
   setActiveMood: Dispatch<SetStateAction<string>>;
@@ -52,11 +48,9 @@ export function VersehubOverlayController({
   audioMenuOpen,
   books,
   chapters,
-  controlCenterOpen,
   error,
   firstBookLabel,
   firstChapterHref,
-  floatingMenuItems,
   handleAmbienceMenuOpen,
   handlePlaybackStateChange,
   isLandingMode,
@@ -67,7 +61,6 @@ export function VersehubOverlayController({
   mentorPreviewVerse,
   ogOpen,
   onNavigate,
-  onToggleControlCenter,
   overlay,
   selectedVerseReflection,
   setActiveMood,
@@ -96,67 +89,28 @@ export function VersehubOverlayController({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 40 }}
               transition={{ type: "spring", stiffness: 240, damping: 28 }}
-              className="absolute inset-x-0 bottom-0 mx-auto w-full max-w-3xl rounded-t-[36px] glass-panel px-6 pt-6 pb-[calc(24px+env(safe-area-inset-bottom,24px))] shadow-[0_-30px_80px_rgba(15,23,42,0.18)] md:left-1/2 md:max-w-2xl md:-translate-x-1/2 md:pb-6"
+              className="absolute inset-x-0 bottom-0 mx-auto w-full max-w-3xl rounded-t-[36px] bg-white px-6 pt-6 pb-[calc(24px+env(safe-area-inset-bottom,24px))] shadow-[0_-30px_80px_rgba(15,23,42,0.1)] md:left-1/2 md:max-w-2xl md:-translate-x-1/2 md:pb-6"
             >
-              <div className="mx-auto mb-5 h-1.5 w-14 rounded-full bg-foreground/10" />
+              <div className="mx-auto mb-5 h-1.5 w-14 rounded-full bg-slate-200" />
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#91A0C7]">Deep Dive</p>
-                  <h3 className="mt-2 text-2xl font-black tracking-tight text-foreground">Masuk ke firman tanpa kehilangan rasa heningnya.</h3>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">VerseHub</p>
+                  <h3 className="mt-2 text-2xl tct-serif tracking-tight text-slate-800">Masuk ke firman tanpa kehilangan rasa heningnya.</h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setOverlay(null)}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-foreground/5 text-foreground/50 transition hover:bg-foreground/10 active:scale-90"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 text-slate-500 transition hover:bg-slate-100 active:scale-90"
                 >
                   <X className="h-5 w-5" />
                 </button>
               </div>
 
-              <p className="mt-4 text-sm leading-7 text-foreground/65">{activeScene.reflection}</p>
+              <p className="mt-4 text-[15px] leading-relaxed text-slate-500">{activeScene.reflection}</p>
 
-              <div className="mt-6 grid gap-3 md:grid-cols-2">
-                <button
-                  type="button"
-                  onClick={() => setOverlay("picker")}
-                  className="rounded-[26px] bg-[var(--vh-surface)]/80 p-4 text-left ring-1 ring-[var(--vh-border)] transition hover:bg-[var(--vh-surface)] active:scale-[0.98]"
-                >
-                  <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[var(--vh-text-muted)]">Koleksi Kitab</p>
-                  <p className="mt-2 text-lg font-black tracking-tight text-[var(--vh-text-primary)]">Buka Perjanjian Lama dan Baru</p>
-                  <p className="mt-2 text-sm leading-relaxed text-[var(--vh-text-secondary)]">
-                    Masuk ke daftar kitab, lalu pilih pasal yang ingin Anda baca dengan flow yang lebih tenang.
-                  </p>
-                </button>
-
-                <button
-                  type="button"
-                  disabled={!firstChapterHref}
-                  onClick={() => {
-                    if (!firstChapterHref) return;
-                    setOverlay(null);
-                    onNavigate(firstChapterHref);
-                  }}
-                  className="rounded-[26px] bg-[var(--vh-surface)]/80 p-4 text-left ring-1 ring-[var(--vh-border)] transition hover:bg-[var(--vh-surface)] disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98]"
-                >
-                  <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[var(--vh-text-muted)]">Jalur Cepat</p>
-                  <p className="mt-2 text-lg font-black tracking-tight text-[var(--vh-text-primary)]">Mulai dari {firstBookLabel} 1</p>
-                  <p className="mt-2 text-sm leading-relaxed text-[var(--vh-text-secondary)]">
-                    Cocok untuk langsung masuk ke reader utilitarian tanpa kehilangan transisi dari landing.
-                  </p>
-                </button>
-
-                <div className="rounded-[26px] bg-[var(--vh-surface)]/80 p-4 text-left ring-1 ring-[var(--vh-border)]">
-                  <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[var(--vh-text-muted)]">Lagusion Companion</p>
-                  <p className="mt-2 text-lg font-black tracking-tight text-[var(--vh-text-primary)]">Vocal dan audio-only tetap tersedia</p>
-                  <p className="mt-2 text-sm leading-relaxed text-[var(--vh-text-secondary)]">
-                    Floating audio companion akan menemani bacaan Anda dengan pilihan vocal, piano, acoustic, atau instrumental.
-                  </p>
-                </div>
-
-                <div className="rounded-[26px] bg-[var(--vh-surface)]/80 p-4 text-left ring-1 ring-[var(--vh-border)]">
-                  <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[var(--vh-text-muted)]">Atur Atmosfer</p>
-                  <p className="mt-2 text-lg font-black tracking-tight text-[var(--vh-text-primary)]">Pilih Mood Saat Ini</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
+              <div className="mt-8 flex flex-col items-center gap-4 py-4">
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Pilih Mood Saat Ini</p>
+                  <div className="flex flex-wrap justify-center gap-2 mb-6">
                     {[
                       { key: "hopeful", label: "Cahaya" },
                       { key: "anxious", label: "Ketenangan" },
@@ -167,25 +121,38 @@ export function VersehubOverlayController({
                         key={mood.key}
                         onClick={() => setActiveMood(mood.key)}
                         className={cn(
-                          "rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition",
+                          "rounded-full px-5 py-2.5 text-[12px] font-bold transition-all shadow-sm ring-1",
                           activeMood === mood.key
-                            ? "bg-[var(--vh-accent)] text-white"
-                            : "bg-[var(--vh-surface-elevated)] text-[var(--vh-text-secondary)] ring-1 ring-[var(--vh-border)] hover:bg-[var(--vh-surface)]"
+                            ? "bg-slate-900 text-white ring-slate-900"
+                            : "bg-white text-slate-500 ring-slate-200/60 hover:bg-slate-50 hover:text-slate-900 hover:ring-slate-300"
                         )}
                       >
                         {mood.label}
                       </button>
                     ))}
                   </div>
-                </div>
 
-                <div className="rounded-[26px] bg-[var(--vh-surface)]/80 p-4 text-left ring-1 ring-[var(--vh-border)]">
-                  <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[var(--vh-text-muted)]">Mentor Internal</p>
-                  <p className="mt-2 text-lg font-black tracking-tight text-[var(--vh-text-primary)]">Scripture guide aktif saat ayat dibuka</p>
-                  <p className="mt-2 text-sm leading-relaxed text-[var(--vh-text-secondary)]">
-                    Mentor menarik refleksi, kaitan ayat, konteks, dan study guidance dari engine Laravel internal dengan metadata penuh.
-                  </p>
-                </div>
+                  <div className="flex flex-col sm:flex-row w-full gap-3 mt-4 max-w-md">
+                    <button
+                      type="button"
+                      disabled={!firstChapterHref}
+                      onClick={() => {
+                        if (!firstChapterHref) return;
+                        setOverlay(null);
+                        onNavigate(firstChapterHref);
+                      }}
+                      className="flex-1 rounded-full bg-slate-900 px-6 py-[16px] text-center text-[14px] font-bold text-white shadow-2xl shadow-slate-900/10 transition hover:bg-slate-800 disabled:opacity-50 active:scale-95"
+                    >
+                      Baca {firstBookLabel} 1
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setOverlay("picker")}
+                      className="flex-1 rounded-full bg-slate-50 px-6 py-[16px] text-center text-[14px] font-bold text-slate-600 ring-1 ring-slate-200/60 transition hover:bg-slate-100 active:scale-95"
+                    >
+                      Koleksi Kitab
+                    </button>
+                  </div>
               </div>
             </motion.div>
           </div>
@@ -315,16 +282,9 @@ export function VersehubOverlayController({
         activeMoodKey={activeMood}
         dayIndex={new Date().getDay()}
         menuOpen={audioMenuOpen}
-        hideTrigger
+        hideTrigger={false}
         onMenuOpen={handleAmbienceMenuOpen}
         onPlaybackStateChange={handlePlaybackStateChange}
-      />
-
-      <VersehubControlCenter
-        isVisible={shouldShowChrome}
-        isOpen={controlCenterOpen}
-        items={floatingMenuItems}
-        onToggle={onToggleControlCenter}
       />
 
       {error && isLandingMode && (
