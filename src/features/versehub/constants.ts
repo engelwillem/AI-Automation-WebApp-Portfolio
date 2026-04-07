@@ -26,7 +26,7 @@ export const SANCTUARY_SCENES: SanctuaryScene[] = [
         eyebrow: "Ruang Doa Digital",
         quote: "\"Tinggallah di dalam Aku...\"",
         invitation: "",
-        reflection: "Koleksi kitab, ambience, mentor, dan jurnal refleksi disusun sebagai satu ritme yang utuh, bukan fitur-fitur yang saling terlepas.",
+        reflection: "",
         moodTag: "weary",
         suggestedRoute: "explore",
     },

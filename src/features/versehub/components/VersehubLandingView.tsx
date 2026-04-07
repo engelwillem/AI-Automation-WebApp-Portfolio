@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, BookOpenText, ChevronLeft } from "lucide-react";
+import { ArrowRight, ChevronLeft } from "lucide-react";
+import { TCTLogo } from "@/components/brand/TCTLogo";
 import { MOOD_QUICK_STARTS } from "@/features/versehub/constants";
 import { MoodQuickStart } from "@/features/versehub/components/MoodQuickStart";
 import type { SanctuaryScene } from "@/features/versehub/types";
@@ -41,9 +42,8 @@ export function VersehubLandingView({
 }: VersehubLandingViewProps) {
     return (
         <div className="relative flex flex-1 flex-col bg-white">
-            {/* Header: Fixed Height & Proper Spacing */}
             <header className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/80 backdrop-blur-md pt-[env(safe-area-inset-top,16px)]">
-                <div className="mx-auto flex w-full max-w-[620px] items-center justify-between gap-4 px-6 py-4">
+                <div className="mx-auto flex w-full max-w-[620px] items-start gap-4 px-6 py-4">
                     <button
                         type="button"
                         onClick={onBackToday}
@@ -52,13 +52,16 @@ export function VersehubLandingView({
                         <ChevronLeft className="h-5 w-5" />
                     </button>
 
-                    <div className="flex flex-col text-right">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400">
-                            {liveDateLabel}
-                        </span>
-                        <h1 className="text-[18px] font-semibold leading-tight text-slate-900 md:text-[20px]">
-                            {memberName ? `${memberName}, Selamat Datang` : "Selamat Datang Kembali"}
-                        </h1>
+                    <div className="flex flex-1 flex-col items-center pr-10 text-center">
+                        <div className="flex items-center gap-2 opacity-[0.65]">
+                            <TCTLogo className="h-4 w-4 drop-shadow-sm" />
+                            <p className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-900">
+                                The Chosen Talks
+                            </p>
+                        </div>
+                        <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                            VerseHub
+                        </p>
                     </div>
                 </div>
             </header>
@@ -74,13 +77,6 @@ export function VersehubLandingView({
                         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                     >
                         <div className="pb-16 flex flex-col items-center text-center">
-                            <div className="flex flex-col items-center mb-8">
-                                <BookOpenText className="h-8 w-8 text-slate-800 mb-3" />
-                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
-                                    VerseHub
-                                </p>
-                            </div>
-
                             <blockquote className="font-serif text-[32px] font-medium leading-[1.2] tracking-tight text-slate-700 italic border-l-2 border-slate-200 pl-4 py-1 my-8 max-w-md md:text-[40px]">
                                 {activeScene.quote}
                             </blockquote>
@@ -106,7 +102,7 @@ export function VersehubLandingView({
                                     onClick={onOpenPicker}
                                     className="flex w-full items-center justify-center rounded-full bg-slate-50 px-6 py-[15px] text-[14px] font-bold text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-900 active:scale-95"
                                 >
-                                    Eksplorasi Kitab Lain
+                                    Eksplor Kitab Lain
                                 </button>
                             </div>
 
@@ -126,9 +122,6 @@ export function VersehubLandingView({
                                 </div>
                             ) : null}
 
-                            <p className="mt-12 text-[13px] leading-relaxed text-slate-400 max-w-sm">
-                                {activeScene.reflection}
-                            </p>
                         </div>
                     </motion.section>
                 </div>
