@@ -801,8 +801,8 @@ export function CommunityPage() {
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
-                      <label className="group relative flex min-w-0 flex-1 items-center gap-3 rounded-[22px] border border-slate-200/85 bg-slate-50/90 px-4 py-3 shadow-inner transition-colors focus-within:border-brand/30 focus-within:bg-white">
+                    <div className="flex flex-col gap-3 2xl:flex-row 2xl:items-center">
+                      <label className="group relative flex w-full min-w-0 flex-1 items-center gap-3 rounded-[22px] border border-slate-200/85 bg-slate-50/90 px-4 py-3 shadow-inner transition-colors focus-within:border-brand/30 focus-within:bg-white">
                         <Search className="h-4 w-4 text-slate-400 transition-colors group-focus-within:text-brand" />
                         <input
                           value={archiveSearchQuery}
@@ -826,7 +826,7 @@ export function CommunityPage() {
                         ) : null}
                       </label>
 
-                      <div className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-slate-950/[0.045] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                      <div className="inline-flex w-fit max-w-full shrink-0 self-start items-center gap-2 rounded-full bg-slate-950/[0.045] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
                         <SlidersHorizontal className="h-3.5 w-3.5" />
                         Filter cepat
                       </div>
