@@ -145,3 +145,13 @@ root_error.png
 .codex-page.tsx.bak
 docs/CORE/architecture/laravel-decoupled-hybrid/TECH STACK TCT.md
 docs/CORE/implementation/DOCKER COMMAND.md
+docs/CORE/architecture/laravel-decoupled-hybrid/renungan/Design Landing Page Renungan.png
+docs/CORE/architecture/laravel-decoupled-hybrid/renungan/hero-bible-candle-placeholder.webp
+docs/CORE/architecture/laravel-decoupled-hybrid/renungan/hero-landing-placeholder.webp
+docs/CORE/architecture/laravel-decoupled-hybrid/renungan/noise-soft.png
+
+# Local DB parity and design scratch artifacts
+backups/
+public/renungan/
+docs/CORE/architecture/laravel-decoupled-hybrid/renungan/
+docs/CORE/architecture/laravel-decoupled-hybrid/versehub/VerseHub Design Flow Tombol Emotion *.png

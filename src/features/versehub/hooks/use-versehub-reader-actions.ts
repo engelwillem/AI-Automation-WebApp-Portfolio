@@ -32,7 +32,6 @@ interface UseVersehubReaderActionsArgs {
   setIsSharingInsight: Dispatch<SetStateAction<boolean>>;
   setLiked: Dispatch<SetStateAction<boolean>>;
   setLikeCount: Dispatch<SetStateAction<number>>;
-  setOverlay: Dispatch<SetStateAction<"explore" | "picker" | "mentor" | "audio" | null>>;
   setReflectionDrafts: Dispatch<SetStateAction<Record<string, string>>>;
   setShareInsightError: Dispatch<SetStateAction<string | null>>;
   verseBookCode: string | null;
@@ -67,7 +66,6 @@ export function useVersehubReaderActions({
   setIsSharingInsight,
   setLiked,
   setLikeCount,
-  setOverlay,
   setReflectionDrafts,
   setShareInsightError,
   verseBookCode,
@@ -98,7 +96,6 @@ export function useVersehubReaderActions({
 
   const handleMoodQuickStart = async (moodKey: string) => {
     setActiveMood(moodKey);
-    setOverlay("explore");
     await trackVersehubEvent(lang, "versehub_mood_click", {
       persona: "landing",
       meta: {

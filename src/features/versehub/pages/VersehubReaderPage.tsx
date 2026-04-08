@@ -9,6 +9,7 @@ import { VerseFocusHeader } from "@/features/versehub/components/VerseFocusHeade
 import { VersehubLoadingScreen } from "@/features/versehub/components/VersehubLoadingScreen";
 import { VersehubOverlayController } from "@/features/versehub/components/VersehubOverlayController";
 import { VersehubReaderView } from "@/features/versehub/components/VersehubReaderView";
+import { MoodGuidedFlow } from "@/features/versehub/components/MoodGuidedFlow";
 import { useAuthSession } from "@/auth/use-auth-session";
 import { useVersehubReaderActions } from "@/features/versehub/hooks/use-versehub-reader-actions";
 import { useVersehubReaderChrome } from "@/features/versehub/hooks/use-versehub-reader-chrome";
@@ -22,6 +23,8 @@ interface VersehubReaderPageProps {
   initialChapterRef?: string | null;
   initialVerseRef?: string | null;
 }
+
+type GuidedMoodKey = "anxious" | "grateful" | "weary";
 
 export function VersehubReaderPage({
   lang: initialLang,
@@ -40,6 +43,7 @@ export function VersehubReaderPage({
   const [hasReachedChapterEnd, setHasReachedChapterEnd] = useState(false);
   const [isSavingChapterReflection, setIsSavingChapterReflection] = useState(false);
   const [isSharingInsight, setIsSharingInsight] = useState(false);
+  const [guidedMood, setGuidedMood] = useState<GuidedMoodKey | null>(null);
 
   const {
     activeBook,
@@ -154,7 +158,6 @@ export function VersehubReaderPage({
     setIsSharingInsight,
     setLiked,
     setLikeCount,
-    setOverlay,
     setReflectionDrafts,
     setShareInsightError,
     verseBookCode,
@@ -231,30 +234,46 @@ export function VersehubReaderPage({
       ) : null}
 
       {isLandingMode && (
-        <VersehubLandingView
-          activeScene={activeScene}
-          landingContentPadding={landingContentPadding}
-          firstChapterHref={firstChapterHref}
-          firstBookLabel={firstBookLabel}
-          continueReadingHref={lastVisitedChapterHref}
-          continueReadingLabel={lastVisitedChapterLabel}
-          onContinueReading={() => {
-            if (lastVisitedChapterHref) {
-              router.push(lastVisitedChapterHref);
-            }
-          }}
-          onBackToday={() => router.push("/today")}
-          onOpenPicker={() => setOverlay("picker")}
-          onOpenExplore={() => setOverlay("explore")}
-          onQuickStartMood={handleMoodQuickStart}
-          onStartFirstChapter={() => {
-            setOverlay(null);
-            if (firstChapterHref) router.push(firstChapterHref);
-          }}
-          liveDateLabel={liveDateLabel}
-          memberName={memberName}
-          activeMood={activeMood}
-        />
+        <>
+          {guidedMood ? (
+            <MoodGuidedFlow
+              lang={lang}
+              mood={guidedMood}
+              onBack={() => setGuidedMood(null)}
+              onOpenVerse={(ref) => router.push(`/versehub/${lang}/${ref}`)}
+            />
+          ) : (
+            <VersehubLandingView
+              activeScene={activeScene}
+              landingContentPadding={landingContentPadding}
+              firstChapterHref={firstChapterHref}
+              firstBookLabel={firstBookLabel}
+              continueReadingHref={lastVisitedChapterHref}
+              continueReadingLabel={lastVisitedChapterLabel}
+              onContinueReading={() => {
+                if (lastVisitedChapterHref) {
+                  router.push(lastVisitedChapterHref);
+                }
+              }}
+              onBackToday={() => router.push("/today")}
+              onOpenPicker={() => setOverlay("picker")}
+              onOpenExplore={() => setOverlay("explore")}
+              onQuickStartMood={(moodKey) => {
+                if (moodKey === "anxious" || moodKey === "grateful" || moodKey === "weary") {
+                  setGuidedMood(moodKey);
+                }
+                void handleMoodQuickStart(moodKey);
+              }}
+              onStartFirstChapter={() => {
+                setOverlay(null);
+                if (firstChapterHref) router.push(firstChapterHref);
+              }}
+              liveDateLabel={liveDateLabel}
+              memberName={memberName}
+              activeMood={activeMood}
+            />
+          )}
+        </>
       )}
 
       {isChapterMode && (
