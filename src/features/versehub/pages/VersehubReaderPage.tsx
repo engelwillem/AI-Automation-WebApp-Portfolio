@@ -285,7 +285,6 @@ export function VersehubReaderPage({
           verses={verses}
           shouldShowChrome={shouldShowChrome}
           readerContentPadding={readerContentPadding}
-          activeMood={activeMood}
           chapterReflectionQuestion={chapterReflectionQuestion}
           chapterCompletionReflection={chapterCompletionReflection}
           chapterCompletionSaved={chapterReflectionSaved}

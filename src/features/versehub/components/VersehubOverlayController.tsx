@@ -2,9 +2,10 @@
 
 import type { Dispatch, SetStateAction } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { X } from "lucide-react";
+import { Share2, X } from "lucide-react";
 import AmbienceController from "@/components/versehub/AmbienceController";
 import MentorPanel from "@/components/versehub/MentorPanel";
+import { getVerseShareUrl } from "@/lib/share";
 import { cn } from "@/lib/utils";
 import type { Book, OverlayType, SanctuaryScene, Verse, VerseData } from "@/features/versehub/types";
 
@@ -71,6 +72,23 @@ export function VersehubOverlayController({
   tab,
   verseData,
 }: VersehubOverlayControllerProps) {
+  const handleShareVerse = async (slug: string) => {
+    const url = getVerseShareUrl(lang, slug);
+    const title = `VerseHub ${slug.replace(/-/g, " ").toUpperCase()}`;
+
+    try {
+      if (typeof navigator !== "undefined" && navigator.share) {
+        await navigator.share({ title, url });
+        return;
+      }
+      if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+      }
+    } catch {
+      // Ignore cancelled share action.
+    }
+  };
+
   return (
     <>
       <AnimatePresence>
@@ -236,18 +254,34 @@ export function VersehubOverlayController({
                   </p>
                   <div className="mt-4 flex flex-wrap gap-2">
                     {chapters.map((chapter) => (
-                      <button
+                      <div
                         key={chapter}
-                        type="button"
-                        onClick={() => {
-                          if (!activeBook) return;
-                          setOverlay(null);
-                          onNavigate(`/versehub/${lang}/${activeBook}-${chapter}`);
-                        }}
-                        className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--vh-surface-elevated)] text-sm font-bold text-[var(--vh-text-primary)] transition hover:bg-[var(--vh-surface)]"
+                        className="inline-flex items-center gap-1 rounded-xl bg-[var(--vh-surface-elevated)] p-1"
                       >
-                        {chapter}
-                      </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!activeBook) return;
+                            setOverlay(null);
+                            onNavigate(`/versehub/${lang}/${activeBook}-${chapter}`);
+                          }}
+                          className="inline-flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-sm font-bold text-[var(--vh-text-primary)] transition hover:bg-[var(--vh-surface)]"
+                        >
+                          {chapter}
+                        </button>
+                        <button
+                          type="button"
+                          aria-label={`Bagikan ${activeBookLabel ?? "ayat"} pasal ${chapter}`}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            if (!activeBook) return;
+                            void handleShareVerse(`${activeBook}-${chapter}`);
+                          }}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[var(--vh-text-secondary)] transition hover:bg-[var(--vh-surface)] hover:text-[var(--vh-text-primary)]"
+                        >
+                          <Share2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     ))}
                     {chapters.length === 0 && (
                       <p className="text-sm text-[var(--vh-text-secondary)]">Pilih kitab terlebih dahulu untuk melihat daftar pasal.</p>

@@ -113,26 +113,6 @@ export default function MentorPanel({
         [activeMood, userReflection]
     );
 
-    const moodLead = useMemo(() => {
-        const normalizedMood = activeMood.trim().toLowerCase();
-        if (normalizedMood === 'sedih' || normalizedMood === 'grieving') {
-            return {
-                badge: 'Mode Empati',
-                subtitle: 'Guide akan menanggapi dengan nada yang lebih lembut dan menguatkan sebelum masuk ke wawasan.',
-            };
-        }
-        if (normalizedMood === 'weary' || normalizedMood === 'anxious') {
-            return {
-                badge: 'Mode Tenang',
-                subtitle: 'Guide akan menjaga ritme jawaban tetap pelan dan tidak membanjiri kamu dengan terlalu banyak detail sekaligus.',
-            };
-        }
-        return {
-            badge: 'Mode Studi',
-            subtitle: 'Guide akan menolongmu masuk lebih dalam ke ayat ini dengan konteks, kaitan, dan langkah studi berikutnya.',
-        };
-    }, [activeMood]);
-
     // Fetch insights lazily on first open or tab switch.
     function ensureInsights() {
         if (insightsFetched || insightsLoading) return;
@@ -227,9 +207,6 @@ export default function MentorPanel({
                         <span className="text-lg text-amber-500">✦</span>
                         <div>
                             <p className="text-sm font-bold leading-tight text-slate-900">Scripture Guide</p>
-                            <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400">
-                                Study Companion — Bukan Manusia
-                            </p>
                         </div>
                     </div>
                     <button
@@ -245,10 +222,6 @@ export default function MentorPanel({
                 <div className="shrink-0 border-b border-slate-100 bg-slate-50/60 px-5 py-2">
                     <p className="text-[11px] font-semibold text-slate-500">{verseLabel}</p>
                     <p className="mt-0.5 line-clamp-2 text-xs text-slate-400">{verseText}</p>
-                    <div className="mt-2 rounded-xl bg-white/80 px-3 py-2 ring-1 ring-slate-200/80">
-                        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">{moodLead.badge}</p>
-                        <p className="mt-1 text-[11px] leading-relaxed text-slate-500">{moodLead.subtitle}</p>
-                    </div>
 
                     {activeStudyPaths.length > 0 && (
                         <div className="mt-2 flex items-center gap-2 rounded-lg bg-emerald-50 px-2 py-1.5 ring-1 ring-emerald-100">
@@ -291,7 +264,7 @@ export default function MentorPanel({
                                                 {insights.reflection_questions.map((q, i) => (
                                                     <li
                                                         key={i}
-                                                        className="rounded-xl bg-amber-50 px-3.5 py-3 text-sm leading-relaxed text-slate-700 ring-1 ring-amber-100"
+                                                        className="rounded-none bg-amber-50 px-3.5 py-3 text-sm leading-relaxed text-slate-700 ring-1 ring-amber-100"
                                                     >
                                                         {q}
                                                     </li>
@@ -307,7 +280,7 @@ export default function MentorPanel({
                                                 {insights.theme_connections.map((t, i) => (
                                                     <li
                                                         key={i}
-                                                        className="rounded-xl bg-sky-50 px-3.5 py-2.5 text-sm text-slate-700 ring-1 ring-sky-100"
+                                                        className="rounded-none bg-sky-50 px-3.5 py-2.5 text-sm text-slate-700 ring-1 ring-sky-100"
                                                     >
                                                         {t}
                                                     </li>
@@ -340,7 +313,7 @@ export default function MentorPanel({
                                                     <a
                                                         key={i}
                                                         href={`/versehub/${lang}/${rel.ref}`}
-                                                        className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 ring-1 ring-slate-100 transition-all hover:bg-white hover:shadow-sm hover:ring-slate-200"
+                                                        className="flex items-center justify-between rounded-none bg-slate-50 px-4 py-3 ring-1 ring-slate-100 transition-all hover:bg-white hover:shadow-sm hover:ring-slate-200"
                                                     >
                                                         <div className="flex flex-col">
                                                             <span className="text-sm font-bold text-slate-700">{rel.ref.replace(/-/g, ' ').toUpperCase()}</span>
@@ -385,7 +358,7 @@ export default function MentorPanel({
                                     {insights?.historical_context ? (
                                         <div>
                                             <SectionLabel color="slate">Konteks Historis</SectionLabel>
-                                            <p className="mt-2 rounded-xl bg-slate-50 px-3.5 py-3 text-sm leading-relaxed text-slate-600 ring-1 ring-slate-200">
+                                            <p className="mt-2 rounded-none bg-slate-50 px-3.5 py-3 text-sm leading-relaxed text-slate-600 ring-1 ring-slate-200">
                                                 {insights.historical_context}
                                             </p>
                                         </div>
@@ -397,7 +370,7 @@ export default function MentorPanel({
                                             <p className="mt-2 text-xs text-slate-500 italic mb-3">"{denominationalContext.summary}"</p>
                                             <div className="space-y-3">
                                                 {denominationalContext.traditions.map((trad, i) => (
-                                                    <div key={i} className="rounded-xl border border-slate-100 bg-white p-3 shadow-sm">
+                                                    <div key={i} className="rounded-none border border-slate-100 bg-white p-3 shadow-sm">
                                                         <p className="text-[10px] font-black uppercase text-slate-400">{trad.name}</p>
                                                         <p className="mt-1 text-sm text-slate-700 leading-relaxed">{trad.view}</p>
                                                     </div>
@@ -562,12 +535,6 @@ export default function MentorPanel({
                 </div>
 
                 {/* Footer disclaimer — always shown */}
-                <div className="shrink-0 border-t border-slate-100 px-5 pt-3 pb-[calc(14px+env(safe-area-inset-bottom,24px))] md:pb-3">
-                    <p className="text-center text-[9px] leading-relaxed text-slate-400">
-                        Scripture Guide adalah panduan belajar berbasis teks Alkitab —<br />
-                        bukan manusia, bukan otoritas teologis resmi.
-                    </p>
-                </div>
             </aside>
         </div>
     );
@@ -594,3 +561,4 @@ function SectionLabel({ children, color }: { children: React.ReactNode; color: '
         <p className={`text-[10px] font-bold uppercase tracking-widest ${cls}`}>{children}</p>
     );
 }
+

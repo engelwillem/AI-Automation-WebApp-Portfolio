@@ -15,7 +15,6 @@ interface VersehubReaderViewProps {
     verses: Verse[];
     shouldShowChrome: boolean;
     readerContentPadding: string;
-    activeMood: string;
     chapterReflectionQuestion: string;
     chapterCompletionReflection: string;
     chapterCompletionSaved: boolean;
@@ -48,7 +47,6 @@ export function VersehubReaderView({
     verses,
     shouldShowChrome,
     readerContentPadding,
-    activeMood,
     chapterReflectionQuestion,
     chapterCompletionReflection,
     chapterCompletionSaved,
@@ -144,9 +142,6 @@ export function VersehubReaderView({
                             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
                                 <span className="inline-flex items-center rounded-full bg-slate-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ring-1 ring-slate-200/60">
                                     {verses.length} Ayat
-                                </span>
-                                <span className="inline-flex items-center rounded-full bg-sky-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-sky-600 ring-1 ring-sky-200/60">
-                                    Mood: {activeMood}
                                 </span>
                             </div>
                         </div>
