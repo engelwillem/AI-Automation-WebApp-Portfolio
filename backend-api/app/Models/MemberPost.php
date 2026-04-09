@@ -50,20 +50,54 @@ class MemberPost extends Model
      */
     public function scopePublicFeed($query)
     {
+        return $query->notPrivateRenunganArchive();
+    }
+
+    public function scopePrivateRenunganArchive($query)
+    {
+        return $query->where(function ($q) {
+            $q->where('metadata->visibility', 'private_renungan_archive')
+                ->orWhere('metadata->bookmark_origin', 'renungan')
+                ->orWhere('text', 'like', 'Renungan Pribadiku%');
+        });
+    }
+
+    public function scopeNotPrivateRenunganArchive($query)
+    {
         return $query
-            ->whereRaw(
-                "COALESCE(JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.visibility')), '') <> ?",
-                ['private_renungan_archive']
-            )
-            ->whereRaw(
-                "COALESCE(JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.bookmark_origin')), '') <> ?",
-                ['renungan']
-            )
-            // Backward guard for older flattened private posts created before metadata hardening.
-            ->where(function ($q) {
-                $q->whereNull('text')
+            ->where(function ($visibilityQuery) {
+                $visibilityQuery->whereNull('metadata->visibility')
+                    ->orWhere('metadata->visibility', '!=', 'private_renungan_archive');
+            })
+            ->where(function ($originQuery) {
+                $originQuery->whereNull('metadata->bookmark_origin')
+                    ->orWhere('metadata->bookmark_origin', '!=', 'renungan');
+            })
+            ->where(function ($textQuery) {
+                // Backward guard for older flattened private posts created before metadata hardening.
+                $textQuery->whereNull('text')
                     ->orWhere('text', 'not like', 'Renungan Pribadiku%');
             });
+    }
+
+    public function scopeVisibleToViewer($query, ?User $viewer)
+    {
+        if ($viewer && (bool) ($viewer->is_admin ?? false)) {
+            return $query;
+        }
+
+        $viewerId = (int) ($viewer?->id ?? 0);
+
+        return $query->where(function ($visibilityQuery) use ($viewerId) {
+            $visibilityQuery->notPrivateRenunganArchive();
+
+            if ($viewerId > 0) {
+                $visibilityQuery->orWhere(function ($ownerQuery) use ($viewerId) {
+                    $ownerQuery->where('user_id', $viewerId)
+                        ->privateRenunganArchive();
+                });
+            }
+        });
     }
 
     public function scopeUrgentPrayer($query)

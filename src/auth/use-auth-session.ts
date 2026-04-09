@@ -2,7 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@/firebase/auth/use-user";
-import { clearAppAccessToken, getAppAuthUser, hasAppAccessToken, setAppAuthUser } from "@/services/app-auth-token";
+import {
+  APP_AUTH_STATE_EVENT,
+  clearAppAccessToken,
+  getAppAuthUser,
+  hasAppAccessToken,
+  setAppAuthUser,
+} from "@/services/app-auth-token";
 import { buildAppAuthHeaders } from "@/lib/app-auth-fetch";
 
 export type AuthSessionStatus = "restoring" | "guest" | "authenticated";
@@ -33,6 +39,7 @@ function deriveDisplayName(name: string | null, email: string | null): string | 
 
 export function useAuthSession() {
   const { user, status: firebaseStatus } = useUser();
+  const [authStorageVersion, setAuthStorageVersion] = useState(0);
   const hasToken = hasAppAccessToken();
   const authUser = getAppAuthUser();
   const hasAuthenticatedFirebaseUser = firebaseStatus === "authenticated" && !user?.isAnonymous;
@@ -42,6 +49,19 @@ export function useAuthSession() {
     authenticated: false,
     user: null,
   });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const notify = () => setAuthStorageVersion((prev) => prev + 1);
+    window.addEventListener("storage", notify);
+    window.addEventListener(APP_AUTH_STATE_EVENT, notify as EventListener);
+
+    return () => {
+      window.removeEventListener("storage", notify);
+      window.removeEventListener(APP_AUTH_STATE_EVENT, notify as EventListener);
+    };
+  }, []);
 
   useEffect(() => {
     if (firebaseStatus === "restoring") return;
@@ -126,7 +146,7 @@ export function useAuthSession() {
       isActive = false;
       controller.abort();
     };
-  }, [firebaseStatus, hasAuthenticatedFirebaseUser, hasToken]);
+  }, [authStorageVersion, firebaseStatus, hasAuthenticatedFirebaseUser, hasToken]);
 
   const status: AuthSessionStatus = useMemo(() => {
     if (firebaseStatus === "restoring") return "restoring";
@@ -138,6 +158,7 @@ export function useAuthSession() {
 
   const profileName = user?.displayName?.trim() || serverSession.user?.name?.trim() || authUser?.name?.trim() || null;
   const profileEmail = user?.email?.trim() || serverSession.user?.email?.trim() || authUser?.email?.trim() || null;
+  const profileId = serverSession.user?.id?.trim() || authUser?.id?.trim() || null;
   const avatarUrl = user?.photoURL?.trim() || serverSession.user?.avatarUrl?.trim() || authUser?.avatarUrl?.trim() || null;
   const displayName = deriveDisplayName(profileName, profileEmail);
 
@@ -170,6 +191,7 @@ export function useAuthSession() {
     user,
     profileName,
     profileEmail,
+    profileId,
     avatarUrl,
     identity,
   } as const;

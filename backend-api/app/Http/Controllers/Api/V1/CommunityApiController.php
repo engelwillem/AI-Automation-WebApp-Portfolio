@@ -257,6 +257,7 @@ class CommunityApiController extends Controller
                 'category',
                 'post' => fn ($query) => $query
                     ->whereNull('hidden_at')
+                    ->visibleToViewer($user)
                     ->with(['user:id,name,avatar_path'])
                     ->withCount([
                         'comments',
@@ -707,3 +708,4 @@ class CommunityApiController extends Controller
         }
     }
 }
+

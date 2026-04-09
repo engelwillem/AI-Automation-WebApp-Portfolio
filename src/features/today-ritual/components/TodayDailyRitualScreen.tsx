@@ -375,11 +375,11 @@ export default function TodayDailyRitualScreen({
       surface: 'renungan',
       meta: {
         target: '/versehub/id',
-        mode: 'explore',
+        mode: 'landing',
       },
     });
     if (typeof window !== 'undefined') {
-      window.sessionStorage.setItem('tct:versehub:auto-open', 'explore');
+      window.sessionStorage.removeItem('tct:versehub:auto-open');
     }
     router.push('/versehub/id');
   };
@@ -574,8 +574,7 @@ export default function TodayDailyRitualScreen({
                 <div className="mt-4 flex items-start gap-2 text-[13px] leading-6 text-foreground/45">
                   <Bookmark className="mt-0.5 h-4 w-4 shrink-0 text-foreground/35" />
                   <p>
-                    Bookmark akan menyimpan renungan ini ke kategori <span className="font-semibold text-foreground/68">Arsip</span> dan
-                    tab <span className="font-semibold text-foreground/68">Bookmarks</span> di{' '}
+                    Bookmark akan menyimpan renungan ini ke tab <span className="font-semibold text-foreground/68">Bookmarks pribadimu</span> di{' '}
                     <Link
                       href="/community"
                       className="font-semibold text-[#0284c7] underline-offset-2 transition-colors hover:text-[#0ea5e9] hover:underline"

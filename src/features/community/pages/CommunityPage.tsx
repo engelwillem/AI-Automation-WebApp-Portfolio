@@ -19,7 +19,6 @@ import { cn } from "@/lib/utils";
 import { CommunityService } from "@/services/community.service";
 import { useAuthSession } from "@/auth/use-auth-session";
 import { buildWhatsAppShareUrl, copyToClipboard, getCommunityShareUrl } from "@/lib/share";
-import { getAppAuthUser } from "@/services/app-auth-token";
 import { buildAppAuthHeaders } from "@/lib/app-auth-fetch";
 import {
   COMMUNITY_ARCHIVE_CATEGORIES,
@@ -33,6 +32,13 @@ import { AuthExecutionGate } from "../components/AuthExecutionGate";
 import { VerseHubFeaturedCard, type FeaturedVerse } from "../components/VerseHubFeaturedCard";
 import { CommunityArchiveGalleryCard } from "../components/CommunityArchiveGalleryCard";
 import type { BookmarkCategory, CommunityPost } from "../types";
+import {
+  buildCommunityFeedCacheKey,
+  readCommunityFeedCache,
+  resolveCommunityFeedCacheScope,
+  writeCommunityFeedCache,
+} from "../utils/community-feed-cache";
+import { isPrivateRenunganArchive } from "../utils/private-renungan-archive";
 
 type ArchiveCategory = CommunityArchiveCategory;
 
@@ -73,9 +79,21 @@ function SmartPostComposer({
 
 export function CommunityPage() {
   const router = useRouter();
-  const COMMUNITY_FEED_CACHE_KEY = "tct.community.feed.cache.v1";
-  const { isAuthenticated, isRestoring } = useAuthSession();
-  const currentAppUser = useMemo(() => getAppAuthUser(), []);
+  const { isAuthenticated, isRestoring, profileEmail, profileId } = useAuthSession();
+  const currentUserId = useMemo(() => String(profileId || "").trim(), [profileId]);
+  const communityCacheScope = useMemo(
+    () =>
+      resolveCommunityFeedCacheScope({
+        isAuthenticated,
+        profileId: currentUserId,
+        profileEmail,
+      }),
+    [currentUserId, isAuthenticated, profileEmail]
+  );
+  const COMMUNITY_FEED_CACHE_KEY = useMemo(
+    () => buildCommunityFeedCacheKey(communityCacheScope),
+    [communityCacheScope]
+  );
 
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [archivePosts, setArchivePosts] = useState<CommunityPost[]>([]);
@@ -112,7 +130,16 @@ export function CommunityPage() {
     return author.avatarUrl ?? author.profileImage ?? author.profile_image ?? null;
   };
 
-  const discussionPosts = posts;
+  const isPrivateRenunganPost = useCallback((post: CommunityPost) => {
+    const metadataMarkedPrivate = isPrivateRenunganArchive(post.metadata);
+    const textMarkedPrivate = String(post.text || "").trim().toLowerCase().startsWith("renungan pribadiku");
+    return metadataMarkedPrivate || textMarkedPrivate;
+  }, []);
+
+  const discussionPosts = useMemo(
+    () => posts.filter((post) => !isPrivateRenunganPost(post)),
+    [isPrivateRenunganPost, posts]
+  );
 
   const filteredBookmarkPosts = useMemo(() => {
     if (activeBookmarkCategoryId === "all") return bookmarkPosts;
@@ -129,15 +156,7 @@ export function CommunityPage() {
   const persistFeedCache = useCallback(
     (nextPosts: CommunityPost[], nextArchivePosts: CommunityPost[]) => {
       if (typeof window === "undefined") return;
-
-      window.localStorage.setItem(
-        COMMUNITY_FEED_CACHE_KEY,
-        JSON.stringify({
-          posts: nextPosts,
-          archivePosts: nextArchivePosts,
-          cachedAt: new Date().toISOString(),
-        })
-      );
+      writeCommunityFeedCache(COMMUNITY_FEED_CACHE_KEY, nextPosts, nextArchivePosts);
     },
     [COMMUNITY_FEED_CACHE_KEY]
   );
@@ -229,21 +248,14 @@ export function CommunityPage() {
 
       let usedCachedFeed = false;
       if (typeof window !== "undefined") {
-        try {
-          const raw = window.localStorage.getItem(COMMUNITY_FEED_CACHE_KEY);
-          if (raw) {
-            const parsed = JSON.parse(raw) as { posts?: CommunityPost[]; archivePosts?: CommunityPost[] };
-            const cachedPosts = Array.isArray(parsed.posts) ? parsed.posts : [];
-            const cachedArchive = Array.isArray(parsed.archivePosts) ? parsed.archivePosts : [];
+        const cached = readCommunityFeedCache(COMMUNITY_FEED_CACHE_KEY);
+        const cachedPosts = cached?.posts ?? [];
+        const cachedArchive = cached?.archivePosts ?? [];
 
-            if (cachedPosts.length > 0 || cachedArchive.length > 0) {
-              setPosts(cachedPosts);
-              setArchivePosts(cachedArchive);
-              usedCachedFeed = true;
-            }
-          }
-        } catch {
-          // ignore cache parse errors
+        if (cachedPosts.length > 0 || cachedArchive.length > 0) {
+          setPosts(cachedPosts);
+          setArchivePosts(cachedArchive);
+          usedCachedFeed = true;
         }
       }
 
@@ -527,19 +539,13 @@ export function CommunityPage() {
   };
 
   const canDeletePost = useCallback(
-    (post: CommunityPost) => {
-      const currentUserId = String(currentAppUser?.id || "");
-      return Boolean(post.can_moderate || (currentUserId && post.author.id === currentUserId));
-    },
-    [currentAppUser?.id]
+    (post: CommunityPost) => Boolean(post.can_moderate || (currentUserId && post.author.id === currentUserId)),
+    [currentUserId]
   );
 
   const canEditPost = useCallback(
-    (post: CommunityPost) => {
-      const currentUserId = String(currentAppUser?.id || "");
-      return Boolean(post.can_moderate || (currentUserId && post.author.id === currentUserId));
-    },
-    [currentAppUser?.id]
+    (post: CommunityPost) => Boolean(post.can_moderate || (currentUserId && post.author.id === currentUserId)),
+    [currentUserId]
   );
 
   const toggleLike = async (postId: string) => {
@@ -768,8 +774,13 @@ export function CommunityPage() {
     return null;
   }, [featuredPost, rituals]);
 
+  const publicArchivePosts = useMemo(
+    () => archivePosts.filter((post) => !isPrivateRenunganPost(post)),
+    [archivePosts, isPrivateRenunganPost]
+  );
+
   const archiveCategoryCounts = useMemo(() => {
-    return archivePosts.reduce<Record<string, number>>(
+    return publicArchivePosts.reduce<Record<string, number>>(
       (acc, post) => {
         acc.all += 1;
         acc[post.type] = (acc[post.type] || 0) + 1;
@@ -777,12 +788,12 @@ export function CommunityPage() {
       },
       { all: 0 }
     );
-  }, [archivePosts]);
+  }, [publicArchivePosts]);
 
   const filteredArchivePosts = useMemo(() => {
     const normalizedQuery = deferredArchiveSearchQuery.trim().toLowerCase();
 
-    return archivePosts.filter((post) => {
+    return publicArchivePosts.filter((post) => {
       if (archiveCategory !== "all" && post.type !== archiveCategory) {
         return false;
       }
@@ -798,7 +809,7 @@ export function CommunityPage() {
 
       return haystack.includes(normalizedQuery);
     });
-  }, [archiveCategory, archivePosts, deferredArchiveSearchQuery]);
+  }, [archiveCategory, deferredArchiveSearchQuery, publicArchivePosts]);
 
   const archiveResultLabel = useMemo(() => {
     if (deferredArchiveSearchQuery.trim()) {
@@ -830,7 +841,7 @@ export function CommunityPage() {
     };
   }, [fetchError]);
 
-  const archiveHasBlockingError = !isLoading && archivePosts.length === 0 && fetchError !== null;
+  const archiveHasBlockingError = !isLoading && publicArchivePosts.length === 0 && fetchError !== null;
   const archiveEmptyState = !isLoading && filteredArchivePosts.length === 0;
 
   return (
@@ -915,7 +926,7 @@ export function CommunityPage() {
                       isOfficial={post.author.isOfficial}
                       isFollowingAuthor={Boolean(post.author.isFollowing)}
                       isMutualFollow={Boolean(post.author.isMutualFollow)}
-                      canFollowAuthor={Boolean(currentAppUser?.id) && String(currentAppUser?.id) !== post.author.id}
+                      canFollowAuthor={Boolean(currentUserId) && currentUserId !== post.author.id}
                       type={post.type}
                       text={post.text}
                       metadata={post.metadata}
@@ -1312,7 +1323,7 @@ export function CommunityPage() {
                     authorAvatar={resolveAuthorAvatar(post)}
                     isFollowingAuthor={Boolean(post.author.isFollowing)}
                     isMutualFollow={Boolean(post.author.isMutualFollow)}
-                    canFollowAuthor={Boolean(currentAppUser?.id) && String(currentAppUser?.id) !== post.author.id}
+                    canFollowAuthor={Boolean(currentUserId) && currentUserId !== post.author.id}
                     type={post.type}
                     text={post.text}
                     metadata={post.metadata}

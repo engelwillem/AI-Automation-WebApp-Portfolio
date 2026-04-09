@@ -26,10 +26,22 @@ function shouldPersistSession(request: NextRequest): boolean {
   return raw === "local";
 }
 
+function clearAppSessionCookie(response: NextResponse, request: NextRequest): void {
+  response.cookies.set(APP_SESSION_COOKIE, "", {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    expires: new Date(0),
+    maxAge: 0,
+    secure: request.nextUrl.protocol === "https:" || process.env.NODE_ENV === "production",
+  });
+}
+
 export async function GET(request: NextRequest) {
   const cookieToken = readCookieToken(request);
   const bearerToken = readBearerToken(request);
-  const token = cookieToken ?? bearerToken;
+  const hasTokenMismatch = Boolean(cookieToken && bearerToken && cookieToken !== bearerToken);
+  const token = bearerToken ?? cookieToken;
 
   if (!token) {
     return NextResponse.json({
@@ -53,14 +65,7 @@ export async function GET(request: NextRequest) {
         authenticated: false,
         user: null,
       }, { status: 200 });
-      response.cookies.set(APP_SESSION_COOKIE, "", {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        expires: new Date(0),
-        maxAge: 0,
-        secure: request.nextUrl.protocol === "https:" || process.env.NODE_ENV === "production",
-      });
+      clearAppSessionCookie(response, request);
       return response;
     }
 
@@ -81,10 +86,16 @@ export async function GET(request: NextRequest) {
 
     const user = payload?.data?.user;
     if (!upstream.ok || !user) {
-      return NextResponse.json({
+      const response = NextResponse.json({
         authenticated: false,
         user: null,
       }, { status: 200 });
+
+      if (hasTokenMismatch) {
+        clearAppSessionCookie(response, request);
+      }
+
+      return response;
     }
 
     const response = NextResponse.json({
@@ -98,7 +109,7 @@ export async function GET(request: NextRequest) {
       twoFactor: payload?.data?.twoFactor ?? null,
     });
 
-    if (!cookieToken && bearerToken) {
+    if (bearerToken && (hasTokenMismatch || !cookieToken)) {
       response.cookies.set(APP_SESSION_COOKIE, bearerToken, {
         httpOnly: true,
         sameSite: "lax",

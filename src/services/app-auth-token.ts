@@ -2,6 +2,10 @@ const APP_ACCESS_TOKEN_KEY = "tct_app_access_token";
 const APP_AUTH_SOURCE_KEY = "tct_app_auth_source";
 const APP_AUTH_USER_KEY = "tct_app_auth_user";
 const APP_AUTH_PERSISTENCE_KEY = "tct_app_auth_persistence";
+const LEGACY_COMMUNITY_FEED_CACHE_KEY = "tct.community.feed.cache.v1";
+const COMMUNITY_FEED_CACHE_PREFIX = "tct.community.feed.cache.";
+const VERSEHUB_AUTO_OPEN_KEY = "tct:versehub:auto-open";
+export const APP_AUTH_STATE_EVENT = "tct:app-auth-state-changed";
 
 export type AppAuthSource = "firebase" | "password" | "unknown";
 export type AppAuthPersistence = "session" | "local";
@@ -46,6 +50,29 @@ function removeKeyFromAllStorages(key: string): void {
   for (const entry of getPersistenceOrder()) {
     entry.storage?.removeItem(key);
   }
+}
+
+function clearIdentityScopedClientCaches(): void {
+  if (typeof window === "undefined") return;
+
+  const storages: Storage[] = [window.localStorage, window.sessionStorage];
+  for (const storage of storages) {
+    storage.removeItem(LEGACY_COMMUNITY_FEED_CACHE_KEY);
+    storage.removeItem(VERSEHUB_AUTO_OPEN_KEY);
+
+    for (let index = storage.length - 1; index >= 0; index -= 1) {
+      const key = storage.key(index);
+      if (!key) continue;
+      if (key.startsWith(COMMUNITY_FEED_CACHE_PREFIX)) {
+        storage.removeItem(key);
+      }
+    }
+  }
+}
+
+function emitAuthStateChanged(reason: "token" | "user" | "clear"): void {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent(APP_AUTH_STATE_EVENT, { detail: { reason } }));
 }
 
 function normalizePersistence(raw: string | null | undefined): AppAuthPersistence | null {
@@ -149,6 +176,7 @@ export function setAppAuthUser(user: AppAuthUser, persistence?: AppAuthPersisten
 
   removeKeyFromAllStorages(APP_AUTH_USER_KEY);
   targetStorage.setItem(APP_AUTH_USER_KEY, JSON.stringify(normalized));
+  emitAuthStateChanged("user");
 }
 
 export function setAppAccessToken(
@@ -165,12 +193,15 @@ export function setAppAccessToken(
 
   removeKeyFromAllStorages(APP_ACCESS_TOKEN_KEY);
   removeKeyFromAllStorages(APP_AUTH_SOURCE_KEY);
+  removeKeyFromAllStorages(APP_AUTH_USER_KEY);
   removeKeyFromAllStorages(APP_AUTH_PERSISTENCE_KEY);
+  clearIdentityScopedClientCaches();
 
   const sessionStorage = getSessionStorage();
   sessionStorage?.setItem(APP_ACCESS_TOKEN_KEY, clean);
   targetStorage.setItem(APP_AUTH_SOURCE_KEY, source);
   targetStorage.setItem(APP_AUTH_PERSISTENCE_KEY, persistence);
+  emitAuthStateChanged("token");
 }
 
 export function clearAppAccessToken(): void {
@@ -179,4 +210,6 @@ export function clearAppAccessToken(): void {
   removeKeyFromAllStorages(APP_AUTH_SOURCE_KEY);
   removeKeyFromAllStorages(APP_AUTH_USER_KEY);
   removeKeyFromAllStorages(APP_AUTH_PERSISTENCE_KEY);
+  clearIdentityScopedClientCaches();
+  emitAuthStateChanged("clear");
 }
