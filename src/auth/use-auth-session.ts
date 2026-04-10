@@ -104,6 +104,7 @@ export function useAuthSession() {
 
     const hydrateSession = async () => {
       setServerSession((prev) => ({ ...prev, status: "loading" }));
+      const timeoutId = window.setTimeout(() => controller.abort(), 8000);
 
       try {
         const persistence = typeof window !== "undefined"
@@ -176,6 +177,8 @@ export function useAuthSession() {
           authenticated: false,
           user: null,
         });
+      } finally {
+        window.clearTimeout(timeoutId);
       }
     };
 
