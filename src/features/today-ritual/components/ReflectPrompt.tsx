@@ -15,6 +15,7 @@ interface ReflectPromptProps {
   onContinue: () => void;
   isDone: boolean;
   isSubmitting?: boolean;
+  submittingLabel?: string;
 }
 
 export default function ReflectPrompt({
@@ -28,6 +29,7 @@ export default function ReflectPrompt({
   onContinue,
   isDone,
   isSubmitting = false,
+  submittingLabel = "Mendoakan...",
 }: ReflectPromptProps) {
   const m = useMotionConfig();
   const isFilled = value.trim().length > 0;
@@ -90,7 +92,7 @@ export default function ReflectPrompt({
                 }`}
               >
                 <span className={isFilled ? 'inline-block transition-transform duration-400 ease-out group-hover:translate-x-[1px]' : undefined}>
-                  {isSubmitting ? "Mendoakan..." : ctaLabel}
+                  {isSubmitting ? submittingLabel : ctaLabel}
                 </span>
               </button>
             </div>

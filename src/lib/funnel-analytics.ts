@@ -8,7 +8,15 @@ type FunnelEventName =
   | "renungan_start"
   | "renungan_complete"
   | "continue_to_versehub"
-  | "reflection_bookmark";
+  | "reflection_bookmark"
+  | "renungan_doakan_clicked"
+  | "renungan_request_started"
+  | "renungan_first_loading_stage_shown"
+  | "renungan_loading_stage_shown"
+  | "renungan_request_succeeded"
+  | "renungan_request_failed"
+  | "renungan_frontend_coherence_fallback_triggered"
+  | "renungan_final_render_complete";
 
 type FunnelEventPayload = {
   path?: string;

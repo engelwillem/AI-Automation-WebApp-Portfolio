@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import { buildAppAuthHeaders, fetchWithAppAuth } from "@/lib/app-auth-fetch";
+import { useMutationRefreshTick } from "@/hooks/use-mutation-refresh-tick";
 import {
   useLastVisitedVersehubChapter,
   usePersistedVersehubMood,
@@ -68,6 +69,7 @@ export function useVersehubReaderData({
   overlay,
   setOverlay,
 }: UseVersehubReaderDataArgs) {
+  const refreshTick = useMutationRefreshTick(["/api/versehub/"]);
   const isLandingMode = mode === "landing";
   const isChapterMode = mode === "chapter";
   const isVerseMode = mode === "verse";
@@ -244,6 +246,7 @@ export function useVersehubReaderData({
       cancelled = true;
     };
   }, [
+    refreshTick,
     initialChapterRef,
     initialVerseRef,
     isChapterMode,
@@ -274,7 +277,7 @@ export function useVersehubReaderData({
         }
       })
       .catch(() => undefined);
-  }, [initialVerseRef, isAuthenticated, isVerseMode, lang, verseBookCode, verseChapterNumber]);
+  }, [refreshTick, initialVerseRef, isAuthenticated, isVerseMode, lang, verseBookCode, verseChapterNumber]);
 
   useLastVisitedVersehubChapter({
     activeBook,

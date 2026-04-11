@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { ChevronRight, Users, Bell, ArrowLeft, MessageSquare, Plus } from 'lucide-react';
 import { buildAppAuthHeaders, fetchWithAppAuth } from '@/lib/app-auth-fetch';
 import { cn } from '@/lib/utils';
+import { useMutationRefreshTick } from '@/hooks/use-mutation-refresh-tick';
 
 type Post = {
     id: number;
@@ -32,6 +33,7 @@ export default function WeeklyChannelIndexPage() {
     const params = useParams();
     const router = useRouter();
     const { isAuthenticated } = useAuthSession();
+    const refreshTick = useMutationRefreshTick(['/api/channels/']);
     const slugParam = params?.slug;
     const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam;
 
@@ -79,7 +81,7 @@ export default function WeeklyChannelIndexPage() {
         return () => {
             isActive = false;
         };
-    }, [slug]);
+    }, [slug, refreshTick]);
 
     const handleMembershipToggle = async () => {
         if (!slug || !channel) return;

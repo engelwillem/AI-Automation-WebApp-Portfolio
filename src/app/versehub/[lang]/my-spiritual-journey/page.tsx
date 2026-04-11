@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Share2, ExternalLink, PenLine, X, Zap, Sparkles, Heart, Bookmark as BookmarkIcon, History } from 'lucide-react';
 import { buildAppAuthHeaders, fetchWithAppAuth } from '@/lib/app-auth-fetch';
 import { cn } from '@/lib/utils';
+import { useMutationRefreshTick } from '@/hooks/use-mutation-refresh-tick';
 
 type ActivityItem = {
     id: string;
@@ -162,6 +163,7 @@ export default function SpiritualJourneyPage() {
     const params = useParams();
     const router = useRouter();
     const { isAuthenticated, isRestoring } = useAuthSession();
+    const refreshTick = useMutationRefreshTick(['/api/versehub/']);
     const lang = params?.lang as string || 'id';
     const isId = lang === 'id';
 
@@ -268,7 +270,7 @@ export default function SpiritualJourneyPage() {
         return () => {
             active = false;
         };
-    }, [isAuthenticated, isId, isRestoring, lang]);
+    }, [isAuthenticated, isId, isRestoring, lang, refreshTick]);
 
     const filteredItems = useMemo(() => {
         const byTab = localItems.filter((row) => {

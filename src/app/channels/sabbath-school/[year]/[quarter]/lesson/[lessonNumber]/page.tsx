@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { ChevronRight, CalendarDays, BookOpen, ArrowLeft } from 'lucide-react';
 import { buildAppAuthHeaders } from '@/lib/app-auth-fetch';
 import { cn } from '@/lib/utils';
+import { useMutationRefreshTick } from '@/hooks/use-mutation-refresh-tick';
 
 type Day = {
     day_key: string;
@@ -23,6 +24,7 @@ export default function SabbathSchoolLessonPage() {
     const year = Array.isArray(yearParam) ? yearParam[0] : yearParam;
     const quarter = Array.isArray(quarterParam) ? quarterParam[0] : quarterParam;
     const lessonNumber = Array.isArray(lessonParam) ? lessonParam[0] : lessonParam;
+    const refreshTick = useMutationRefreshTick(['/api/sabbath-school/', '/api/channels/']);
 
     const [days, setDays] = useState<Day[]>([]);
     const [loading, setLoading] = useState(true);
@@ -52,7 +54,7 @@ export default function SabbathSchoolLessonPage() {
         return () => {
             isActive = false;
         };
-    }, [year, quarter, lessonNumber]);
+    }, [year, quarter, lessonNumber, refreshTick]);
 
     const formatShortDate = (iso: string) => {
         try {

@@ -8,13 +8,17 @@ import Link from 'next/link';
 import { useAuthSession } from '@/auth/use-auth-session';
 import { CommunityService } from '@/services/community.service';
 import type { TodaySessionContent } from '../content/today-session.types';
-import type { RenunganMatch } from '../content/personal-renungan';
+import type { PersonalRenunganTelemetryEvent, RenunganMatch } from '../content/personal-renungan';
 import {
   buildPersonalRenungan,
   generatePersonalRenungan,
   normalizeReflectionForCache,
   preparePersonalRenungan,
 } from '../content/personal-renungan';
+import {
+  buildSafeRenunganTelemetryMeta,
+  trackRenunganTelemetryEvent,
+} from '../analytics';
 import { useTodayRitualProgress } from '../hooks/useTodayRitualProgress';
 import { useMotionConfig } from '../hooks/useMotionConfig';
 import TodayHeader from './TodayHeader';
@@ -28,6 +32,12 @@ interface TodayDailyRitualScreenProps {
   sessionContent: TodaySessionContent;
   showOfflineBanner?: boolean;
 }
+
+const GENERATION_STATUS_STEPS = [
+  "Membaca isi hati...",
+  "Merangkai renungan...",
+  "Menyusun doa penutup...",
+] as const;
 
 function buildArchiveText(
   reflectionText: string,
@@ -79,6 +89,9 @@ export default function TodayDailyRitualScreen({
   const [bookmarkSuccessNote, setBookmarkSuccessNote] = useState<string | null>(null);
   const [activeActionText, setActiveActionText] = useState<string | null>(null);
   const [isGeneratingRenungan, setIsGeneratingRenungan] = useState(false);
+  const [renunganGenerationLabel, setRenunganGenerationLabel] = useState<string>(
+    GENERATION_STATUS_STEPS[0]
+  );
   const [snapshotSharePath, setSnapshotSharePath] = useState<string | null>(null);
   const [preparedRenungan, setPreparedRenungan] = useState<{
     cacheKey: string;
@@ -147,6 +160,9 @@ export default function TodayDailyRitualScreen({
   const verseRevealRef = useRef<HTMLDivElement>(null);
   const prepareTimerRef = useRef<number | null>(null);
   const prepareAbortRef = useRef<AbortController | null>(null);
+  const generationStageTimersRef = useRef<number[]>([]);
+  const doakanFlowStartedAtRef = useRef<number | null>(null);
+  const pendingFinalRenderTelemetryRef = useRef(false);
   const ritualStage = useMemo(() => {
     if (isPrayerCompleted) return 'complete';
     if (isReflectDone) return 'meditation';
@@ -236,6 +252,8 @@ export default function TodayDailyRitualScreen({
       if (prepareTimerRef.current) {
         window.clearTimeout(prepareTimerRef.current);
       }
+      generationStageTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
+      generationStageTimersRef.current = [];
     };
   }, []);
 
@@ -246,6 +264,17 @@ export default function TodayDailyRitualScreen({
     }, 520);
     return () => window.clearTimeout(timerId);
   }, [isHydrating, isPrayerCompleted, isReflectDone]);
+
+  useEffect(() => {
+    if (!pendingFinalRenderTelemetryRef.current || !isReflectDone) return;
+    const startedAt = doakanFlowStartedAtRef.current;
+    const totalRenderMs = startedAt !== null ? Math.round(performance.now() - startedAt) : null;
+    void trackRenunganTelemetryEvent('renungan_final_render_complete', {
+      total_render_ms: totalRenderMs,
+      stage_count: GENERATION_STATUS_STEPS.length,
+    });
+    pendingFinalRenderTelemetryRef.current = false;
+  }, [isReflectDone]);
 
   useEffect(() => {
     if (isHydrating || !isPrayerCompleted) return;
@@ -342,15 +371,98 @@ export default function TodayDailyRitualScreen({
     if (!reflection || isGeneratingRenungan) return;
     const cacheKey = normalizeReflectionForCache(reflection);
     const prepared = preparedRenungan?.cacheKey === cacheKey ? preparedRenungan.result : null;
+    const safeMeta = buildSafeRenunganTelemetryMeta(reflection);
+    const startedAt = performance.now();
+    doakanFlowStartedAtRef.current = startedAt;
+    pendingFinalRenderTelemetryRef.current = true;
 
+    void trackRenunganTelemetryEvent('renungan_doakan_clicked', {
+      ...safeMeta,
+      has_prepared_result: Boolean(prepared),
+    });
+
+    generationStageTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
+    generationStageTimersRef.current = [];
+    setRenunganGenerationLabel(GENERATION_STATUS_STEPS[0]);
     setIsGeneratingRenungan(true);
+    void trackRenunganTelemetryEvent('renungan_request_started', {
+      ...safeMeta,
+      source: prepared ? 'prepared_cache' : 'api',
+    });
+    void trackRenunganTelemetryEvent('renungan_first_loading_stage_shown', {
+      ...safeMeta,
+      stage: GENERATION_STATUS_STEPS[0],
+      stage_index: 1,
+      time_to_first_feedback_ms: Math.round(performance.now() - startedAt),
+    });
+    void trackRenunganTelemetryEvent('renungan_loading_stage_shown', {
+      ...safeMeta,
+      stage: GENERATION_STATUS_STEPS[0],
+      stage_index: 1,
+      elapsed_ms: Math.round(performance.now() - startedAt),
+    });
+
+    if (!prepared) {
+      generationStageTimersRef.current.push(
+        window.setTimeout(() => {
+          setRenunganGenerationLabel(GENERATION_STATUS_STEPS[1]);
+          void trackRenunganTelemetryEvent('renungan_loading_stage_shown', {
+            ...safeMeta,
+            stage: GENERATION_STATUS_STEPS[1],
+            stage_index: 2,
+            elapsed_ms: Math.round(performance.now() - startedAt),
+          });
+        }, 900)
+      );
+      generationStageTimersRef.current.push(
+        window.setTimeout(() => {
+          setRenunganGenerationLabel(GENERATION_STATUS_STEPS[2]);
+          void trackRenunganTelemetryEvent('renungan_loading_stage_shown', {
+            ...safeMeta,
+            stage: GENERATION_STATUS_STEPS[2],
+            stage_index: 3,
+            elapsed_ms: Math.round(performance.now() - startedAt),
+          });
+        }, 1950)
+      );
+    }
+
     try {
-      const generated = prepared ?? (await generatePersonalRenungan(reflection, sessionContent));
+      const handleGenerationTelemetry = (event: PersonalRenunganTelemetryEvent) => {
+        if (event.type !== 'fallback_triggered') return;
+        void trackRenunganTelemetryEvent('renungan_frontend_coherence_fallback_triggered', {
+          ...safeMeta,
+          fallback_reason: event.reason,
+          request_id: event.requestId ?? null,
+          pipeline_version: event.pipelineVersion ?? null,
+          status_code: event.statusCode ?? null,
+        });
+      };
+
+      const generated = prepared
+        ? prepared
+        : (await generatePersonalRenungan(reflection, sessionContent, {
+            onTelemetry: handleGenerationTelemetry,
+          }));
       setPersonalRenungan(generated);
+      void trackRenunganTelemetryEvent('renungan_request_succeeded', {
+        ...safeMeta,
+        total_request_ms: Math.round(performance.now() - startedAt),
+        source: prepared ? 'prepared_cache' : 'api',
+      });
+      completeReflect();
+    } catch {
+      pendingFinalRenderTelemetryRef.current = false;
+      void trackRenunganTelemetryEvent('renungan_request_failed', {
+        ...safeMeta,
+        total_request_ms: Math.round(performance.now() - startedAt),
+        api_outcome_class: prepared ? 'prepared_error' : 'api_error',
+      });
     } finally {
+      generationStageTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
+      generationStageTimersRef.current = [];
       setIsGeneratingRenungan(false);
     }
-    completeReflect();
   };
 
   const handleCompletePrayer = () => {
@@ -538,6 +650,7 @@ export default function TodayDailyRitualScreen({
                     onContinue={() => void handleContinueReflect()}
                     isDone={isReflectDone}
                     isSubmitting={isGeneratingRenungan}
+                    submittingLabel={renunganGenerationLabel}
                   />
                 </motion.div>
               ) : null}

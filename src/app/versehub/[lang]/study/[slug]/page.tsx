@@ -8,6 +8,7 @@ import { ChevronLeft, CheckCircle2, Circle, Play, ArrowRight, Info, Share2, X, C
 import { buildAppAuthHeaders, fetchWithAppAuth } from '@/lib/app-auth-fetch';
 import { cn } from '@/lib/utils';
 import SharePanel from '@/components/versehub/SharePanel';
+import { useMutationRefreshTick } from '@/hooks/use-mutation-refresh-tick';
 
 interface Step {
     id: number;
@@ -34,6 +35,7 @@ export default function StudyPathShowPage() {
     const params = useParams();
     const router = useRouter();
     const { isAuthenticated } = useAuthSession();
+    const refreshTick = useMutationRefreshTick(['/api/study-paths/', '/api/versehub/']);
     const lang = params?.lang as string || 'id';
     const slug = params?.slug as string;
     const isId = lang === 'id';
@@ -68,7 +70,7 @@ export default function StudyPathShowPage() {
         return () => {
             isActive = false;
         };
-    }, [lang, slug]);
+    }, [lang, slug, refreshTick]);
 
     const handleCompleteStep = async (stepId: number) => {
         if (!isAuthenticated) return;

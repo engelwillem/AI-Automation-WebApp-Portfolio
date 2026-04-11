@@ -7,6 +7,7 @@ import { ChevronLeft, Share2, Users, MessageSquare, Heart, Bookmark } from 'luci
 import { buildAppAuthHeaders, fetchWithAppAuth } from '@/lib/app-auth-fetch';
 import { sanitizeRichHtml } from '@/lib/safe-rich-text';
 import { cn } from '@/lib/utils';
+import { useMutationRefreshTick } from '@/hooks/use-mutation-refresh-tick';
 
 type Post = {
     title: string;
@@ -26,6 +27,7 @@ export default function WeeklyChannelPostPage() {
     const params = useParams();
     const router = useRouter();
     const { isAuthenticated } = useAuthSession();
+    const refreshTick = useMutationRefreshTick(['/api/channels/']);
     const slugParam = params?.slug;
     const dateParam = params?.date;
     const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam;
@@ -76,7 +78,7 @@ export default function WeeklyChannelPostPage() {
         return () => {
             isActive = false;
         };
-    }, [slug, date]);
+    }, [slug, date, refreshTick]);
 
     const handleMembershipToggle = async () => {
         if (!slug || !channel) return;

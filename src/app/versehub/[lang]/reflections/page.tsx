@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { buildAppAuthHeaders, fetchWithAppAuth } from '@/lib/app-auth-fetch';
 import { cn } from '@/lib/utils';
+import { useMutationRefreshTick } from '@/hooks/use-mutation-refresh-tick';
 
 type Reflection = {
     id: string;
@@ -38,6 +39,7 @@ export default function ReflectionsJournalPage() {
     const params = useParams();
     const router = useRouter();
     const { isAuthenticated, isRestoring } = useAuthSession();
+    const refreshTick = useMutationRefreshTick(['/api/versehub/']);
     const lang = params?.lang as string || 'id';
     const isId = lang === 'id';
 
@@ -100,7 +102,7 @@ export default function ReflectionsJournalPage() {
         return () => {
             active = false;
         };
-    }, [isAuthenticated, isId, isRestoring, lang]);
+    }, [isAuthenticated, isId, isRestoring, lang, refreshTick]);
 
     return (
         <div className="min-h-screen bg-background text-foreground pb-20 selection:bg-brand/30">

@@ -5,6 +5,7 @@ import { Bookmark, Heart, Loader2, MessageSquare, MessageSquareText, Reply, Send
 import { cn } from "@/lib/utils";
 import type { VerseData } from "@/features/versehub/types";
 import { buildAppAuthHeaders, fetchWithAppAuth } from "@/lib/app-auth-fetch";
+import { useMutationRefreshTick } from "@/hooks/use-mutation-refresh-tick";
 
 interface VerseFocusCardProps {
   bookmarked: boolean;
@@ -49,6 +50,7 @@ export function VerseFocusCard({
   onShare,
   verseData,
 }: VerseFocusCardProps) {
+  const refreshTick = useMutationRefreshTick([`/api/versehub/${lang}/`]);
   const commentsSectionRef = useRef<HTMLDivElement | null>(null);
   const [ogImageSrc, setOgImageSrc] = useState<string>(verseData.og_image_url || "/og/today-share.png");
   const [comments, setComments] = useState<VerseComment[]>([]);
@@ -99,7 +101,7 @@ export function VerseFocusCard({
     return () => {
       cancelled = true;
     };
-  }, [commentEndpoint]);
+  }, [commentEndpoint, refreshTick]);
 
   const handleSubmitComment = async (event: React.FormEvent) => {
     event.preventDefault();

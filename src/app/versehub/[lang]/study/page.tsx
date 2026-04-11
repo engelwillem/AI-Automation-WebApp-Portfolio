@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { BookOpen, Clock, ChevronRight, Sparkles, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { useMutationRefreshTick } from '@/hooks/use-mutation-refresh-tick';
 
 interface StudyPath {
     id: number;
@@ -23,6 +24,7 @@ export default function StudyPathsIndexPage() {
     const router = useRouter();
     const lang = params?.lang as string || 'id';
     const isId = lang === 'id';
+    const refreshTick = useMutationRefreshTick(['/api/study-paths/', '/api/versehub/']);
 
     const [paths, setPaths] = useState<StudyPath[]>([]);
     const [loading, setLoading] = useState(true);
@@ -50,7 +52,7 @@ export default function StudyPathsIndexPage() {
         return () => {
             isActive = false;
         };
-    }, [lang]);
+    }, [lang, refreshTick]);
 
     return (
         <div className="min-h-screen bg-slate-950 text-white pb-20">

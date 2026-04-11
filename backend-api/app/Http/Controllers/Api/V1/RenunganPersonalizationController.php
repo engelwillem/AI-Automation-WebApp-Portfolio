@@ -7,10 +7,17 @@ use App\Models\BibleVerse;
 use App\Services\RenunganPastoralInterpretationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class RenunganPersonalizationController extends Controller
 {
+    private const PIPELINE_VERSION = 'renungan.v2.1.telemetry';
+    private const DEBUG_FORCE_HEADER = 'x-renungan-debug-force';
+    private const DEBUG_TELEMETRY_HEADER = 'x-renungan-debug-telemetry';
+
+    private bool $usedFallbackContent = false;
+
     public function __construct(
         private RenunganPastoralInterpretationService $pastoralInterpretationService
     ) {
@@ -273,6 +280,11 @@ class RenunganPersonalizationController extends Controller
 
     public function personalize(Request $request): JsonResponse
     {
+        $requestStartedAt = microtime(true);
+        $this->usedFallbackContent = false;
+        $requestId = $this->resolveRequestId($request);
+        $debugForceMode = $this->resolveDebugForceMode($request);
+
         $validated = $request->validate([
             'text' => ['required', 'string', 'min:3', 'max:5000'],
             'lang' => ['nullable', 'string', 'in:id,en'],
@@ -304,26 +316,132 @@ class RenunganPersonalizationController extends Controller
         if (! is_array($interpretation) || empty($interpretation['verse_main_message'])) {
             $interpretation = $this->buildPastoralInterpretationContext($primary, $analysis, $reflectionText);
         }
-        $meditation = $this->composeMeditation($reflectionText, $analysis, $interpretation, (string) ($primary?->text ?? ''));
+        $generationStartedAt = microtime(true);
+        $generationPlan = $this->buildGenerationPlan($reflectionText, $analysis, $interpretation);
+        $meditation = $this->composeMeditation(
+            $reflectionText,
+            $analysis,
+            $interpretation,
+            (string) ($primary?->text ?? ''),
+            $generationPlan
+        );
+        $generationDurationMs = $this->elapsedMs($generationStartedAt);
+        $evaluationStartedAt = microtime(true);
+        $initialQuality = $this->evaluateMeditationQuality($meditation, $reflectionText, $analysis, $generationPlan);
+        if (in_array($debugForceMode, ['rewrite', 'fallback'], true)) {
+            $initialReasons = array_values(array_unique(array_merge(
+                (array) ($initialQuality['reasons'] ?? []),
+                ['debug_force_quality_fail_initial']
+            )));
+            $initialQuality['passed'] = false;
+            $initialQuality['reasons'] = $initialReasons;
+        }
+        $quality = $initialQuality;
+        $rewriteCount = 0;
+        if (! ($quality['passed'] ?? false)) {
+            $rewriteCount = 1;
+            $meditation = $this->rewriteMeditationFromPlan($reflectionText, $analysis, $interpretation, $generationPlan);
+            $quality = $this->evaluateMeditationQuality($meditation, $reflectionText, $analysis, $generationPlan);
+            if ($debugForceMode === 'fallback') {
+                $quality['passed'] = false;
+                $quality['reasons'] = array_values(array_unique(array_merge(
+                    (array) ($quality['reasons'] ?? []),
+                    ['debug_force_rewrite_failed']
+                )));
+            }
+        }
+        if (! ($quality['passed'] ?? false)) {
+            $meditation = $this->composeSafeFallbackMeditation($analysis);
+            $this->usedFallbackContent = true;
+            $quality = $this->evaluateMeditationQuality($meditation, $reflectionText, $analysis, $generationPlan);
+            $quality['passed'] = false;
+            $quality['reasons'] = array_values(array_unique(array_merge(
+                (array) ($quality['reasons'] ?? []),
+                ['rewrite_failed_to_improve'],
+                ['fallback_due_to_invalid_output']
+            )));
+        } elseif (! ($initialQuality['passed'] ?? false)) {
+            $quality['reasons'] = array_values(array_unique(array_merge(
+                (array) ($quality['reasons'] ?? []),
+                ['rewrite_improved_output']
+            )));
+        }
+        $evaluationDurationMs = $this->elapsedMs($evaluationStartedAt);
 
-        return response()->json([
+        $relatedVerses = collect($selected)
+            ->map(fn (BibleVerse $verse) => [
+                'reference' => (string) ($verse->reference ?? ''),
+                'text' => (string) ($verse->text ?? ''),
+            ])
+            ->values()
+            ->all();
+
+        $responsePayload = [
             'data' => [
                 'meditation' => $meditation,
                 'verse' => [
                     'reference' => (string) ($primary?->reference ?? 'Mazmur 55:23'),
                     'text' => (string) ($primary?->text ?? 'Serahkanlah kuatirmu kepada TUHAN, maka Ia akan memelihara engkau.'),
                 ],
-                'related_verses' => collect($selected)
-                    ->map(fn (BibleVerse $verse) => [
-                        'reference' => (string) ($verse->reference ?? ''),
-                        'text' => (string) ($verse->text ?? ''),
-                    ])
-                    ->values()
-                    ->all(),
+                'related_verses' => $relatedVerses,
                 'analysis' => $analysis,
                 'interpretation' => $interpretation,
+                'generation' => [
+                    'intent_summary' => (string) ($generationPlan['intent_summary'] ?? ''),
+                    'heart_diagnosis' => (string) ($generationPlan['heart_diagnosis'] ?? ''),
+                    'pastoral_angle' => (string) ($generationPlan['pastoral_angle'] ?? ''),
+                    'outline' => [
+                        'opening' => (string) ($generationPlan['outline']['opening'] ?? ''),
+                        'body' => (string) ($generationPlan['outline']['body'] ?? ''),
+                        'closing' => (string) ($generationPlan['outline']['closing'] ?? ''),
+                    ],
+                    'quality' => $quality,
+                ],
             ],
-        ]);
+        ];
+
+        $requestDurationMs = $this->elapsedMs($requestStartedAt);
+        $initialQualityReasons = array_values(array_unique((array) ($initialQuality['reasons'] ?? [])));
+        $qualityReasons = array_values(array_unique((array) ($quality['reasons'] ?? [])));
+        $telemetryContext = [
+            'request_id' => $requestId,
+            'timestamp' => now()->toIso8601String(),
+            'pipeline_version' => self::PIPELINE_VERSION,
+            'environment' => app()->environment(),
+            'input_length_bucket' => $this->bucketInputLength($reflectionText),
+            'word_count_bucket' => $this->bucketWordCount($reflectionText),
+            'ambiguity_bucket' => $this->bucketAmbiguity((array) ($analysis['theme_scores'] ?? []), (array) ($analysis['emotion_scores'] ?? [])),
+            'emotional_intensity_bucket' => $this->bucketIntensity((int) ($analysis['intensity'] ?? 1)),
+            'generation_duration_ms' => $generationDurationMs,
+            'evaluation_duration_ms' => $evaluationDurationMs,
+            'total_duration_ms' => $requestDurationMs,
+            'backend_latency_bucket' => $this->bucketBackendLatency($requestDurationMs),
+            'rewrite_triggered' => $rewriteCount > 0,
+            'rewrite_count' => $rewriteCount,
+            'quality_passed_initial' => (bool) ($initialQuality['passed'] ?? false),
+            'quality_passed_final' => (bool) ($quality['passed'] ?? false),
+            'initial_evaluation_reasons' => $initialQualityReasons,
+            'evaluation_reasons' => $qualityReasons,
+            'failure_reasons' => array_values(array_filter(
+                $qualityReasons,
+                fn (string $reason): bool => ! in_array($reason, ['rewrite_improved_output'], true)
+            )),
+            'used_fallback_content' => $this->usedFallbackContent,
+            'verse_reference' => (string) ($primary?->reference ?? ''),
+            'primary_theme' => (string) ($analysis['primary_theme'] ?? ''),
+            'intent' => (string) ($analysis['intent'] ?? ''),
+            'debug_force_mode' => $debugForceMode,
+            'contains_raw_reflection' => false,
+        ];
+        $this->logRenunganTelemetry($telemetryContext);
+        if ($this->shouldIncludeDebugTelemetry($request)) {
+            $responsePayload['data']['generation']['telemetry_debug'] = $telemetryContext;
+        }
+
+        return response()
+            ->json($responsePayload)
+            ->header('x-renungan-request-id', $requestId)
+            ->header('x-renungan-pipeline-version', self::PIPELINE_VERSION);
     }
 
     private function analyzeReflection(string $text): array
@@ -664,7 +782,13 @@ class RenunganPersonalizationController extends Controller
         return array_values($selected);
     }
 
-    private function composeMeditation(string $reflectionText, array $analysis, array $interpretation, string $primaryVerseText): string
+    private function composeMeditation(
+        string $reflectionText,
+        array $analysis,
+        array $interpretation,
+        string $primaryVerseText,
+        array $generationPlan = []
+    ): string
     {
         $primaryTheme = (string) ($analysis['primary_theme'] ?? 'direction');
         $primaryEmotion = (string) ($analysis['primary_emotion'] ?? 'confused');
@@ -672,9 +796,9 @@ class RenunganPersonalizationController extends Controller
         $relationalContext = (string) ($analysis['relational_context'] ?? 'neutral');
         $emotionalNeed = (string) ($analysis['emotional_need'] ?? 'ketenangan');
         $spiritualNeed = (string) ($analysis['spiritual_need'] ?? 'pengharapan');
-        $reflectionEcho = $this->extractReflectionEcho($reflectionText, $primaryTheme);
+        $reflectionEcho = $this->extractReflectionEcho($reflectionText, $primaryTheme, $generationPlan);
 
-        $opening = match ($primaryTheme) {
+        $openingDefault = match ($primaryTheme) {
             'gratitude' => "Syukurmu hari ini adalah respons iman yang indah.",
             'longing_family' => "Kerinduanmu kepada orang yang kamu kasihi adalah ungkapan kasih yang tulus, dan Tuhan memahaminya sepenuhnya.",
             'relationship_conflict' => "Tuhan melihat luka relasimu dengan kasih yang tidak menghakimi.",
@@ -689,7 +813,7 @@ class RenunganPersonalizationController extends Controller
             default => "Tuhan menuntunmu dengan lembut ketika arah terasa belum jelas.",
         };
 
-        $body = match ($primaryTheme) {
+        $bodyDefault = match ($primaryTheme) {
             'gratitude' => "Rawatlah hati yang bersyukur itu agar tetap berakar pada kebaikan-Nya, bukan pada situasi yang berubah.",
             'longing_family' => "Di tengah jarak atau perpisahan, kamu boleh mempercayakan mereka ke dalam penjagaan-Nya sambil terus mendoakan perlindungan dan damai.",
             'relationship_conflict' => "Mintalah hati yang lembut untuk berkata benar dalam kasih, sehingga pemulihan terjadi tanpa kehilangan ketegasan.",
@@ -704,7 +828,7 @@ class RenunganPersonalizationController extends Controller
             default => "Setialah pada langkah kecil hari ini, karena Tuhan sering menyingkapkan arah melalui ketaatan yang sederhana.",
         };
 
-        $closing = match (true) {
+        $closingDefault = match (true) {
             $relationalContext === 'longing' => "Tuhan tetap menyertaimu hari ini dan menumbuhkan pengharapan untuk perjumpaan pada waktu-Nya.",
             in_array($primaryTheme, ['ministry_disillusionment', 'church_hurt', 'calling_conflict', 'exploitation', 'institutional_disappointment', 'authority_wound', 'mixed_emotional_state'], true) => "Tuhan menuntunmu memilih jalan yang benar: tetap lembut, tetap jujur, dan tetap sehat secara rohani.",
             $intent === 'express_gratitude' => "Biarlah penyembahanmu hari ini membuat hatimu makin peka terhadap kemurahan Tuhan.",
@@ -712,28 +836,79 @@ class RenunganPersonalizationController extends Controller
             $primaryEmotion === 'guilty' => "Kasih karunia-Nya lebih besar daripada rasa bersalahmu, dan masa depanmu tidak berhenti di kegagalan.",
             default => "Hari ini kamu membutuhkan {$emotionalNeed}, dan Tuhan menuntunmu kepada {$spiritualNeed}.",
         };
+        $opening = (string) ($generationPlan['outline']['opening'] ?? $openingDefault);
+        $body = (string) ($generationPlan['outline']['body'] ?? $bodyDefault);
+        $closing = (string) ($generationPlan['outline']['closing'] ?? $closingDefault);
 
         $pastoralInsight = (string) ($interpretation['pastoral_application'] ?? 'Firman Tuhan menuntunmu melihat keadaan ini dengan iman yang tenang.');
         $hopeDirection = (string) ($interpretation['hope_direction'] ?? '');
         $prayerDirection = (string) ($interpretation['prayer_direction'] ?? '');
+        $pastoralAngle = (string) ($generationPlan['pastoral_angle'] ?? '');
 
         $deEscalationDirection = (string) ($interpretation['de_escalation_direction'] ?? '');
         $correctionDirection = (string) ($interpretation['correction_direction'] ?? '');
 
-        $raw = trim($opening.' '.$reflectionEcho.' '.$body.' '.$pastoralInsight.' '.$closing.' '.$deEscalationDirection.' '.$correctionDirection.' '.$hopeDirection.' '.$prayerDirection);
+        $raw = trim($opening.' '.$reflectionEcho.' '.$body.' '.$pastoralAngle.' '.$pastoralInsight.' '.$closing.' '.$deEscalationDirection.' '.$correctionDirection.' '.$hopeDirection.' '.$prayerDirection);
         $finalized = $this->finalizeMeditationText($raw, $analysis);
 
         return $this->ensurePastoralOriginality($finalized, $primaryVerseText, $analysis, $interpretation);
     }
 
-    private function extractReflectionEcho(string $reflectionText, string $primaryTheme): string
+    private function buildGenerationPlan(string $reflectionText, array $analysis, array $interpretation): array
+    {
+        $primaryTheme = (string) ($analysis['primary_theme'] ?? 'direction');
+        $intent = (string) ($analysis['intent'] ?? 'guidance');
+        $emotionalNeed = (string) ($analysis['emotional_need'] ?? 'ketenangan');
+        $spiritualNeed = (string) ($analysis['spiritual_need'] ?? 'pengharapan');
+        $anchor = $this->extractReflectionAnchor($reflectionText);
+
+        $intentSummary = match ($intent) {
+            'express_gratitude' => 'Pengguna sedang datang dengan hati syukur dan ingin menjaga ketulusan itu.',
+            'seek_comfort' => 'Pengguna mencari penghiburan yang tenang di tengah beban emosional.',
+            'confess' => 'Pengguna sedang membawa pengakuan dan merindukan pemulihan yang nyata.',
+            'process_anger' => 'Pengguna sedang bergumul dengan emosi panas dan butuh arah yang meneduhkan.',
+            'seek_reconciliation' => 'Pengguna ingin memulihkan relasi tanpa kehilangan kejujuran.',
+            'seek_release' => 'Pengguna ingin melepas beban batin yang menekan.',
+            'seek_peace' => 'Pengguna merindukan damai batin dan kejernihan langkah.',
+            'surrender_burden' => 'Pengguna sedang belajar berserah sambil menata langkah konkret.',
+            default => 'Pengguna mencari tuntunan rohani yang jelas untuk kondisi saat ini.',
+        };
+
+        $heartDiagnosis = match ($primaryTheme) {
+            'ministry_disillusionment', 'church_hurt', 'calling_conflict', 'exploitation', 'institutional_disappointment', 'authority_wound' => 'Ada luka relasional dan rasa tidak aman yang perlu diakui dulu sebelum diarahkan.',
+            'anger_conflict', 'hatred_hostility' => 'Ada dorongan reaktif yang perlu ditenangkan agar tidak melahirkan luka baru.',
+            'anxiety' => 'Ada kegelisahan yang butuh ruang aman, bukan tuntutan untuk langsung kuat.',
+            'fatigue' => 'Ada kelelahan nyata; pemulihan ritme perlu disebutkan secara konkret.',
+            'guilt', 'repentance' => 'Ada rasa bersalah yang perlu diarahkan ke pertobatan yang memulihkan, bukan rasa malu berkepanjangan.',
+            default => 'Isi hati perlu ditata agar '.$emotionalNeed.' membuka jalan menuju '.$spiritualNeed.'.',
+        };
+
+        $pastoralAngle = (string) ($interpretation['verse_main_message'] ?? $interpretation['pastoral_application'] ?? 'Tuhan menuntun hati dengan kebenaran yang lembut.');
+        $themeGuidance = (string) ($interpretation['pastoral_application'] ?? 'Jalani langkah kecil yang jujur bersama Tuhan.');
+        $hopeDirection = (string) ($interpretation['hope_direction'] ?? 'Pengharapan tetap mungkin bertumbuh saat kamu melangkah setia.');
+
+        return [
+            'intent_summary' => $intentSummary,
+            'heart_diagnosis' => $heartDiagnosis,
+            'pastoral_angle' => $pastoralAngle,
+            'anchor' => $anchor,
+            'outline' => [
+                'opening' => trim('Saat kamu menulis tentang '.$anchor.', Tuhan melihat itu dengan jujur tanpa menghakimi.'),
+                'body' => trim($themeGuidance.' '.$heartDiagnosis.' Mulailah dari satu langkah yang bisa kamu jalani hari ini.'),
+                'closing' => trim($hopeDirection.' Tutup hari ini dengan doa sederhana yang selaras dengan isi hatimu.'),
+            ],
+        ];
+    }
+
+    private function extractReflectionEcho(string $reflectionText, string $primaryTheme, array $generationPlan = []): string
     {
         $clean = trim((string) Str::of($reflectionText)->replaceMatches('/\s+/', ' '));
+        $anchor = (string) ($generationPlan['anchor'] ?? '');
         if ($clean === '' || strlen($clean) > 180) {
             return match ($primaryTheme) {
                 'longing_family' => "Kerinduan itu tidak membuatmu lemah; kerinduan itu menunjukkan kasih yang hidup.",
                 'anxiety' => "Kamu tidak perlu pura-pura kuat ketika hatimu sedang mencari ketenangan.",
-                default => "Tuhan menghargai kejujuran hatimu di hadapan-Nya.",
+                default => $anchor !== '' ? 'Inti isi hatimu tentang '.$anchor.' sungguh didengar oleh Tuhan.' : "Tuhan menghargai kejujuran hatimu di hadapan-Nya.",
             };
         }
 
@@ -755,6 +930,7 @@ class RenunganPersonalizationController extends Controller
         $normalized = trim($normalized);
 
         if ($normalized === '' || strlen($normalized) < 80) {
+            $this->usedFallbackContent = true;
             return $this->composeSafeFallbackMeditation($analysis);
         }
 
@@ -767,6 +943,134 @@ class RenunganPersonalizationController extends Controller
         }
 
         return $normalized;
+    }
+
+    private function rewriteMeditationFromPlan(string $reflectionText, array $analysis, array $interpretation, array $generationPlan): string
+    {
+        $opening = (string) ($generationPlan['outline']['opening'] ?? 'Tuhan melihat isi hatimu dengan jujur dan penuh kasih.');
+        $body = (string) ($generationPlan['outline']['body'] ?? 'Langkah kecil yang setia akan menolongmu berjalan lebih jernih hari ini.');
+        $closing = (string) ($generationPlan['outline']['closing'] ?? 'Tuhan tetap memegang prosesmu dan menuntunmu dengan damai.');
+        $prayerDirection = (string) ($interpretation['prayer_direction'] ?? 'Doakan ini dengan singkat dan jujur di hadapan Tuhan.');
+        $anchor = $this->extractReflectionAnchor($reflectionText);
+
+        $raw = trim($opening.' Saat kamu berkata tentang '.$anchor.', kamu sedang membawa hal yang nyata kepada Tuhan. '.$body.' '.$closing.' '.$prayerDirection);
+
+        return $this->finalizeMeditationText($raw, $analysis);
+    }
+
+    private function evaluateMeditationQuality(string $meditation, string $reflectionText, array $analysis, array $generationPlan): array
+    {
+        $normalizedMeditation = $this->normalizeText($meditation);
+        if ($normalizedMeditation === '') {
+            return ['passed' => false, 'reasons' => ['empty_meditation']];
+        }
+
+        $reasons = [];
+        $sentences = preg_split('/[.!?]+/', trim($meditation)) ?: [];
+        $sentenceCount = count(array_values(array_filter($sentences, fn ($sentence) => trim((string) $sentence) !== '')));
+        if (strlen($meditation) < 140 || $sentenceCount < 4) {
+            $reasons[] = 'too_short_or_fragmented';
+        }
+
+        $opening = trim((string) ($sentences[0] ?? ''));
+        $openingNormalized = $this->normalizeText($opening);
+        $anchor = $this->normalizeText((string) ($generationPlan['anchor'] ?? ''));
+        $openingAnchored = $anchor !== '' && Str::contains($openingNormalized, $anchor);
+        if (! $openingAnchored) {
+            $keywords = $this->extractSignificantKeywords($reflectionText);
+            $keywordInOpening = collect($keywords)->contains(fn (string $keyword) => Str::contains($openingNormalized, $keyword));
+            if (! $keywordInOpening) {
+                $reasons[] = 'opening_not_anchored';
+                $reasons[] = 'low_input_alignment';
+            }
+        }
+
+        $primaryTheme = (string) ($analysis['primary_theme'] ?? 'direction');
+        $continuitySignals = $this->themeContinuitySignals($primaryTheme);
+        $continuityHits = collect($continuitySignals)
+            ->filter(fn (string $term) => Str::contains($normalizedMeditation, $term))
+            ->count();
+        if ($continuityHits < 2) {
+            $reasons[] = 'weak_theme_continuity';
+        }
+
+        $genericPhrases = [
+            'kamu tidak sendiri',
+            'tuhan menyertaimu',
+            'tetap semangat',
+            'jalani hari ini',
+            'tetap percaya',
+        ];
+        $genericHits = collect($genericPhrases)
+            ->filter(fn (string $phrase) => Str::contains($normalizedMeditation, $this->normalizeText($phrase)))
+            ->count();
+        if ($genericHits >= 3) {
+            $reasons[] = 'excessive_generic_phrases';
+        }
+
+        $closingRaw = trim((string) ($sentences[$sentenceCount - 1] ?? ''));
+        $closingNormalized = $this->normalizeText($closingRaw);
+        if (
+            Str::contains($closingNormalized, 'kamu tidak berjalan sendiri')
+            || Str::contains($closingNormalized, 'tuhan menyertaimu')
+            || Str::contains($closingNormalized, 'tetap semangat')
+        ) {
+            $reasons[] = 'generic_closing';
+        }
+
+        return [
+            'passed' => empty($reasons),
+            'reasons' => array_values(array_unique($reasons)),
+            'sentence_count' => $sentenceCount,
+            'continuity_hits' => $continuityHits,
+        ];
+    }
+
+    private function extractReflectionAnchor(string $reflectionText): string
+    {
+        $clean = trim((string) Str::of($reflectionText)->replaceMatches('/\s+/', ' '));
+        if ($clean === '') {
+            return 'isi hati yang kamu bawa';
+        }
+
+        if (strlen($clean) <= 72) {
+            return preg_replace('/[\"\']+/', '', $clean) ?? $clean;
+        }
+
+        $keywords = $this->extractSignificantKeywords($reflectionText);
+        if (! empty($keywords)) {
+            return implode(' ', array_slice($keywords, 0, 4));
+        }
+
+        $excerpt = (string) Str::of($clean)->limit(72, '');
+        return preg_replace('/[\"\']+/', '', trim($excerpt)) ?: 'isi hati yang sedang kamu bawa';
+    }
+
+    private function extractSignificantKeywords(string $text): array
+    {
+        $normalized = $this->normalizeText($text);
+        return collect(explode(' ', $normalized))
+            ->filter(fn (string $word) => strlen($word) >= 4)
+            ->reject(fn (string $word) => in_array($word, self::STOP_WORDS, true))
+            ->unique()
+            ->take(6)
+            ->values()
+            ->all();
+    }
+
+    private function themeContinuitySignals(string $primaryTheme): array
+    {
+        return match ($primaryTheme) {
+            'gratitude' => ['syukur', 'terima kasih', 'kemurahan', 'pujian'],
+            'longing_family' => ['rindu', 'keluarga', 'penjagaan', 'menyertai'],
+            'relationship_conflict' => ['relasi', 'damai', 'mengampuni', 'kasih'],
+            'ministry_disillusionment', 'church_hurt', 'calling_conflict', 'exploitation', 'institutional_disappointment', 'authority_wound', 'mixed_emotional_state' => ['luka', 'hikmat', 'batas', 'damai', 'pulih'],
+            'anger_conflict', 'hatred_hostility' => ['marah', 'jeda', 'kata', 'damai'],
+            'anxiety' => ['cemas', 'tenang', 'napas', 'aman'],
+            'fatigue' => ['lelah', 'istirahat', 'kekuatan', 'pulih'],
+            'guilt', 'repentance' => ['ampun', 'pulih', 'bertobat', 'anugerah'],
+            default => ['langkah', 'tuntun', 'hikmat', 'harap'],
+        };
     }
 
     private function composeSafeFallbackMeditation(array $analysis): string
@@ -911,6 +1215,7 @@ class RenunganPersonalizationController extends Controller
         }
 
         $safe = $this->composeSafeFallbackMeditation($analysis).' '.(string) ($interpretation['comfort_direction'] ?? '').' '.(string) ($interpretation['prayer_direction'] ?? '');
+        $this->usedFallbackContent = true;
         return $this->finalizeMeditationText($safe, $analysis);
     }
 
@@ -1090,6 +1395,114 @@ class RenunganPersonalizationController extends Controller
         $intensity = $base + $punctuationBoost + $lengthBoost;
 
         return max(1, min(5, $intensity));
+    }
+
+    private function resolveRequestId(Request $request): string
+    {
+        $headerRequestId = trim((string) $request->header('x-request-id'));
+        if ($headerRequestId !== '') {
+            return Str::limit($headerRequestId, 120, '');
+        }
+
+        return (string) Str::uuid();
+    }
+
+    private function resolveDebugForceMode(Request $request): ?string
+    {
+        if (! app()->environment(['local', 'testing'])) {
+            return null;
+        }
+
+        $mode = Str::lower(trim((string) $request->header(self::DEBUG_FORCE_HEADER, '')));
+        if (in_array($mode, ['rewrite', 'fallback'], true)) {
+            return $mode;
+        }
+
+        return null;
+    }
+
+    private function shouldIncludeDebugTelemetry(Request $request): bool
+    {
+        if (! app()->environment(['local', 'testing'])) {
+            return false;
+        }
+
+        return trim((string) $request->header(self::DEBUG_TELEMETRY_HEADER, '')) === '1';
+    }
+
+    private function elapsedMs(float $startedAt): int
+    {
+        return (int) round((microtime(true) - $startedAt) * 1000);
+    }
+
+    private function bucketInputLength(string $reflectionText): string
+    {
+        $length = strlen(trim($reflectionText));
+        return match (true) {
+            $length <= 20 => 'xs_0_20',
+            $length <= 60 => 's_21_60',
+            $length <= 140 => 'm_61_140',
+            $length <= 280 => 'l_141_280',
+            default => 'xl_281_plus',
+        };
+    }
+
+    private function bucketWordCount(string $reflectionText): string
+    {
+        $count = str_word_count($reflectionText);
+        return match (true) {
+            $count <= 3 => 'w_0_3',
+            $count <= 8 => 'w_4_8',
+            $count <= 16 => 'w_9_16',
+            $count <= 32 => 'w_17_32',
+            default => 'w_33_plus',
+        };
+    }
+
+    private function bucketAmbiguity(array $themeScores, array $emotionScores): string
+    {
+        $themeSpread = count($themeScores);
+        $emotionSpread = count($emotionScores);
+        $topTheme = (float) (reset($themeScores) ?: 0.0);
+        $secondTheme = (float) (array_values($themeScores)[1] ?? 0.0);
+        $themeGap = $topTheme - $secondTheme;
+
+        if ($themeSpread >= 4 || $emotionSpread >= 4) {
+            return 'high';
+        }
+        if ($themeGap <= 0.6) {
+            return 'medium';
+        }
+
+        return 'low';
+    }
+
+    private function bucketIntensity(int $intensity): string
+    {
+        return match (true) {
+            $intensity <= 2 => 'low',
+            $intensity === 3 => 'medium',
+            default => 'high',
+        };
+    }
+
+    private function bucketBackendLatency(int $durationMs): string
+    {
+        return match (true) {
+            $durationMs < 400 => 'fast',
+            $durationMs < 1000 => 'normal',
+            $durationMs < 2200 => 'slow',
+            default => 'very_slow',
+        };
+    }
+
+    private function logRenunganTelemetry(array $telemetry): void
+    {
+        $safeTelemetry = $telemetry;
+        unset($safeTelemetry['reflection_text'], $safeTelemetry['input_text'], $safeTelemetry['raw_text']);
+        $safeTelemetry['contains_raw_reflection'] = false;
+
+        Log::info('renungan.personalization.telemetry', $safeTelemetry);
     }
 
     private function roundScores(array $scores): array

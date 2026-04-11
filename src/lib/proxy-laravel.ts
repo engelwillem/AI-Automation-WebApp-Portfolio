@@ -109,6 +109,7 @@ export async function proxyLaravel(
     const contentType = request.headers.get("content-type");
     const authorization = request.headers.get("authorization");
     const cookie = request.headers.get("cookie");
+    const upstreamRequestId = request.headers.get("x-request-id");
     const sessionCookieToken = !authorization ? readSessionTokenFromCookie(request) : null;
     const xsrfToken = request.headers.get("x-xsrf-token") || request.headers.get("X-XSRF-TOKEN");
     const accept = request.headers.get("accept");
@@ -156,6 +157,7 @@ export async function proxyLaravel(
         ...(authorization ? { Authorization: authorization } : {}),
         ...(!authorization && sessionCookieToken ? { Authorization: `Bearer ${sessionCookieToken}` } : {}),
         ...(cookie ? { Cookie: cookie } : {}),
+        ...(upstreamRequestId ? { "X-Request-Id": upstreamRequestId } : {}),
         ...(xsrfToken ? { "X-XSRF-TOKEN": xsrfToken } : {}),
         ...(accept ? { Accept: accept } : { Accept: "application/json" }),
       },
@@ -170,7 +172,15 @@ export async function proxyLaravel(
 
     // 3. Clone headers for the proxy response
     const responseHeaders = new Headers();
-    const headersToForward = ["content-type", "x-auth", "cache-control", "content-disposition"];
+    const headersToForward = [
+      "content-type",
+      "x-auth",
+      "cache-control",
+      "content-disposition",
+      "x-request-id",
+      "x-renungan-request-id",
+      "x-renungan-pipeline-version",
+    ];
     
     headersToForward.forEach(header => {
       const value = response.headers.get(header);

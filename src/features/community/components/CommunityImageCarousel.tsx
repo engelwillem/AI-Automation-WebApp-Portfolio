@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { TouchEvent } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
@@ -223,13 +223,7 @@ export function CommunityImageCarousel({
               <span className="text-[11px] font-black uppercase tracking-[0.22em] text-white/70">
                 {activeIndex + 1} / {total}
               </span>
-              <button
-                type="button"
-                onClick={() => setViewerOpen(false)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <div className="h-10 w-10" aria-hidden="true" />
             </div>
 
             <div className="relative flex min-h-0 flex-1 items-center justify-center px-4 pb-6">

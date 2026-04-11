@@ -18,6 +18,7 @@ import {
 import { buildAppAuthHeaders } from '@/lib/app-auth-fetch';
 import { sanitizeRichHtml } from '@/lib/safe-rich-text';
 import { cn } from '@/lib/utils';
+import { useMutationRefreshTick } from '@/hooks/use-mutation-refresh-tick';
 
 type Day = {
     day_key: string;
@@ -39,6 +40,7 @@ export default function SabbathSchoolDayPage() {
     const quarter = Array.isArray(quarterParam) ? quarterParam[0] : quarterParam;
     const lessonNumber = Array.isArray(lessonParam) ? lessonParam[0] : lessonParam;
     const dayKey = Array.isArray(dayKeyParam) ? dayKeyParam[0] : dayKeyParam;
+    const refreshTick = useMutationRefreshTick(['/api/sabbath-school/', '/api/channels/']);
 
     const [day, setDay] = useState<Day | null>(null);
     const [loading, setLoading] = useState(true);
@@ -74,7 +76,7 @@ export default function SabbathSchoolDayPage() {
         return () => {
             isActive = false;
         };
-    }, [year, quarter, lessonNumber, dayKey]);
+    }, [year, quarter, lessonNumber, dayKey, refreshTick]);
 
     if (loading || !day) {
         return (

@@ -21,6 +21,20 @@ export type RenunganMatch = {
   };
 };
 
+export type PersonalRenunganTelemetryEvent =
+  | {
+      type: "fallback_triggered";
+      reason:
+        | "network_error"
+        | "http_error"
+        | "invalid_output"
+        | "coherence_guardrail"
+        | "short_input";
+      requestId?: string;
+      pipelineVersion?: string;
+      statusCode?: number;
+    };
+
 const MATCHES: Array<{ keywords: string[]; result: RenunganMatch }> = [
   {
     keywords: ["syukur", "bersyukur", "berkat", "sukacita", "puji", "bahagia", "senang"],
@@ -126,6 +140,55 @@ function isUsableMeditationText(input: string): boolean {
   return true;
 }
 
+function extractMeaningfulKeywords(text: string): string[] {
+  const stopWords = new Set([
+    "yang", "dengan", "untuk", "dalam", "sudah", "akan", "saya", "kami", "kamu", "dari", "karena",
+    "tetapi", "atau", "dan", "itu", "ini", "hari", "lagi", "saat", "agar", "pada", "kepada", "seperti",
+    "satu", "dua", "tiga", "mau", "ingin",
+  ]);
+
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .split(/\s+/)
+    .filter((word) => word.length >= 4 && !stopWords.has(word))
+    .filter((word, index, arr) => arr.indexOf(word) === index)
+    .slice(0, 6);
+}
+
+function splitSentences(text: string): string[] {
+  return text
+    .split(/[.!?]+/)
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0);
+}
+
+function isMeditationCoherentWithReflection(meditation: string, reflection: string): boolean {
+  const normalizedMeditation = meditation.toLowerCase();
+  const sentences = splitSentences(meditation);
+  if (sentences.length < 3) return false;
+
+  const [opening, ...rest] = sentences;
+  const closing = rest[rest.length - 1] || "";
+  const body = rest.slice(0, -1).join(" ");
+  const reflectionKeywords = extractMeaningfulKeywords(reflection);
+  const openingAnchored = reflectionKeywords.length === 0
+    ? opening.length > 20
+    : reflectionKeywords.some((keyword) => opening.toLowerCase().includes(keyword));
+  if (!openingAnchored) return false;
+
+  const continuityLexicon = ["hati", "tuhan", "langkah", "doa", "damai", "pulih", "hikmat", "harap"];
+  const continuityHits = continuityLexicon.filter((term) => normalizedMeditation.includes(term)).length;
+  if (continuityHits < 2) return false;
+  if (body.length < 30 || closing.length < 16) return false;
+
+  const genericPhrases = ["kamu tidak sendiri", "tetap semangat", "jalani hari ini", "tetap percaya", "tuhan menyertaimu"];
+  const genericHits = genericPhrases.filter((phrase) => normalizedMeditation.includes(phrase)).length;
+  if (genericHits >= 3) return false;
+
+  return true;
+}
+
 export function buildPersonalRenunganFallback(
   reflectionText: string,
   sessionContent: TodaySessionContent
@@ -160,19 +223,28 @@ export function buildPersonalRenungan(
 export async function generatePersonalRenungan(
   reflectionText: string,
   sessionContent: TodaySessionContent,
-  options?: { signal?: AbortSignal }
+  options?: {
+    signal?: AbortSignal;
+    onTelemetry?: (event: PersonalRenunganTelemetryEvent) => void;
+  }
 ): Promise<RenunganMatch> {
   const clean = reflectionText.trim();
   if (clean.length < 3) {
+    options?.onTelemetry?.({ type: "fallback_triggered", reason: "short_input" });
     return buildPersonalRenunganFallback(reflectionText, sessionContent);
   }
 
   try {
+    const requestId =
+      typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : `rn-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
     const response = await fetch("/api/renungan/personalize", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        "X-Request-Id": requestId,
       },
       signal: options?.signal,
       body: JSON.stringify({
@@ -182,8 +254,18 @@ export async function generatePersonalRenungan(
     });
 
     if (!response.ok) {
+      options?.onTelemetry?.({
+        type: "fallback_triggered",
+        reason: "http_error",
+        requestId,
+        statusCode: response.status,
+      });
       return buildPersonalRenunganFallback(reflectionText, sessionContent);
     }
+
+    const resolvedRequestId =
+      response.headers.get("x-renungan-request-id") || response.headers.get("x-request-id") || requestId;
+    const pipelineVersion = response.headers.get("x-renungan-pipeline-version") || undefined;
 
     const payload = (await response.json()) as {
       data?: {
@@ -198,7 +280,27 @@ export async function generatePersonalRenungan(
     const verseText = String(payload?.data?.verse?.text || "").trim();
     const verseReference = String(payload?.data?.verse?.reference || "").trim();
 
-    if (!isUsableMeditationText(meditation) || !verseText || !verseReference) {
+    if (
+      !isUsableMeditationText(meditation) ||
+      !verseText ||
+      !verseReference
+    ) {
+      options?.onTelemetry?.({
+        type: "fallback_triggered",
+        reason: "invalid_output",
+        requestId: resolvedRequestId,
+        pipelineVersion,
+      });
+      return buildPersonalRenunganFallback(reflectionText, sessionContent);
+    }
+
+    if (!isMeditationCoherentWithReflection(meditation, clean)) {
+      options?.onTelemetry?.({
+        type: "fallback_triggered",
+        reason: "coherence_guardrail",
+        requestId: resolvedRequestId,
+        pipelineVersion,
+      });
       return buildPersonalRenunganFallback(reflectionText, sessionContent);
     }
 
@@ -220,6 +322,7 @@ export async function generatePersonalRenungan(
     if (error instanceof DOMException && error.name === "AbortError") {
       throw error;
     }
+    options?.onTelemetry?.({ type: "fallback_triggered", reason: "network_error" });
     return buildPersonalRenunganFallback(reflectionText, sessionContent);
   }
 }
@@ -227,7 +330,10 @@ export async function generatePersonalRenungan(
 export async function preparePersonalRenungan(
   reflectionText: string,
   sessionContent: TodaySessionContent,
-  options?: { signal?: AbortSignal }
+  options?: {
+    signal?: AbortSignal;
+    onTelemetry?: (event: PersonalRenunganTelemetryEvent) => void;
+  }
 ): Promise<RenunganMatch | null> {
   const clean = normalizeReflectionForCache(reflectionText);
   if (clean.length < 3) {

@@ -7,6 +7,7 @@ import { CalendarDays, ChevronRight, MoveRight, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { buildAppAuthHeaders, fetchWithAppAuth } from '@/lib/app-auth-fetch';
+import { useMutationRefreshTick } from '@/hooks/use-mutation-refresh-tick';
 
 type Channel = {
     id: number;
@@ -63,6 +64,7 @@ const shortDate = (value?: string | null): string => {
 export default function ChannelsPage() {
     const router = useRouter();
     const { isAuthenticated } = useAuthSession();
+    const refreshTick = useMutationRefreshTick(['/api/channels/', '/api/channels', '/api/sabbath-school/']);
     const [channels, setChannels] = useState<Channel[]>([]);
     const [sabbathSchool, setSabbathSchool] = useState<SabbathPayload | null>(null);
     const [selectedQuarterId, setSelectedQuarterId] = useState<number>(0);
@@ -96,7 +98,7 @@ export default function ChannelsPage() {
         return () => {
             isActive = false;
         };
-    }, []);
+    }, [refreshTick]);
 
     const handleMembershipToggle = async (channelSlug: string) => {
         if (!isAuthenticated) return;
