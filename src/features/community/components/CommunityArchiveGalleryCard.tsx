@@ -5,6 +5,7 @@ import { ArrowUpRight, Bookmark, Heart, MessageCircle, Repeat2, Share2 } from "l
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { CommunityPost } from "../types";
+import { CommunityImageCarousel } from "./CommunityImageCarousel";
 
 const CATEGORY_STYLES: Record<string, { label: string; badgeClassName: string; accentClassName: string }> = {
   quote: {
@@ -91,7 +92,12 @@ export function CommunityArchiveGalleryCard({
   const title = useMemo(() => buildCardTitle(post, categoryMeta.label), [categoryMeta.label, post]);
   const excerpt = useMemo(() => buildExcerpt(post), [post]);
   const authorName = String(post.author?.name || "Chosen People");
-  const mediaPreview = post.mediaPaths?.[0] || post.imageUrl || null;
+  const mediaList = useMemo(() => {
+    const list = Array.isArray(post.mediaPaths) ? post.mediaPaths.filter(Boolean) : [];
+    if (list.length > 0) return list;
+    return post.imageUrl ? [post.imageUrl] : [];
+  }, [post.imageUrl, post.mediaPaths]);
+  const hasMedia = mediaList.length > 0;
 
   return (
     <Card className="group relative flex h-full flex-col overflow-hidden rounded-[26px] border border-slate-200/80 bg-white shadow-[0_18px_42px_-28px_rgba(15,23,42,0.32)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_26px_54px_-30px_rgba(15,23,42,0.35)]">
@@ -134,23 +140,26 @@ export function CommunityArchiveGalleryCard({
           </button>
         </div>
 
-        {mediaPreview ? (
-          <div className="relative mt-4 overflow-hidden rounded-[20px] border border-slate-200/80 bg-slate-100">
-            <img
-              src={mediaPreview}
-              alt={title}
-              className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+        {hasMedia ? (
+          <div className="relative z-20 mt-4 rounded-[22px] border border-slate-200/80 bg-slate-50/70 p-1.5">
+            <CommunityImageCarousel
+              images={mediaList}
+              altBase={authorName ? `Post arsip oleh ${authorName}` : "Gambar arsip"}
+              className="w-full"
+              viewportClassName="w-full"
+              ratioClassName="aspect-[4/3]"
+              uiVariant="archive"
+              showCounter={mediaList.length > 1}
             />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/10 via-transparent to-transparent" />
           </div>
         ) : (
-          <div className="mt-4 rounded-[20px] border border-dashed border-slate-200/80 bg-slate-50/70 p-4 text-left">
+          <div className="mt-4 rounded-[22px] border border-dashed border-slate-200/80 bg-slate-50/70 p-4 text-left">
             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Arsip Community</p>
             <p className="mt-2 line-clamp-3 text-[13px] leading-6 text-slate-600">{excerpt}</p>
           </div>
         )}
 
-        <div className="mt-4 flex flex-1 flex-col">
+        <div className="mt-5 flex flex-1 flex-col">
           <div className="flex items-center justify-between gap-2">
             <p className="truncate text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">{authorName}</p>
             <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-500">

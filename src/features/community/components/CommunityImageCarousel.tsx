@@ -13,6 +13,10 @@ type CommunityImageCarouselProps = {
   altBase?: string;
   aspectRatio?: MediaAspectRatio;
   className?: string;
+  ratioClassName?: string;
+  viewportClassName?: string;
+  uiVariant?: "default" | "archive";
+  showCounter?: boolean;
 };
 
 function getRatioClass(aspectRatio: MediaAspectRatio): string {
@@ -42,6 +46,10 @@ export function CommunityImageCarousel({
   altBase = "Community image",
   aspectRatio = "auto",
   className,
+  ratioClassName,
+  viewportClassName,
+  uiVariant = "default",
+  showCounter = false,
 }: CommunityImageCarouselProps) {
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const touchStartXRef = useRef<number | null>(null);
@@ -51,8 +59,12 @@ export function CommunityImageCarousel({
   const [viewerOpen, setViewerOpen] = useState(false);
   const total = images.length;
 
-  const ratioClass = useMemo(() => getRatioClass(aspectRatio), [aspectRatio]);
-  const viewportWidthClass = useMemo(() => getViewportWidthClass(aspectRatio), [aspectRatio]);
+  const ratioClass = useMemo(() => ratioClassName || getRatioClass(aspectRatio), [aspectRatio, ratioClassName]);
+  const viewportWidthClass = useMemo(
+    () => viewportClassName || getViewportWidthClass(aspectRatio),
+    [aspectRatio, viewportClassName]
+  );
+  const isArchiveVariant = uiVariant === "archive";
 
   const updateActiveByScroll = useCallback(() => {
     const scroller = scrollerRef.current;
@@ -145,7 +157,8 @@ export function CommunityImageCarousel({
             type="button"
             onClick={() => openViewer(0)}
             className={cn(
-              "relative block w-full overflow-hidden rounded-2xl ring-1 ring-border/60 bg-surface-muted",
+              "relative block w-full overflow-hidden bg-surface-muted",
+              isArchiveVariant ? "rounded-[18px] ring-1 ring-slate-200/80" : "rounded-2xl ring-1 ring-border/60",
               ratioClass
             )}
           >
@@ -159,7 +172,8 @@ export function CommunityImageCarousel({
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
               className={cn(
-                "relative flex overflow-x-auto scroll-smooth snap-x snap-mandatory touch-pan-y rounded-2xl ring-1 ring-border/60 bg-surface-muted scrollbar-hide [scrollbar-width:none]",
+                "relative flex overflow-x-auto scroll-smooth snap-x snap-mandatory touch-pan-y bg-surface-muted scrollbar-hide [scrollbar-width:none]",
+                isArchiveVariant ? "rounded-[18px] ring-1 ring-slate-200/80" : "rounded-2xl ring-1 ring-border/60",
                 ratioClass
               )}
             >
@@ -181,36 +195,48 @@ export function CommunityImageCarousel({
               ))}
             </div>
 
-            <div className="pointer-events-none absolute inset-x-0 bottom-3 z-10 flex justify-center gap-1.5">
+            <div className={cn("pointer-events-none absolute inset-x-0 z-10 flex justify-center gap-1.5", isArchiveVariant ? "bottom-2.5" : "bottom-3")}>
               {images.map((_, idx) => (
                 <span
                   key={`dot-${idx}`}
                   className={cn(
-                    "h-1.5 w-1.5 rounded-full transition-colors duration-200",
-                    idx === activeIndex ? "bg-white/88" : "bg-white/45"
+                    isArchiveVariant ? "h-1 w-1 rounded-full transition-colors duration-200" : "h-1.5 w-1.5 rounded-full transition-colors duration-200",
+                    idx === activeIndex ? "bg-white/88" : "bg-white/48"
                   )}
                   aria-hidden="true"
                 />
               ))}
             </div>
 
+            {showCounter ? (
+              <div className="pointer-events-none absolute right-2.5 top-2.5 z-10 inline-flex items-center rounded-full border border-white/25 bg-black/35 px-2 py-1 text-[10px] font-semibold tabular-nums text-white/90 backdrop-blur-sm">
+                {activeIndex + 1}/{total}
+              </div>
+            ) : null}
+
             <button
               type="button"
               aria-label="Gambar sebelumnya"
               onClick={() => stepInlineCarousel("prev")}
               disabled={activeIndex === 0}
-              className="absolute left-1.5 top-1/2 z-20 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/18 bg-black/10 text-white/72 shadow-[0_4px_14px_-10px_rgba(15,23,42,0.45)] backdrop-blur-[1px] transition-colors hover:bg-black/18 disabled:opacity-0 disabled:pointer-events-none"
+              className={cn(
+                "absolute left-1.5 top-1/2 z-20 inline-flex -translate-y-1/2 items-center justify-center rounded-full border border-white/18 bg-black/10 text-white/72 shadow-[0_4px_14px_-10px_rgba(15,23,42,0.45)] backdrop-blur-[1px] transition-colors hover:bg-black/18 disabled:opacity-0 disabled:pointer-events-none",
+                isArchiveVariant ? "h-7 w-7" : "h-8 w-8"
+              )}
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className={cn(isArchiveVariant ? "h-3.5 w-3.5" : "h-4 w-4")} />
             </button>
             <button
               type="button"
               aria-label="Gambar berikutnya"
               onClick={() => stepInlineCarousel("next")}
               disabled={activeIndex === total - 1}
-              className="absolute right-1.5 top-1/2 z-20 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/18 bg-black/10 text-white/72 shadow-[0_4px_14px_-10px_rgba(15,23,42,0.45)] backdrop-blur-[1px] transition-colors hover:bg-black/18 disabled:opacity-0 disabled:pointer-events-none"
+              className={cn(
+                "absolute right-1.5 top-1/2 z-20 inline-flex -translate-y-1/2 items-center justify-center rounded-full border border-white/18 bg-black/10 text-white/72 shadow-[0_4px_14px_-10px_rgba(15,23,42,0.45)] backdrop-blur-[1px] transition-colors hover:bg-black/18 disabled:opacity-0 disabled:pointer-events-none",
+                isArchiveVariant ? "h-7 w-7" : "h-8 w-8"
+              )}
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className={cn(isArchiveVariant ? "h-3.5 w-3.5" : "h-4 w-4")} />
             </button>
           </>
         )}
