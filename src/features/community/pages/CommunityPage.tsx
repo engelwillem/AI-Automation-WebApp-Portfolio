@@ -905,28 +905,34 @@ export function CommunityPage() {
       try {
         const updatedPost = await CommunityService.repost(post.id);
 
-        const upsertById = (list: CommunityPost[]) => {
-          const index = list.findIndex((item) => item.id === updatedPost.id);
-          if (index >= 0) {
-            return list.map((item) => (item.id === updatedPost.id ? updatedPost : item));
-          }
-          return [updatedPost, ...list];
-        };
+        const nowMs = Date.now();
+        setTimelineNowMs(nowMs);
+        setActiveTab("discussions");
 
-        setTimelineNowMs(Date.now());
-        setPosts((prev) => {
-          const nextPosts = upsertById(prev);
-          setArchivePosts((prevArchive) => {
-            const nextArchive = upsertById(prevArchive);
-            persistFeedCache(nextPosts, nextArchive);
-            return nextArchive;
+        if (updatedPost) {
+          setPosts((prev) => {
+            const nextPosts = [updatedPost, ...prev.filter((item) => item.id !== updatedPost.id)];
+            setArchivePosts((prevArchive) => {
+              const nextArchive = prevArchive.filter((item) => item.id !== updatedPost.id);
+              persistFeedCache(nextPosts, nextArchive);
+              return nextArchive;
+            });
+            return nextPosts;
           });
-          return nextPosts;
-        });
+        } else {
+          // Fallback when backend responds success without full post payload.
+          await fetchData();
+        }
 
         showToast("Post berhasil diaktifkan kembali ke Diskusi.", "success");
-      } catch {
-        showToast("Gagal mengaktifkan ulang post.", "error");
+      } catch (error) {
+        console.error("Failed to repost post", error);
+        const rawMessage = error instanceof Error ? error.message : "";
+        if (rawMessage.includes("401") || rawMessage.includes("403")) {
+          showToast("Sesi akun berakhir. Silakan masuk lagi.", "error");
+        } else {
+          showToast("Gagal mengaktifkan ulang post.", "error");
+        }
       } finally {
         setRepostBusyPostId(null);
       }
@@ -934,6 +940,7 @@ export function CommunityPage() {
     [
       isAuthenticated,
       isRestoring,
+      fetchData,
       openAuthGate,
       persistFeedCache,
       repostBusyPostId,
@@ -1112,7 +1119,7 @@ export function CommunityPage() {
   const archiveEmptyState = !isLoading && filteredArchivePosts.length === 0;
 
   return (
-    <div className="flex h-full flex-col animate-in fade-in duration-700 md:py-6">
+    <div className="flex min-h-full flex-col animate-in fade-in duration-700 md:py-6">
       <header className={cn(pageShellClassName, "pb-8 pt-0")}>
         <div className={narrowColumnClassName}>
           <p className="mb-8 mt-4 text-center text-[11px] font-bold uppercase tracking-[0.15em] text-foreground/30 md:mb-4 md:mt-0">Community</p>
@@ -1262,9 +1269,9 @@ export function CommunityPage() {
             </div>
           </TabsContent>
 
-          <TabsContent value="archive" className="mt-0 outline-none">
+          <TabsContent value="archive" className="mt-0 overflow-visible outline-none">
             <div className="space-y-8">
-              <section className="sticky top-[72px] z-30">
+              <section className="relative z-20">
                 <div className="overflow-hidden rounded-[30px] border border-white/75 bg-white/80 p-4 shadow-[0_20px_70px_-38px_rgba(15,23,42,0.42)] backdrop-blur-xl md:p-5">
                     <div className="flex flex-col gap-4">
                       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">

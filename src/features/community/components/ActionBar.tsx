@@ -18,6 +18,7 @@ type ActionBarProps = {
     onBookmark: () => void;
     className?: string;
     splitSave?: boolean;
+    ariaLabelContext?: 'default' | 'archive';
 };
 
 export function ActionBar({
@@ -33,11 +34,17 @@ export function ActionBar({
     onBookmark,
     className,
     splitSave = false,
+    ariaLabelContext = 'default',
 }: ActionBarProps) {
     // In Next.js decoupled hybrid, we handle auth check at the page level or within the action handler
     const runMemberAction = (action: () => void | Promise<void>) => {
         void action();
     };
+
+    const prayActionLabel = ariaLabelContext === 'archive' ? 'Doakan arsip' : 'Pray';
+    const commentActionLabel = ariaLabelContext === 'archive' ? 'Komentari arsip' : 'Comment';
+    const shareActionLabel = ariaLabelContext === 'archive' ? 'Bagikan arsip' : 'Share';
+    const bookmarkActionLabel = ariaLabelContext === 'archive' ? 'Simpan arsip' : 'Bookmark';
 
     return (
         <div className={cn('flex items-center gap-2 text-sm', splitSave ? 'w-full' : '', className)}>
@@ -49,7 +56,7 @@ export function ActionBar({
                         'tct-pressable inline-flex h-9 items-center gap-2 rounded-full px-3 text-muted-foreground transition-all duration-200 hover:bg-surface-muted hover:text-foreground',
                         prayed ? 'bg-brand/10 text-brand ring-1 ring-inset ring-brand/20' : 'bg-surface-muted/70',
                     )}
-                    aria-label="Pray"
+                    aria-label={prayActionLabel}
                     aria-pressed={prayed}
                     onClick={() => runMemberAction(onPray)}
                 >
@@ -62,7 +69,7 @@ export function ActionBar({
                 whileTap={{ scale: 0.95 }}
                 type="button"
                 className="tct-pressable inline-flex h-9 items-center gap-2 rounded-full bg-surface-muted/70 px-3 text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
-                aria-label={`Comment${commentsCount ? ` (${commentsCount})` : ''}`}
+                aria-label={`${commentActionLabel}${commentsCount ? ` (${commentsCount})` : ''}`}
                 onClick={() => runMemberAction(onOpenComments)}
             >
                 <AppIcon icon={MessageCircle} variant="action" className="opacity-70" />
@@ -77,7 +84,7 @@ export function ActionBar({
                 whileTap={{ scale: 0.95 }}
                 type="button"
                 className="tct-pressable flex h-9 w-9 items-center justify-center rounded-full bg-surface-muted/70 text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
-                aria-label="Share"
+                aria-label={shareActionLabel}
                 onClick={() => runMemberAction(onShare)}
             >
                 <AppIcon icon={Share2} variant="action" className="opacity-70" />
@@ -91,7 +98,7 @@ export function ActionBar({
                     splitSave ? 'ml-auto' : '',
                     bookmarked ? 'bg-brand/10 text-brand ring-1 ring-inset ring-brand/20' : 'bg-surface-muted/70',
                 )}
-                aria-label="Bookmark"
+                aria-label={bookmarkActionLabel}
                 aria-pressed={bookmarked}
                 onClick={() => runMemberAction(onBookmark)}
             >

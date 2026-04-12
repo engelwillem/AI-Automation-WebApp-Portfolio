@@ -23,6 +23,13 @@ interface ApiEnvelope<T> {
   data?: T;
 }
 
+const shouldWarnRepostDebug = process.env.NODE_ENV !== "production";
+
+function warnRepostDebug(stage: string, details: Record<string, unknown>) {
+  if (!shouldWarnRepostDebug) return;
+  console.warn("[community.repost.debug]", stage, details);
+}
+
 function appendNestedFormData(formData: FormData, keyPrefix: string, value: unknown) {
   if (value === null || value === undefined) return;
 
@@ -366,17 +373,83 @@ export const CommunityService = {
     return mapApiPost(payload.data.post);
   },
 
-  async repost(postId: string): Promise<CommunityPost> {
+  async repost(postId: string): Promise<CommunityPost | null> {
     const response = await fetch(`/api/community/posts/${postId}/repost`, {
       method: "POST",
       headers: buildHeaders(true),
     });
 
-    await assertOk(response, "Failed to repost post");
-    const payload = (await response.json()) as ApiEnvelope<{ post: ApiPost }>;
-    if (!payload?.data?.post) throw new ApiError("Malformed response", 502);
+    if (!response.ok) {
+      const debugResponse = response.clone();
+      let debugBodyShape: Record<string, unknown> = {};
+      let debugBodyType = "empty";
 
-    return mapApiPost(payload.data.post);
+      try {
+        const parsed = (await debugResponse.json()) as unknown;
+        if (parsed && typeof parsed === "object") {
+          debugBodyType = "json";
+          const root = parsed as Record<string, unknown>;
+          const data = root.data;
+          debugBodyShape = {
+            rootKeys: Object.keys(root).slice(0, 12),
+            hasDataObject: Boolean(data && typeof data === "object"),
+            dataKeys:
+              data && typeof data === "object"
+                ? Object.keys(data as Record<string, unknown>).slice(0, 12)
+                : [],
+          };
+        }
+      } catch {
+        try {
+          const raw = (await debugResponse.text()).trim();
+          debugBodyType = raw ? "text" : "empty";
+          debugBodyShape = {
+            textPreview: raw ? raw.slice(0, 220) : "",
+          };
+        } catch {
+          debugBodyType = "unreadable";
+        }
+      }
+
+      warnRepostDebug("http_error", {
+        postId,
+        status: response.status,
+        bodyType: debugBodyType,
+        ...debugBodyShape,
+      });
+    }
+
+    await assertOk(response, "Failed to repost post");
+    const payload = (await response.json().catch(() => ({}))) as
+      | ApiEnvelope<{ post?: ApiPost } & Record<string, unknown>>
+      | { data?: Record<string, unknown>; post?: ApiPost };
+
+    const rootPost =
+      "post" in payload && payload.post && typeof payload.post === "object" ? payload.post : null;
+
+    const candidate =
+      payload?.data && typeof payload.data === "object" && payload.data !== null
+        ? (payload.data as Record<string, unknown>).post ?? payload.data
+        : rootPost;
+
+    if (candidate && typeof candidate === "object" && "id" in (candidate as Record<string, unknown>)) {
+      return mapApiPost(candidate as ApiPost);
+    }
+
+    const payloadData = "data" in payload ? payload.data : undefined;
+    warnRepostDebug("inconsistent_success_payload", {
+      postId,
+      status: response.status,
+      hasDataObject: Boolean(payloadData && typeof payloadData === "object"),
+      dataKeys:
+        payloadData && typeof payloadData === "object"
+          ? Object.keys(payloadData as Record<string, unknown>).slice(0, 12)
+          : [],
+      hasRootPost: Boolean("post" in payload && payload.post),
+    });
+
+    // Some backends may acknowledge repost without returning full post payload.
+    return null;
   },
 
   async listBookmarks(): Promise<CommunityPost[]> {

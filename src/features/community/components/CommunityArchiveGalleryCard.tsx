@@ -1,46 +1,40 @@
 "use client";
 
-import { useMemo } from "react";
-import { ArrowUpRight, Bookmark, Heart, MessageCircle, Repeat2, Share2 } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { useMemo, type KeyboardEvent, type MouseEvent } from "react";
+import { Archive, Repeat2 } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { CommunityPost } from "../types";
 import { CommunityImageCarousel } from "./CommunityImageCarousel";
+import { MemberPostActionBar } from "./MemberPostActionBar";
 
-const CATEGORY_STYLES: Record<string, { label: string; badgeClassName: string; accentClassName: string }> = {
+const CATEGORY_STYLES: Record<string, { label: string; badgeClassName: string }> = {
   quote: {
     label: "Quotes",
     badgeClassName: "bg-sky-500/12 text-sky-700 ring-sky-500/15",
-    accentClassName: "from-sky-500/14 via-sky-500/6 to-transparent",
   },
   reflection: {
     label: "Refleksi",
     badgeClassName: "bg-amber-500/12 text-amber-700 ring-amber-500/15",
-    accentClassName: "from-amber-500/16 via-amber-500/7 to-transparent",
   },
   prayer_request: {
     label: "Permohonan Doa",
     badgeClassName: "bg-rose-500/12 text-rose-700 ring-rose-500/15",
-    accentClassName: "from-rose-500/16 via-rose-500/7 to-transparent",
   },
   testimony: {
     label: "Kesaksian",
     badgeClassName: "bg-emerald-500/12 text-emerald-700 ring-emerald-500/15",
-    accentClassName: "from-emerald-500/16 via-emerald-500/7 to-transparent",
   },
   user_post: {
     label: "Curahan Hati",
     badgeClassName: "bg-violet-500/12 text-violet-700 ring-violet-500/15",
-    accentClassName: "from-violet-500/16 via-violet-500/7 to-transparent",
   },
 };
 
 function formatArchiveDate(value?: string | null): string {
   if (!value) return "Baru saja";
-
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "Baru saja";
-
   return new Intl.DateTimeFormat("id-ID", {
     day: "numeric",
     month: "short",
@@ -48,20 +42,24 @@ function formatArchiveDate(value?: string | null): string {
   }).format(date);
 }
 
-function buildCardTitle(post: CommunityPost, fallbackLabel: string): string {
+function buildCardTitle(post: CommunityPost): string | null {
   const explicitTitle = String(post.title || "").trim();
   if (explicitTitle) return explicitTitle;
-
-  const source = String(post.text || "").replace(/\s+/g, " ").trim();
-  if (!source) return fallbackLabel;
-
-  return source.length > 72 ? `${source.slice(0, 72).trimEnd()}...` : source;
+  return null;
 }
 
-function buildExcerpt(post: CommunityPost): string {
-  const source = String(post.text || "").replace(/\s+/g, " ").trim();
-  if (!source) return "Belum ada ringkasan yang tersedia untuk konten ini.";
-  return source.length > 180 ? `${source.slice(0, 180).trimEnd()}...` : source;
+function buildDisplayContent(post: CommunityPost, title: string | null): string | null {
+  const text = String(post.text || "").replace(/\s+/g, " ").trim();
+
+  if (title && text && title === text) {
+    return null;
+  }
+
+  if (text) {
+    return text.length > 200 ? `${text.slice(0, 200).trimEnd()}...` : text;
+  }
+
+  return null;
 }
 
 type CommunityArchiveGalleryCardProps = {
@@ -86,12 +84,13 @@ export function CommunityArchiveGalleryCard({
   const categoryMeta = CATEGORY_STYLES[post.type] ?? {
     label: post.type_label || "Komunitas",
     badgeClassName: "bg-slate-500/12 text-slate-700 ring-slate-500/15",
-    accentClassName: "from-slate-500/14 via-slate-500/6 to-transparent",
   };
 
-  const title = useMemo(() => buildCardTitle(post, categoryMeta.label), [categoryMeta.label, post]);
-  const excerpt = useMemo(() => buildExcerpt(post), [post]);
+  const title = useMemo(() => buildCardTitle(post), [post]);
+  const displayContent = useMemo(() => buildDisplayContent(post, title), [post, title]);
   const authorName = String(post.author?.name || "Chosen People");
+  const authorAvatar = post.author?.avatarUrl;
+
   const mediaList = useMemo(() => {
     const list = Array.isArray(post.mediaPaths) ? post.mediaPaths.filter(Boolean) : [];
     if (list.length > 0) return list;
@@ -99,144 +98,141 @@ export function CommunityArchiveGalleryCard({
   }, [post.imageUrl, post.mediaPaths]);
   const hasMedia = mediaList.length > 0;
 
-  return (
-    <Card className="group relative flex h-full flex-col overflow-hidden rounded-[26px] border border-slate-200/80 bg-white shadow-[0_18px_42px_-28px_rgba(15,23,42,0.32)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_26px_54px_-30px_rgba(15,23,42,0.35)]">
-      <button
-        type="button"
-        onClick={onOpen}
-        className="absolute inset-0 z-10 rounded-[26px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60 focus-visible:ring-offset-4 focus-visible:ring-offset-white"
-        aria-label={`Buka ${title}`}
-      />
+  const handleCardClick = (event: MouseEvent<HTMLElement>) => {
+    const target = event.target as HTMLElement | null;
+    if (target?.closest('[data-interactive="true"]')) return;
+    onOpen();
+  };
 
-      <div className="relative flex h-full flex-col p-4 sm:p-5">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <span
-              className={cn(
-                "inline-flex min-h-7 items-center rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] ring-1",
-                categoryMeta.badgeClassName
+  const handleCardKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    const target = event.target as HTMLElement | null;
+    if (target?.closest('[data-interactive="true"]')) return;
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onOpen();
+    }
+  };
+
+  return (
+    <Card
+      role="button"
+      tabIndex={0}
+      onClick={handleCardClick}
+      onKeyDown={handleCardKeyDown}
+      aria-label={`Buka Arsip: ${title || authorName}`}
+      className={cn(
+        "group relative flex h-full flex-col overflow-hidden rounded-[32px] md:rounded-[40px] border-0 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-premium animate-in fade-in slide-in-from-bottom-4",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60 focus-visible:ring-offset-4 focus-visible:ring-offset-white",
+        "bg-slate-50/60 ring-1 ring-border/50"
+      )}
+    >
+      <CardContent className="relative flex flex-1 flex-col p-5 md:p-6">
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full bg-surface ring-1 ring-border/40 shadow-sm">
+              {authorAvatar ? (
+                <img src={authorAvatar} alt={authorName} className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-brand/5 text-[14px] font-black uppercase text-brand">
+                  {authorName.charAt(0)}
+                </div>
               )}
-            >
-              {categoryMeta.label}
-            </span>
-            <span className="truncate text-[11px] font-semibold text-slate-500">{formatArchiveDate(post.createdAt)}</span>
+            </div>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <span className="leading-none text-[14px] font-black tracking-tight text-foreground/90">{authorName}</span>
+              </div>
+              <div className="mt-1 flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
+                <span>{formatArchiveDate(post.createdAt)}</span>
+                <span>•</span>
+                <span className="flex items-center gap-1">
+                  <Archive className="h-3 w-3" />
+                  Arsip
+                </span>
+              </div>
+            </div>
           </div>
 
-          <button
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              onBookmark();
-            }}
+          <span
             className={cn(
-              "relative z-20 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors",
-              post.isBookmarked
-                ? "border-amber-300/70 bg-amber-50 text-amber-700"
-                : "border-slate-200/80 bg-white/90 text-slate-500 hover:border-slate-300 hover:text-slate-800"
+              "mt-0.5 inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] ring-1",
+              categoryMeta.badgeClassName
             )}
-            aria-label={post.isBookmarked ? "Hapus dari simpanan" : "Simpan konten"}
           >
-            <Bookmark className={cn("h-4 w-4", post.isBookmarked && "fill-current")} />
-          </button>
+            {categoryMeta.label}
+          </span>
         </div>
 
         {hasMedia ? (
-          <div className="relative z-20 mt-4 rounded-[22px] border border-slate-200/80 bg-slate-50/70 p-1.5">
+          <div data-interactive="true" className="mb-4 overflow-hidden rounded-[24px] ring-1 ring-border/60">
             <CommunityImageCarousel
               images={mediaList}
-              altBase={authorName ? `Post arsip oleh ${authorName}` : "Gambar arsip"}
-              className="w-full"
-              viewportClassName="w-full"
-              ratioClassName="aspect-[4/3]"
-              uiVariant="archive"
+              altBase={authorName ? `Arsip oleh ${authorName}` : "Gambar arsip"}
+              uiVariant="default"
               showCounter={mediaList.length > 1}
             />
           </div>
-        ) : (
-          <div className="mt-4 rounded-[22px] border border-dashed border-slate-200/80 bg-slate-50/70 p-4 text-left">
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Arsip Community</p>
-            <p className="mt-2 line-clamp-3 text-[13px] leading-6 text-slate-600">{excerpt}</p>
-          </div>
-        )}
+        ) : null}
 
-        <div className="mt-5 flex flex-1 flex-col">
-          <div className="flex items-center justify-between gap-2">
-            <p className="truncate text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">{authorName}</p>
-            <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-500">
-              Buka
-              <ArrowUpRight className="h-3.5 w-3.5" />
-            </span>
-          </div>
-
-          <h3 className="mt-3 line-clamp-2 text-[18px] font-bold leading-[1.3] tracking-tight text-slate-900">{title}</h3>
-          <p className="mt-2.5 line-clamp-3 text-[14px] leading-6 text-slate-600">{excerpt}</p>
+        <div className="flex-1">
+          {title ? (
+            <h3 className="mb-2 line-clamp-2 text-[18px] font-bold leading-[1.3] tracking-tight text-slate-900 md:text-[20px]">{title}</h3>
+          ) : null}
+          {displayContent ? (
+            <p
+              className={cn(
+                "text-[15px] font-medium leading-relaxed text-foreground/80",
+                !title && !hasMedia
+                  ? "line-clamp-6 text-[18px] italic tracking-tight text-foreground md:text-[21px]"
+                  : "line-clamp-5 md:line-clamp-4"
+              )}
+            >
+              {displayContent}
+            </p>
+          ) : null}
+          {!title && !displayContent && !hasMedia ? (
+            <p className="text-[13px] italic text-muted-foreground/50">Konten kosong.</p>
+          ) : null}
         </div>
 
-        <div className="relative z-20 mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-slate-200/80 pt-3 text-slate-500">
-          <div className="flex items-center gap-1 text-[12px] font-semibold">
-            <button
-              type="button"
-              onClick={(event) => {
-                event.stopPropagation();
-                onPray();
-              }}
-              className={cn(
-                "inline-flex min-h-10 items-center gap-2 rounded-full px-3 transition-colors",
-                post.isLiked ? "bg-rose-50 text-rose-700" : "hover:bg-slate-100/80 hover:text-slate-800"
-              )}
-              aria-label="Sukai konten"
-            >
-              <Heart className={cn("h-4 w-4", post.isLiked && "fill-current")} />
-              <span>{post.counts.likes}</span>
-            </button>
+        <div data-interactive="true" className="mt-6 border-t border-border/60 pt-4">
+          <MemberPostActionBar
+            postType={post.type}
+            ariaLabelContext="archive"
+            prayLabel={post.counts.likes.toString()}
+            prayed={post.isLiked}
+            commentsCount={post.counts.comments}
+            bookmarked={post.isBookmarked}
+            bookmarkLabel="Simpan"
+            onPray={onPray}
+            onOpenComments={onOpen}
+            onShare={() => {
+              void onShare();
+            }}
+            onBookmark={onBookmark}
+          />
 
-            <button
-              type="button"
-              onClick={(event) => {
-                event.stopPropagation();
-                onOpen();
-              }}
-              className="inline-flex min-h-10 items-center gap-2 rounded-full px-3 hover:bg-slate-100/80 hover:text-slate-800"
-              aria-label="Buka komentar"
-            >
-              <MessageCircle className="h-4 w-4" />
-              <span>{post.counts.comments}</span>
-            </button>
-          </div>
-
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={(event) => {
-                event.stopPropagation();
-                void onShare();
-              }}
-              className="inline-flex min-h-10 items-center gap-2 rounded-full px-3 text-[12px] font-semibold hover:bg-slate-100/80 hover:text-slate-800"
-              aria-label="Bagikan konten"
-            >
-              <Share2 className="h-4 w-4" />
-              <span>Bagikan</span>
-            </button>
-
-            <button
-              type="button"
-              disabled={reposting}
-              onClick={(event) => {
-                event.stopPropagation();
-                void onRepost();
-              }}
-              className={cn(
-                "inline-flex min-h-10 items-center gap-2 rounded-full px-3 text-[12px] font-semibold transition-colors",
-                reposting ? "cursor-not-allowed bg-slate-100/80 text-slate-400" : "hover:bg-slate-100/80 hover:text-slate-800"
-              )}
-              aria-label="Repost ke diskusi"
-            >
-              <Repeat2 className="h-4 w-4" />
-              <span>{reposting ? "Memposting..." : "Repost"}</span>
-            </button>
-          </div>
+          <button
+            type="button"
+            data-interactive="true"
+            onClick={(event) => {
+              event.stopPropagation();
+              void onRepost();
+            }}
+            disabled={reposting}
+            aria-label={reposting ? "Mengaktifkan ulang arsip" : "Aktifkan ulang arsip ke Talks"}
+            className={cn(
+              "mt-2 inline-flex min-h-9 items-center gap-2 rounded-full px-3 text-[11px] font-semibold transition-colors",
+              reposting
+                ? "cursor-not-allowed bg-slate-100/90 text-slate-400"
+                : "bg-slate-100/80 text-slate-600 hover:bg-slate-200/80 hover:text-slate-900"
+            )}
+          >
+            <Repeat2 className="h-3.5 w-3.5" />
+            <span>{reposting ? "Mengaktifkan..." : "Aktifkan"}</span>
+          </button>
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 }
