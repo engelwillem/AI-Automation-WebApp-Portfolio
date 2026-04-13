@@ -33,9 +33,31 @@ class CommunityApiController extends Controller
         /** @var User|null $user */
         $user = Auth::guard('sanctum')->user();
 
-        $feedData = $feedService->getTodayData($user);
-
         $now = Carbon::now();
+        $talkPosts = MemberPost::query()
+            ->whereNull('hidden_at')
+            ->active()
+            ->publicFeed()
+            ->with(['user:id,name,avatar_path'])
+            ->withCount([
+                'comments',
+                'bookmarks',
+                'reactions as pray_count' => fn ($q) => $q->where('type', 'pray'),
+            ])
+            ->withExists([
+                'reactions as is_prayed_by_me' => fn ($q) => $q
+                    ->where('type', 'pray')
+                    ->where('user_id', $user?->id ?? 0),
+                'bookmarks as is_bookmarked_by_me' => fn ($q) => $q
+                    ->where('user_id', $user?->id ?? 0),
+            ])
+            ->orderByDesc('activated_at')
+            ->orderByDesc('created_at')
+            ->limit(120)
+            ->get()
+            ->map(fn (MemberPost $post) => $this->serializePost($post, $user))
+            ->values();
+
         $archivePosts = MemberPost::query()
             ->whereNull('hidden_at')
             ->where(function ($query) use ($now) {
@@ -71,10 +93,14 @@ class CommunityApiController extends Controller
             ->map(fn (MemberPost $post) => $this->serializePost($post, $user))
             ->values();
 
+        // Keep featured feed payload available for backward-compatible consumers.
+        $feedData = $feedService->getTodayData($user);
+
         return response()->json([
             'data' => [
-                'posts' => $feedData['feed'],
+                'posts' => $talkPosts,
                 'archivePosts' => $archivePosts,
+                'featuredFeed' => $feedData['feed'] ?? [],
             ],
         ]);
     }

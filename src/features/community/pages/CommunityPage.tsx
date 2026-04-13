@@ -42,7 +42,6 @@ import {
 } from "../utils/community-feed-cache";
 import {
   DISCUSSION_WINDOW_MS,
-  partitionCommunityPostsByAge,
   resolvePostPublicDate,
   sortByNewest,
 } from "../utils/community-lifecycle";
@@ -150,7 +149,7 @@ export function CommunityPage() {
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [followBusyAuthorId, setFollowBusyAuthorId] = useState<string | null>(null);
   const [repostBusyPostId, setRepostBusyPostId] = useState<string | null>(null);
-  const [timelineNowMs, setTimelineNowMs] = useState(() => Date.now());
+  const [, setTimelineNowMs] = useState(() => Date.now());
   const [lastPostedId, setLastPostedId] = useState<string | null>(null);
   const [authGateOpen, setAuthGateOpen] = useState(false);
   const [authGateContent, setAuthGateContent] = useState<{ title: string; description: string }>({
@@ -194,22 +193,17 @@ export function CommunityPage() {
   }, []);
 
   const publicTimelinePosts = useMemo(() => {
-    const mergedById = new Map<string, CommunityPost>();
-    // Prefer active feed payload when the same post exists in both buckets.
-    [...archivePosts, ...posts].forEach((post) => {
-      if (!post?.id) return;
-      mergedById.set(post.id, post);
-    });
+    return sortByNewest(posts.filter((post) => !isPrivateRenunganPost(post)));
+  }, [isPrivateRenunganPost, posts]);
 
-    return sortByNewest(Array.from(mergedById.values()).filter((post) => !isPrivateRenunganPost(post)));
-  }, [archivePosts, isPrivateRenunganPost, posts]);
+  const publicArchivePosts = useMemo(() => {
+    return sortByNewest(archivePosts.filter((post) => !isPrivateRenunganPost(post)));
+  }, [archivePosts, isPrivateRenunganPost]);
 
-  const timelineBuckets = useMemo(
-    () => partitionCommunityPostsByAge(publicTimelinePosts, timelineNowMs),
-    [publicTimelinePosts, timelineNowMs]
-  );
-
-  const discussionPosts = timelineBuckets.discussionPosts;
+  // Canonical buckets:
+  // TALKS = posts (active payload from backend)
+  // GALERY = archivePosts (gallery payload from backend)
+  const discussionPosts = publicTimelinePosts;
   const hasLastPostedInDiscussions = useMemo(
     () => Boolean(lastPostedId && discussionPosts.some((post) => post.id === lastPostedId)),
     [discussionPosts, lastPostedId]
@@ -303,6 +297,7 @@ export function CommunityPage() {
       setPosts(fetched.posts);
       setArchivePosts(fetched.archivePosts);
       persistFeedCache(fetched.posts, fetched.archivePosts);
+      setTimelineNowMs(Date.now());
       await loadBookmarkData();
 
       const ritualRes = await fetch("/api/today");
@@ -864,32 +859,56 @@ export function CommunityPage() {
         const updatedPost = await CommunityService.repost(post.id);
 
         const nowMs = Date.now();
-        setTimelineNowMs(nowMs);
-        setActiveTab("discussions");
-        setActiveArchiveDetailPostId(null);
-
         if (updatedPost) {
-          setPosts((prev) => {
-            const nextPosts = [updatedPost, ...prev.filter((item) => item.id !== updatedPost.id)];
-            setArchivePosts((prevArchive) => {
-              const nextArchive = prevArchive.filter((item) => item.id !== updatedPost.id);
-              persistFeedCache(nextPosts, nextArchive);
-              return nextArchive;
-            });
-            return nextPosts;
-          });
-        } else {
-          // Fallback when backend responds success without full post payload.
-          await fetchData();
-        }
+          const nextTalks = sortByNewest([
+            {
+              ...updatedPost,
+              status: "active",
+            },
+            ...posts.filter((item) => item.id !== updatedPost.id),
+          ]);
 
-        showToast("Berhasil Repost ke Talks", "success");
+          const nextArchive = sortByNewest(archivePosts.filter((item) => item.id !== updatedPost.id));
+          const isMovedLocally =
+            nextTalks.some((item) => item.id === post.id) &&
+            !nextArchive.some((item) => item.id === post.id);
+
+          if (!isMovedLocally) {
+            throw new Error("Repost verification failed in local state");
+          }
+
+          setTimelineNowMs(nowMs);
+          setActiveTab("discussions");
+          setActiveArchiveDetailPostId(null);
+          setPosts(nextTalks);
+          setArchivePosts(nextArchive);
+          persistFeedCache(nextTalks, nextArchive);
+          showToast("Berhasil Repost ke Talks", "success");
+        } else {
+          // Fallback when backend success payload is minimal: verify bucket move from fresh feed.
+          const latest = await CommunityService.listPosts();
+          const movedToDiscussion = latest.posts.some((item) => item.id === post.id);
+          const removedFromArchive = !latest.archivePosts.some((item) => item.id === post.id);
+
+          if (!movedToDiscussion || !removedFromArchive) {
+            throw new Error("Repost acknowledged but post did not move buckets");
+          }
+
+          setTimelineNowMs(nowMs);
+          setActiveTab("discussions");
+          setPosts(latest.posts);
+          setArchivePosts(latest.archivePosts);
+          persistFeedCache(latest.posts, latest.archivePosts);
+          setActiveArchiveDetailPostId(null);
+          showToast("Berhasil Repost ke Talks", "success");
+        }
       } catch (error) {
         console.error("Failed to repost post", error);
         try {
           const latest = await CommunityService.listPosts();
           const movedToDiscussion = latest.posts.some((item) => item.id === post.id);
-          if (movedToDiscussion) {
+          const removedFromArchive = !latest.archivePosts.some((item) => item.id === post.id);
+          if (movedToDiscussion && removedFromArchive) {
             setTimelineNowMs(Date.now());
             setActiveTab("discussions");
             setPosts(latest.posts);
@@ -906,18 +925,19 @@ export function CommunityPage() {
         if (rawMessage.includes("401") || rawMessage.includes("403")) {
           showToast("Sesi akun berakhir. Silakan masuk lagi.", "error");
         } else {
-          showToast("Gagal mengaktifkan ulang post.", "error");
+          showToast("Repost belum berpindah ke Talks. Coba muat ulang.", "error");
         }
       } finally {
         setRepostBusyPostId(null);
       }
     },
     [
+      archivePosts,
       isAuthenticated,
       isRestoring,
-      fetchData,
       openAuthGate,
       persistFeedCache,
+      posts,
       repostBusyPostId,
       showToast,
     ]
@@ -1025,8 +1045,6 @@ export function CommunityPage() {
 
     return null;
   }, [featuredPost, rituals]);
-
-  const publicArchivePosts = timelineBuckets.archivePosts;
 
   const archiveCategoryCounts = useMemo(() => {
     return publicArchivePosts.reduce<Record<string, number>>(

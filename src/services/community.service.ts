@@ -290,7 +290,11 @@ async function fetchWithRetry(input: RequestInfo | URL, init: RequestInit, attem
 }
 
 export const CommunityService = {
-  async listPosts(): Promise<{ posts: CommunityPost[]; archivePosts: CommunityPost[] }> {
+  async listPosts(): Promise<{
+    posts: CommunityPost[];
+    archivePosts: CommunityPost[];
+    featuredFeed: CommunityPost[];
+  }> {
     const response = await fetchWithRetry("/api/community/posts", {
       method: "GET",
       cache: "no-store",
@@ -298,10 +302,15 @@ export const CommunityService = {
     });
 
     await assertOk(response, "Failed to fetch posts");
-    const payload = await response.json() as ApiEnvelope<{ posts: ApiPost[], archivePosts?: ApiPost[] }>;
+    const payload = await response.json() as ApiEnvelope<{
+      posts: ApiPost[];
+      archivePosts?: ApiPost[];
+      featuredFeed?: ApiPost[];
+    }>;
     return {
       posts: (payload?.data?.posts ?? []).map(mapApiPost),
       archivePosts: (payload?.data?.archivePosts ?? []).map(mapApiPost),
+      featuredFeed: (payload?.data?.featuredFeed ?? []).map(mapApiPost),
     };
   },
 
@@ -441,7 +450,14 @@ export const CommunityService = {
         : rootPost;
 
     if (candidate && typeof candidate === "object" && "id" in (candidate as Record<string, unknown>)) {
-      return mapApiPost(candidate as ApiPost);
+      const mapped = mapApiPost(candidate as ApiPost);
+      warnRepostDebug("success_payload", {
+        postId,
+        mappedStatus: mapped.status,
+        activatedAt: mapped.activatedAt ?? null,
+        expiresAt: mapped.expiresAt ?? null,
+      });
+      return mapped;
     }
 
     const payloadData = "data" in payload ? payload.data : undefined;
