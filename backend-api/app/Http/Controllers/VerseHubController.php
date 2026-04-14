@@ -7,6 +7,7 @@ use App\Services\VerseHubMentorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
@@ -151,6 +152,19 @@ class VerseHubController extends Controller
         if (! preg_match('/^([a-z0-9]+)-(\d+)-(\d+)$/', $normalized['ref'], $m)) {
             return response()->json(['error' => 'Invalid reference.'], 400);
         }
+
+        $maxAttempts = max(1, (int) config('versehub_mentor.ask_rate_limit', 10));
+        $userId = (string) ($request->user()?->getAuthIdentifier() ?? 'guest');
+        $rateKey = 'versehub:mentor:ask:'.$userId;
+        if (RateLimiter::tooManyAttempts($rateKey, $maxAttempts)) {
+            $seconds = RateLimiter::availableIn($rateKey);
+
+            return response()->json([
+                'message' => 'Terlalu banyak pertanyaan. Coba lagi dalam beberapa menit.',
+                'retry_after_seconds' => $seconds,
+            ], 429)->header('Retry-After', (string) $seconds);
+        }
+        RateLimiter::hit($rateKey, 3600);
 
         $query = $this->refToProviderQuery($lang, $normalized['ref']);
         $verseData = $query ? $this->fetchVerseForLang($lang, $query) : [];

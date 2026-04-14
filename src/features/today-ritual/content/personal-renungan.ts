@@ -4,6 +4,14 @@ export type RenunganMatch = {
   verseText: string;
   verseReference: string;
   meditation: string;
+  mentorOpening?: string;
+  prayerPrompt?: string;
+  followUpQuestion?: string;
+  confidence?: number | string | null;
+  safetyNotes?: string[];
+  requestId?: string | null;
+  driver?: "openai" | "template" | "claude" | string | null;
+  usedFallback?: boolean;
   relatedVerses?: Array<{
     reference: string;
     text: string;
@@ -270,13 +278,45 @@ export async function generatePersonalRenungan(
     const payload = (await response.json()) as {
       data?: {
         meditation?: string;
+        mentor_opening?: string;
+        prayer_prompt?: string;
+        follow_up_question?: string;
+        confidence?: number | string | null;
+        safety_notes?: unknown[];
+        request_id?: string | null;
+        driver?: string | null;
+        used_fallback?: boolean;
         verse?: { text?: string; reference?: string };
         related_verses?: Array<{ text?: string; reference?: string }>;
         analysis?: RenunganMatch["analysis"];
+        mentor?: {
+          driver?: string | null;
+          used_fallback?: boolean;
+        };
       };
     };
 
     const meditation = String(payload?.data?.meditation || "").trim();
+    const mentorOpening = String(payload?.data?.mentor_opening || "").trim();
+    const prayerPrompt = String(payload?.data?.prayer_prompt || "").trim();
+    const followUpQuestion = String(payload?.data?.follow_up_question || "").trim();
+    const confidence = payload?.data?.confidence ?? null;
+    const safetyNotes = Array.isArray(payload?.data?.safety_notes)
+      ? payload.data.safety_notes
+          .map((item) => String(item ?? "").trim())
+          .filter((item) => item.length > 0)
+      : [];
+    const outputRequestId = String(payload?.data?.request_id || "").trim() || resolvedRequestId;
+    const driver =
+      payload?.data?.driver ||
+      payload?.data?.mentor?.driver ||
+      null;
+    const usedFallback =
+      typeof payload?.data?.used_fallback === "boolean"
+        ? payload.data.used_fallback
+        : typeof payload?.data?.mentor?.used_fallback === "boolean"
+          ? payload.data.mentor.used_fallback
+          : false;
     const verseText = String(payload?.data?.verse?.text || "").trim();
     const verseReference = String(payload?.data?.verse?.reference || "").trim();
 
@@ -306,6 +346,14 @@ export async function generatePersonalRenungan(
 
     return {
       meditation: cleanMeditationText(meditation),
+      mentorOpening: mentorOpening || undefined,
+      prayerPrompt: prayerPrompt || undefined,
+      followUpQuestion: followUpQuestion || undefined,
+      confidence,
+      safetyNotes,
+      requestId: outputRequestId || null,
+      driver,
+      usedFallback,
       verseText,
       verseReference,
       relatedVerses: Array.isArray(payload?.data?.related_verses)

@@ -16,7 +16,10 @@ type FunnelEventName =
   | "renungan_request_succeeded"
   | "renungan_request_failed"
   | "renungan_frontend_coherence_fallback_triggered"
-  | "renungan_final_render_complete";
+  | "renungan_final_render_complete"
+  | "renungan_result_helpful"
+  | "renungan_result_not_helpful"
+  | "renungan_followup_opened";
 
 type FunnelEventPayload = {
   path?: string;

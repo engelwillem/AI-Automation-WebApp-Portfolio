@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\BibleVerse;
 use App\Services\RenunganPastoralInterpretationService;
+use App\Services\Renungan\RenunganMentorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -19,7 +20,8 @@ class RenunganPersonalizationController extends Controller
     private bool $usedFallbackContent = false;
 
     public function __construct(
-        private RenunganPastoralInterpretationService $pastoralInterpretationService
+        private RenunganPastoralInterpretationService $pastoralInterpretationService,
+        private RenunganMentorService $renunganMentorService,
     ) {
     }
 
@@ -400,6 +402,27 @@ class RenunganPersonalizationController extends Controller
             ],
         ];
 
+        $mentorResult = $this->renunganMentorService->generate([
+            'reflection_text' => $reflectionText,
+            'legacy_meditation' => $meditation,
+            'verse_reference' => (string) ($primary?->reference ?? 'Mazmur 55:23'),
+            'verse_text' => (string) ($primary?->text ?? ''),
+            'analysis' => $analysis,
+            'interpretation' => $interpretation,
+            'generation_plan' => $generationPlan,
+            'quality' => $quality,
+        ]);
+
+        $responsePayload['data']['mentor_opening'] = (string) ($mentorResult['mentor_opening'] ?? '');
+        $responsePayload['data']['meditation'] = (string) ($mentorResult['meditation'] ?? $meditation);
+        $responsePayload['data']['prayer_prompt'] = (string) ($mentorResult['prayer_prompt'] ?? '');
+        $responsePayload['data']['follow_up_question'] = (string) ($mentorResult['follow_up_question'] ?? '');
+        $responsePayload['data']['confidence'] = (string) ($mentorResult['confidence'] ?? 'medium');
+        $responsePayload['data']['safety_notes'] = (array) ($mentorResult['safety_notes'] ?? []);
+        $responsePayload['data']['request_id'] = (string) ($mentorResult['request_id'] ?? $requestId);
+        $responsePayload['data']['driver'] = (string) data_get($mentorResult, 'meta.driver', 'template');
+        $responsePayload['data']['used_fallback'] = (bool) data_get($mentorResult, 'meta.used_fallback', true);
+
         $requestDurationMs = $this->elapsedMs($requestStartedAt);
         $initialQualityReasons = array_values(array_unique((array) ($initialQuality['reasons'] ?? [])));
         $qualityReasons = array_values(array_unique((array) ($quality['reasons'] ?? [])));
@@ -432,6 +455,11 @@ class RenunganPersonalizationController extends Controller
             'intent' => (string) ($analysis['intent'] ?? ''),
             'debug_force_mode' => $debugForceMode,
             'contains_raw_reflection' => false,
+            'mentor_driver' => (string) data_get($mentorResult, 'meta.driver', 'template'),
+            'mentor_used_fallback' => (bool) data_get($mentorResult, 'meta.used_fallback', true),
+            'mentor_fallback_reason' => data_get($mentorResult, 'meta.fallback_reason'),
+            'mentor_latency_ms' => (int) data_get($mentorResult, 'meta.latency_ms', 0),
+            'mentor_request_id' => (string) ($mentorResult['request_id'] ?? ''),
         ];
         $this->logRenunganTelemetry($telemetryContext);
         if ($this->shouldIncludeDebugTelemetry($request)) {

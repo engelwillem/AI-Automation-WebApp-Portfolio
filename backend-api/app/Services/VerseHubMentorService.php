@@ -7,7 +7,6 @@ use App\Models\UserMentorSession;
 use App\Models\VerseRelationship;
 use App\Models\VerseThemeMapping;
 use App\Services\Mentor\MentorDriverInterface;
-use App\Services\Mentor\TemplateMentorDriver;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -16,7 +15,6 @@ use Illuminate\Support\Str;
  * Scripture Guide — VerseHub Mentor Service.
  *
  * Routes all insight and Q&A requests through a swappable driver.
- * Default driver: TemplateMentorDriver (no external API required).
  * Configure via config/versehub_mentor.php → driver.
  *
  * TRANSPARENCY RULE: Every public response MUST be attributable to
@@ -24,12 +22,7 @@ use Illuminate\Support\Str;
  */
 class VerseHubMentorService
 {
-    private MentorDriverInterface $driver;
-
-    public function __construct(?MentorDriverInterface $driver = null)
-    {
-        $this->driver = $driver ?? new TemplateMentorDriver;
-    }
+    public function __construct(private MentorDriverInterface $driver) {}
 
     // ─── Public API ──────────────────────────────────────────────────────────
 

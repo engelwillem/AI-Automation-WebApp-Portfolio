@@ -10,7 +10,10 @@ type RenunganTelemetryEventName =
   | "renungan_request_succeeded"
   | "renungan_request_failed"
   | "renungan_frontend_coherence_fallback_triggered"
-  | "renungan_final_render_complete";
+  | "renungan_final_render_complete"
+  | "renungan_result_helpful"
+  | "renungan_result_not_helpful"
+  | "renungan_followup_opened";
 
 type RenunganTelemetryMeta = Record<string, unknown> & {
   input_length_bucket?: string;

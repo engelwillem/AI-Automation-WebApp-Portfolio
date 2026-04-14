@@ -16,6 +16,7 @@ import {
   preparePersonalRenungan,
 } from '../content/personal-renungan';
 import {
+  bucketInputLength,
   buildSafeRenunganTelemetryMeta,
   trackRenunganTelemetryEvent,
 } from '../analytics';
@@ -89,6 +90,8 @@ export default function TodayDailyRitualScreen({
   const [bookmarkSuccessNote, setBookmarkSuccessNote] = useState<string | null>(null);
   const [activeActionText, setActiveActionText] = useState<string | null>(null);
   const [isGeneratingRenungan, setIsGeneratingRenungan] = useState(false);
+  const [mentorFeedback, setMentorFeedback] = useState<'helpful' | 'not_helpful' | null>(null);
+  const [isFollowUpOpen, setIsFollowUpOpen] = useState(false);
   const [renunganGenerationLabel, setRenunganGenerationLabel] = useState<string>(
     GENERATION_STATUS_STEPS[0]
   );
@@ -369,6 +372,8 @@ export default function TodayDailyRitualScreen({
 
     const reflection = reflectionText.trim();
     if (!reflection || isGeneratingRenungan) return;
+    setMentorFeedback(null);
+    setIsFollowUpOpen(false);
     const cacheKey = normalizeReflectionForCache(reflection);
     const prepared = preparedRenungan?.cacheKey === cacheKey ? preparedRenungan.result : null;
     const safeMeta = buildSafeRenunganTelemetryMeta(reflection);
@@ -463,6 +468,36 @@ export default function TodayDailyRitualScreen({
       generationStageTimersRef.current = [];
       setIsGeneratingRenungan(false);
     }
+  };
+
+  const buildMentorOutcomeMeta = () => ({
+    request_id: personalRenungan.requestId ?? null,
+    confidence: personalRenungan.confidence ?? null,
+    driver: personalRenungan.driver ?? null,
+    used_fallback: personalRenungan.usedFallback ?? false,
+    has_follow_up_question: Boolean(personalRenungan.followUpQuestion),
+    input_length_bucket: bucketInputLength(reflectionText.trim().length),
+  });
+
+  const handleMentorHelpful = () => {
+    if (mentorFeedback === 'helpful') return;
+    setMentorFeedback('helpful');
+    void trackRenunganTelemetryEvent('renungan_result_helpful', buildMentorOutcomeMeta());
+  };
+
+  const handleMentorNotHelpful = () => {
+    if (mentorFeedback === 'not_helpful') return;
+    setMentorFeedback('not_helpful');
+    void trackRenunganTelemetryEvent('renungan_result_not_helpful', {
+      ...buildMentorOutcomeMeta(),
+      reason: 'other',
+    });
+  };
+
+  const handleOpenFollowUp = () => {
+    if (isFollowUpOpen || !personalRenungan.followUpQuestion) return;
+    setIsFollowUpOpen(true);
+    void trackRenunganTelemetryEvent('renungan_followup_opened', buildMentorOutcomeMeta());
   };
 
   const handleCompletePrayer = () => {
@@ -579,6 +614,12 @@ export default function TodayDailyRitualScreen({
                     </div>
                   </div>
 
+                  {personalRenungan.mentorOpening ? (
+                    <p className="mt-5 text-[14px] leading-7 text-foreground/60">
+                      {personalRenungan.mentorOpening}
+                    </p>
+                  ) : null}
+
                   <motion.p
                     className="mt-6 tct-serif break-words whitespace-pre-line text-[23px] leading-[1.7] tracking-[-0.01em] text-foreground/88"
                     initial={{ opacity: 0, filter: 'blur(8px)' }}
@@ -587,6 +628,64 @@ export default function TodayDailyRitualScreen({
                   >
                     {personalRenungan.meditation}
                   </motion.p>
+
+                  {personalRenungan.prayerPrompt ? (
+                    <div className="mt-6 rounded-2xl border border-sky-100/70 bg-sky-50/65 px-4 py-3">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-sky-700/80">
+                        Doa singkat untuk dibawa
+                      </p>
+                      <p className="mt-2 text-[14px] leading-7 text-foreground/72">
+                        {personalRenungan.prayerPrompt}
+                      </p>
+                    </div>
+                  ) : null}
+
+                  <div className="mt-6 rounded-2xl border border-slate-100/80 bg-slate-50/60 px-4 py-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={handleMentorHelpful}
+                        className={`rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition-colors ${
+                          mentorFeedback === 'helpful'
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : 'bg-white text-slate-700 hover:bg-emerald-50'
+                        }`}
+                      >
+                        Ini membantu
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleMentorNotHelpful}
+                        className={`rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition-colors ${
+                          mentorFeedback === 'not_helpful'
+                            ? 'bg-rose-100 text-rose-700'
+                            : 'bg-white text-slate-700 hover:bg-rose-50'
+                        }`}
+                      >
+                        Belum pas
+                      </button>
+                      {personalRenungan.followUpQuestion ? (
+                        <button
+                          type="button"
+                          onClick={handleOpenFollowUp}
+                          className="rounded-full bg-white px-3.5 py-1.5 text-[12px] font-semibold text-sky-700 transition-colors hover:bg-sky-50"
+                        >
+                          Lanjut refleksi
+                        </button>
+                      ) : null}
+                    </div>
+
+                    {isFollowUpOpen && personalRenungan.followUpQuestion ? (
+                      <div className="mt-3 rounded-xl border border-sky-100/90 bg-white px-3.5 py-3">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-sky-700/80">
+                          Pertanyaan lanjutan
+                        </p>
+                        <p className="mt-1.5 text-[14px] leading-7 text-foreground/75">
+                          {personalRenungan.followUpQuestion}
+                        </p>
+                      </div>
+                    ) : null}
+                  </div>
 
                   <div className="mt-8 flex justify-start">
                     {!isPrayerCompleted && (

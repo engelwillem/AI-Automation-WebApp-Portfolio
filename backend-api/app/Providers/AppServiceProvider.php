@@ -6,7 +6,9 @@ use App\Filament\Auth\Responses\AdminLoginResponse;
 use App\Events\Community\PostRepostedToTalks;
 use App\Listeners\Community\InvalidateCommunityPostCaches;
 use App\Listeners\Community\RecordPostRepostedAnalytics;
+use App\Services\Mentor\ClaudeMentorDriver;
 use App\Services\Mentor\MentorDriverInterface;
+use App\Services\Mentor\OpenAIMentorDriver;
 use App\Services\Mentor\TemplateMentorDriver;
 use App\Support\RichContentSanitizer;
 use Filament\Auth\Http\Responses\Contracts\LoginResponse as FilamentLoginResponseContract;
@@ -50,8 +52,27 @@ class AppServiceProvider extends ServiceProvider
         // Override Filament login response so we can send security notifications.
         $this->app->bind(FilamentLoginResponseContract::class, AdminLoginResponse::class);
 
-        // Bind the Mentor driver. Swap to OpenAIMentorDriver via config/versehub_mentor.php.
-        $this->app->bind(MentorDriverInterface::class, TemplateMentorDriver::class);
+        $this->app->bind(MentorDriverInterface::class, function () {
+            $configuredDriver = strtolower((string) config('versehub_mentor.driver', 'template'));
+
+            if ($configuredDriver === 'openai') {
+                if (trim((string) config('versehub_mentor.openai.api_key')) !== '') {
+                    return new OpenAIMentorDriver;
+                }
+
+                return new TemplateMentorDriver;
+            }
+
+            if ($configuredDriver === 'claude') {
+                if (trim((string) config('versehub_mentor.claude.api_key')) !== '') {
+                    return new ClaudeMentorDriver;
+                }
+
+                return new TemplateMentorDriver;
+            }
+
+            return new TemplateMentorDriver;
+        });
     }
 
     /**
