@@ -28,8 +28,7 @@ class RenunganMentorService
      */
     public function generate(array $context): array
     {
-        $driverName = strtolower((string) config('renungan_mentor.driver', 'template'));
-        $driverName = in_array($driverName, ['openai', 'template'], true) ? $driverName : 'template';
+        $driverName = $this->resolveDriverName();
         $startedAt = microtime(true);
         $fallbackReason = null;
 
@@ -142,5 +141,32 @@ class RenunganMentorService
     private function elapsedMs(float $startedAt): int
     {
         return (int) round((microtime(true) - $startedAt) * 1000);
+    }
+
+    private function resolveDriverName(): string
+    {
+        $configuredDriver = strtolower((string) config('renungan_mentor.driver', 'template'));
+        if ($configuredDriver === 'openai') {
+            return 'openai';
+        }
+
+        if ($configuredDriver === 'auto') {
+            return $this->shouldAutoEnableOpenAI() ? 'openai' : 'template';
+        }
+
+        if ($configuredDriver === 'template' && $this->shouldAutoEnableOpenAI()) {
+            return 'openai';
+        }
+
+        return 'template';
+    }
+
+    private function shouldAutoEnableOpenAI(): bool
+    {
+        if (! (bool) config('renungan_mentor.auto_enable_openai_when_key_present', true)) {
+            return false;
+        }
+
+        return trim((string) config('renungan_mentor.openai.api_key', '')) !== '';
     }
 }

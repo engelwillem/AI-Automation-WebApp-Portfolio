@@ -7,8 +7,10 @@ return [
     |--------------------------------------------------------------------------
     | "template" (default) keeps deterministic pipeline as the source output.
     | "openai" enables OpenAI Responses API as primary mentor engine.
+    | "auto" will use OpenAI when OPENAI_API_KEY is present, otherwise template.
     */
     'driver' => env('RENUNGAN_MENTOR_DRIVER', 'template'),
+    'auto_enable_openai_when_key_present' => (bool) env('RENUNGAN_MENTOR_AUTO_ENABLE_OPENAI', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -30,4 +32,3 @@ return [
         'max_output_tokens' => (int) env('RENUNGAN_OPENAI_MAX_OUTPUT_TOKENS', 700),
     ],
 ];
-

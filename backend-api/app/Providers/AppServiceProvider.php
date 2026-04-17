@@ -66,9 +66,20 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(MentorDriverInterface::class, function () {
             $configuredDriver = strtolower((string) config('versehub_mentor.driver', 'template'));
+            $openAIKeyConfigured = trim((string) config('versehub_mentor.openai.api_key')) !== '';
+            $claudeKeyConfigured = trim((string) config('versehub_mentor.claude.api_key')) !== '';
+            $autoEnableOpenAI = (bool) config('versehub_mentor.auto_enable_openai_when_key_present', true);
+
+            if ($configuredDriver === 'auto') {
+                $configuredDriver = $openAIKeyConfigured ? 'openai' : 'template';
+            }
+
+            if ($configuredDriver === 'template' && $autoEnableOpenAI && $openAIKeyConfigured) {
+                $configuredDriver = 'openai';
+            }
 
             if ($configuredDriver === 'openai') {
-                if (trim((string) config('versehub_mentor.openai.api_key')) !== '') {
+                if ($openAIKeyConfigured) {
                     return $this->app->make(OpenAIMentorDriver::class);
                 }
 
@@ -76,7 +87,7 @@ class AppServiceProvider extends ServiceProvider
             }
 
             if ($configuredDriver === 'claude') {
-                if (trim((string) config('versehub_mentor.claude.api_key')) !== '') {
+                if ($claudeKeyConfigured) {
                     return $this->app->make(ClaudeMentorDriver::class);
                 }
 

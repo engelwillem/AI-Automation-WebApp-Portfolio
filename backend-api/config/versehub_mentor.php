@@ -9,8 +9,10 @@ return [
     |   "template" — Curated template-based responses (default, no external API)
     |   "openai"   — OpenAI GPT via OPENAI_API_KEY env var
     |   "claude"   — Anthropic Claude via ANTHROPIC_API_KEY env var
+    |   "auto"     — OpenAI when key exists, otherwise template
     */
     'driver' => env('VERSEHUB_MENTOR_DRIVER', 'template'),
+    'auto_enable_openai_when_key_present' => (bool) env('VERSEHUB_MENTOR_AUTO_ENABLE_OPENAI', true),
 
     /*
     |--------------------------------------------------------------------------

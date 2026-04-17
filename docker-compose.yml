@@ -49,7 +49,7 @@ services:
     volumes:
       - .:/workspace
       - backend_vendor:/workspace/backend-api/vendor
-      - ./backend-api/.env.docker:/workspace/backend-api/.env:ro
+      - ./${BACKEND_ENV_FILE:-backend-api/.env.docker}:/workspace/backend-api/.env:ro
     ports:
       - "8000:8000"
     depends_on:
@@ -86,7 +86,7 @@ services:
       - .:/workspace
       - frontend_node_modules:/workspace/node_modules
       - frontend_next:/workspace/.next
-      - ./.env.docker:/workspace/.env.local:ro
+      - ./${FRONTEND_ENV_FILE:-.env.docker}:/workspace/.env.local:ro
     ports:
       - "9002:9002"
     depends_on:
