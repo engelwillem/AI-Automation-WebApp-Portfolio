@@ -15,6 +15,7 @@ class RenunganPersonalizationRequestMapper
      *   reflection_text: string,
      *   lang: string,
      *   response_mode: string,
+     *   entry_state: string|null,
      *   storage_mode: string,
      *   request_id: string,
      *   debug_force_mode: string|null,
@@ -27,6 +28,7 @@ class RenunganPersonalizationRequestMapper
             'text' => ['required', 'string', 'min:3', 'max:5000'],
             'lang' => ['nullable', 'string', 'in:id,en'],
             'mode' => ['nullable', 'string', 'in:calm_heart,practical_step,short_prayer,deep_reflection'],
+            'entry_state' => ['nullable', 'string', 'in:overwhelmed,disconnected,clarity,connect,neutral'],
             'storage_mode' => ['nullable', 'string', 'in:standard,no_raw_storage'],
         ]);
 
@@ -36,6 +38,7 @@ class RenunganPersonalizationRequestMapper
             'reflection_text' => trim((string) $validated['text']),
             'lang' => $lang,
             'response_mode' => (string) ($validated['mode'] ?? 'calm_heart'),
+            'entry_state' => isset($validated['entry_state']) ? (string) $validated['entry_state'] : null,
             'storage_mode' => (string) ($validated['storage_mode'] ?? 'standard'),
             'request_id' => $this->resolveRequestId($request),
             'debug_force_mode' => $this->resolveDebugForceMode($request),

@@ -105,11 +105,14 @@ class OpenAIMentorDriver implements MentorDriverInterface
                 [
                     'role' => 'user',
                     'content' => sprintf(
-                        "Pertanyaan: %s\nRujukan: %s\nTeks: %s\nMode: %s\nKembalikan JSON dengan keys: answer, interpretation, study_guidance, related_refs (array slug), confidence.",
+                        "Pertanyaan: %s\nRujukan: %s\nTeks: %s\nMode: %s\nMood: %s\nIntent: %s\nRefleksi user: %s\nKembalikan JSON dengan keys: answer, interpretation, study_guidance, related_refs (array slug), confidence.",
                         trim($question),
                         $ref,
                         $text !== '' ? $text : '(tidak tersedia)',
-                        (string) ($verseContext['assist_mode'] ?? 'explain_simply')
+                        (string) ($verseContext['assist_mode'] ?? 'explain_simply'),
+                        trim((string) ($verseContext['mood'] ?? '')) !== '' ? trim((string) ($verseContext['mood'] ?? '')) : '(tidak tersedia)',
+                        trim((string) ($verseContext['intent'] ?? '')) !== '' ? trim((string) ($verseContext['intent'] ?? '')) : '(tidak tersedia)',
+                        trim((string) ($verseContext['user_reflection'] ?? '')) !== '' ? trim((string) ($verseContext['user_reflection'] ?? '')) : '(tidak tersedia)'
                     ),
                 ],
                 [

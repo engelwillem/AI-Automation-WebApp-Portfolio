@@ -26,14 +26,15 @@ export function MoodQuickStart({
                         <motion.button
                             key={option.key}
                             type="button"
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
+                            whileHover={{ scale: 1.04 }}
+                            whileTap={{ scale: 0.92 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 25 }}
                             onClick={() => onSelect(option.key)}
                             className={[
-                                "rounded-full px-5 py-[12px] text-[15px] font-medium transition-all ring-1",
+                                "rounded-full px-5 py-[12px] text-[15px] font-medium transition-colors ring-1 outline-none",
                                 isActive
                                     ? "bg-white text-[#2F261A] ring-[#E7DDCC] shadow-[0_12px_30px_-18px_rgba(47,38,26,0.38)]"
-                                    : "bg-white/88 text-[#5F5446] ring-[#EDE3D2] shadow-[0_10px_24px_-20px_rgba(47,38,26,0.25)] hover:bg-white hover:text-[#2F261A] hover:ring-[#E2D6C2]",
+                                    : "bg-white/80 text-[#5F5446] ring-[#EDE3D2] shadow-[0_10px_24px_-20px_rgba(47,38,26,0.25)] hover:bg-white hover:text-[#2F261A] hover:ring-[#E2D6C2]",
                             ].join(" ")}
                             title={option.description}
                         >

@@ -72,6 +72,7 @@ type CommunityArchiveGalleryCardProps = {
   onRepost: () => void | Promise<void>;
   reposting?: boolean;
   onShare: () => void | Promise<void>;
+  shareBusy?: boolean;
 };
 
 export function CommunityArchiveGalleryCard({
@@ -83,6 +84,7 @@ export function CommunityArchiveGalleryCard({
   onRepost,
   reposting = false,
   onShare,
+  shareBusy = false,
 }: CommunityArchiveGalleryCardProps) {
   const categoryMeta = CATEGORY_STYLES[post.type] ?? {
     label: post.type_label || "Komunitas",
@@ -214,6 +216,7 @@ export function CommunityArchiveGalleryCard({
               void onShare();
             }}
             onBookmark={onBookmark}
+            shareBusy={shareBusy}
           />
 
           <button

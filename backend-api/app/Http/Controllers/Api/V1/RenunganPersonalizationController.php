@@ -23,6 +23,19 @@ class RenunganPersonalizationController extends Controller
 
     private bool $usedFallbackContent = false;
 
+    /**
+     * Frontend emotional entry state -> analysis bias profile.
+     *
+     * @var array<string, array{theme: string, emotion: string, intent: string}>
+     */
+    private const ENTRY_STATE_PROFILE = [
+        'overwhelmed' => ['theme' => 'fatigue', 'emotion' => 'exhausted', 'intent' => 'seek_comfort'],
+        'disconnected' => ['theme' => 'loneliness', 'emotion' => 'sad', 'intent' => 'seek_comfort'],
+        'clarity' => ['theme' => 'direction', 'emotion' => 'confused', 'intent' => 'guidance'],
+        'connect' => ['theme' => 'surrender', 'emotion' => 'hopeful', 'intent' => 'seek_peace'],
+        'neutral' => ['theme' => 'hope', 'emotion' => 'hopeful', 'intent' => 'seek_peace'],
+    ];
+
     public function __construct(
         private RenunganPastoralInterpretationService $pastoralInterpretationService,
         private RenunganAIService $renunganAIService,
@@ -300,10 +313,11 @@ class RenunganPersonalizationController extends Controller
         $reflectionText = $requestContext['reflection_text'];
         $lang = $requestContext['lang'];
         $responseMode = $requestContext['response_mode'];
+        $entryState = is_string($requestContext['entry_state'] ?? null) ? (string) $requestContext['entry_state'] : null;
         $storageMode = $requestContext['storage_mode'];
 
         $analysisStartedAt = microtime(true);
-        $analysis = $this->analyzeReflection($reflectionText);
+        $analysis = $this->analyzeReflection($reflectionText, $entryState);
         $analysisDurationMs = $this->elapsedMs($analysisStartedAt);
         $searchTerms = $this->searchTermBuilder->build(
             $reflectionText,
@@ -391,6 +405,7 @@ class RenunganPersonalizationController extends Controller
             'generation_plan' => $generationPlan,
             'quality' => $quality,
             'response_mode' => $responseMode,
+            'entry_state' => $entryState,
             'storage_mode' => $storageMode,
         ]);
         $mentorDurationMs = $this->elapsedMs($mentorStartedAt);
@@ -410,6 +425,7 @@ class RenunganPersonalizationController extends Controller
             'debug_force_mode' => $debugForceMode,
             'reflection_text' => $reflectionText,
             'analysis' => $analysis,
+            'entry_state' => $entryState,
             'initial_quality' => $initialQuality,
             'quality' => $quality,
             'mentor_result' => $mentorResult,
@@ -443,7 +459,7 @@ class RenunganPersonalizationController extends Controller
             ->header('x-renungan-pipeline-version', self::PIPELINE_VERSION);
     }
 
-    private function analyzeReflection(string $text): array
+    private function analyzeReflection(string $text, ?string $entryState = null): array
     {
         $normalized = $this->normalizeText($text);
         $themeScores = $this->scoreProfiles($normalized, self::THEME_PROFILES);
@@ -512,6 +528,23 @@ class RenunganPersonalizationController extends Controller
             $intentScores['seek_peace'] = ($intentScores['seek_peace'] ?? 0) + 1.4;
         }
 
+        $entryProfile = is_string($entryState) ? (self::ENTRY_STATE_PROFILE[$entryState] ?? null) : null;
+        if (is_array($entryProfile)) {
+            $themeKey = (string) ($entryProfile['theme'] ?? '');
+            $emotionKey = (string) ($entryProfile['emotion'] ?? '');
+            $intentKey = (string) ($entryProfile['intent'] ?? '');
+
+            if ($themeKey !== '') {
+                $themeScores[$themeKey] = ($themeScores[$themeKey] ?? 0) + 2.8;
+            }
+            if ($emotionKey !== '') {
+                $emotionScores[$emotionKey] = ($emotionScores[$emotionKey] ?? 0) + 2.4;
+            }
+            if ($intentKey !== '') {
+                $intentScores[$intentKey] = ($intentScores[$intentKey] ?? 0) + 2.0;
+            }
+        }
+
         arsort($themeScores, SORT_NUMERIC);
         arsort($emotionScores, SORT_NUMERIC);
         arsort($intentScores, SORT_NUMERIC);
@@ -550,6 +583,7 @@ class RenunganPersonalizationController extends Controller
             'context_flags' => $contextFlags,
             'theme_scores' => $this->roundScores($themeScores),
             'emotion_scores' => $this->roundScores($emotionScores),
+            'entry_state' => $entryState,
         ];
     }
 

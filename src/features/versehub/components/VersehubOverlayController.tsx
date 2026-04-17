@@ -6,7 +6,7 @@ import { Share2, X } from "lucide-react";
 import AmbienceController from "@/components/versehub/AmbienceController";
 import MentorPanel from "@/components/versehub/MentorPanel";
 import { getVerseShareUrl } from "@/lib/share";
-import { prepareVersehubShareAsset } from "@/lib/share-assets";
+import { ensureShareAssetReady } from "@/lib/share-assets";
 import { cn } from "@/lib/utils";
 import type { Book, OverlayType, SanctuaryScene, Verse, VerseData } from "@/features/versehub/types";
 
@@ -73,19 +73,24 @@ export function VersehubOverlayController({
   tab,
   verseData,
 }: VersehubOverlayControllerProps) {
+  const [shareBusyId, setShareBusyId] = useState<string | null>(null);
+
   const handleShareVerse = async (slug: string) => {
+    if (shareBusyId) return;
+    setShareBusyId(slug);
+
     let url = getVerseShareUrl(lang, slug);
     const title = `VerseHub ${slug.replace(/-/g, " ").toUpperCase()}`;
 
     try {
-      const preparePromise = prepareVersehubShareAsset(lang, slug);
-      const timeoutPromise = new Promise<null>((resolve) => window.setTimeout(() => resolve(null), 1500));
-      const prepared = await Promise.race([preparePromise, timeoutPromise]);
+      const prepared = await ensureShareAssetReady("versehub", slug, { lang });
       if (prepared?.shareUrl) {
         url = prepared.shareUrl;
       }
     } catch {
       // non-fatal
+    } finally {
+      setShareBusyId(null);
     }
 
     try {
@@ -139,31 +144,41 @@ export function VersehubOverlayController({
               <p className="mt-4 text-[15px] leading-relaxed text-slate-500">{activeScene.reflection}</p>
 
               <div className="mt-8 flex flex-col items-center gap-4 py-4">
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Pilih Mood Saat Ini</p>
-                  <div className="flex flex-wrap justify-center gap-2 mb-6">
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#91A0C7] mb-4">Pilih Mood Saat Ini</p>
+                  <div className="relative flex flex-wrap justify-center gap-2 p-1.5 rounded-[28px] bg-slate-100/60 ring-1 ring-slate-200/50 shadow-[inset_0_2px_4px_rgba(0,0,0,0.03)] mb-6">
                     {[
                       { key: "hopeful", label: "Cahaya" },
                       { key: "anxious", label: "Ketenangan" },
                       { key: "weary", label: "Lelah" },
                       { key: "grateful", label: "Syukur" },
-                    ].map((mood) => (
-                      <button
+                    ].map((mood) => {
+                      const isActive = activeMood === mood.key;
+                      return (
+                      <motion.button
                         key={mood.key}
+                        whileTap={{ scale: 0.93 }}
                         onClick={() => setActiveMood(mood.key)}
                         className={cn(
-                          "rounded-full px-5 py-2.5 text-[12px] font-bold transition-all shadow-sm ring-1",
-                          activeMood === mood.key
-                            ? "bg-slate-900 text-white ring-slate-900"
-                            : "bg-white text-slate-500 ring-slate-200/60 hover:bg-slate-50 hover:text-slate-900 hover:ring-slate-300"
+                          "relative rounded-full px-5 py-2.5 text-[12px] font-bold outline-none isolate transition-colors",
+                          isActive ? "text-slate-900" : "text-slate-500 hover:text-slate-700"
                         )}
                       >
+                        {isActive && (
+                          <motion.div
+                            layoutId="activeMoodPillOverlay"
+                            className="absolute inset-0 z-[-1] rounded-full bg-white shadow-sm ring-1 ring-black/[0.04]"
+                            initial={false}
+                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                          />
+                        )}
                         {mood.label}
-                      </button>
-                    ))}
+                      </motion.button>
+                    )})}
                   </div>
 
                   <div className="flex flex-col sm:flex-row w-full gap-3 mt-4 max-w-md">
-                    <button
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
                       type="button"
                       disabled={!firstChapterHref}
                       onClick={() => {
@@ -171,17 +186,18 @@ export function VersehubOverlayController({
                         setOverlay(null);
                         onNavigate(firstChapterHref);
                       }}
-                      className="flex-1 rounded-full bg-slate-900 px-6 py-[16px] text-center text-[14px] font-bold text-white shadow-2xl shadow-slate-900/10 transition hover:bg-slate-800 disabled:opacity-50 active:scale-95"
+                      className="flex-1 rounded-full bg-slate-900 px-6 py-[16px] text-center text-[14px] font-bold text-white shadow-[0_8px_20px_rgba(15,23,42,0.18)] transition-all hover:bg-slate-800 disabled:opacity-50"
                     >
                       Baca {firstBookLabel} 1
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
                       type="button"
                       onClick={() => setOverlay("picker")}
-                      className="flex-1 rounded-full bg-slate-50 px-6 py-[16px] text-center text-[14px] font-bold text-slate-600 ring-1 ring-slate-200/60 transition hover:bg-slate-100 active:scale-95"
+                      className="flex-1 rounded-full bg-slate-50 px-6 py-[16px] text-center text-[14px] font-bold text-slate-600 ring-1 ring-slate-200/60 transition-all hover:bg-slate-100"
                     >
                       Koleksi Kitab
-                    </button>
+                    </motion.button>
                   </div>
               </div>
             </motion.div>
@@ -221,22 +237,33 @@ export function VersehubOverlayController({
                 </button>
               </div>
 
-              <div className="flex gap-2 border-b border-slate-100 px-6 py-4">
-                {(["ot", "nt"] as const).map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    onClick={() => setTab(item)}
-                    className={cn(
-                      "rounded-full px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] transition",
-                      tab === item
-                        ? "bg-[var(--vh-accent)] text-white"
-                        : "bg-[var(--vh-surface-elevated)] text-[var(--vh-text-secondary)] hover:bg-[var(--vh-surface)]"
-                    )}
-                  >
-                    {item === "ot" ? "Perjanjian Lama" : "Perjanjian Baru"}
-                  </button>
-                ))}
+              <div className="flex gap-2 border-b border-slate-100 px-6 py-4 bg-[var(--vh-surface)] relative z-10">
+                <div className="relative flex rounded-full bg-[var(--vh-surface-elevated)] p-1 ring-1 ring-[var(--vh-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+                  {(["ot", "nt"] as const).map((item) => {
+                    const isActive = tab === item;
+                    return (
+                      <motion.button
+                        key={item}
+                        whileTap={{ scale: 0.95 }}
+                        type="button"
+                        onClick={() => setTab(item)}
+                        className={cn(
+                          "relative rounded-full px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] transition-colors outline-none isolate",
+                          isActive ? "text-white" : "text-[var(--vh-text-secondary)] hover:text-[var(--vh-text-primary)]"
+                        )}
+                      >
+                        {isActive && (
+                          <motion.div
+                            layoutId="activeTabPillOverlay"
+                            className="absolute inset-0 z-[-1] rounded-full bg-[var(--vh-accent)] shadow-sm"
+                            initial={false}
+                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                          />
+                        )}
+                        {item === "ot" ? "Perjanjian Lama" : "Perjanjian Baru"}
+                      </motion.button>
+                  )})}
+                </div>
               </div>
 
               <div className="grid min-h-0 flex-1 gap-0 md:grid-cols-[1.15fr,0.85fr]">
@@ -284,14 +311,26 @@ export function VersehubOverlayController({
                         <button
                           type="button"
                           aria-label={`Bagikan ${activeBookLabel ?? "ayat"} pasal ${chapter}`}
+                          disabled={shareBusyId === `${activeBook}-${chapter}`}
                           onClick={(event) => {
                             event.stopPropagation();
                             if (!activeBook) return;
                             void handleShareVerse(`${activeBook}-${chapter}`);
                           }}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[var(--vh-text-secondary)] transition hover:bg-[var(--vh-surface)] hover:text-[var(--vh-text-primary)]"
+                          className={cn(
+                            "inline-flex h-8 w-8 items-center justify-center rounded-lg text-[var(--vh-text-secondary)] transition",
+                            shareBusyId === `${activeBook}-${chapter}`
+                              ? "opacity-60 cursor-not-allowed"
+                              : "hover:bg-[var(--vh-surface)] hover:text-[var(--vh-text-primary)]"
+                          )}
                         >
-                          <Share2 className="h-4 w-4" />
+                          {shareBusyId === `${activeBook}-${chapter}` ? (
+                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
+                              <Share2 className="h-4 w-4" />
+                            </motion.div>
+                          ) : (
+                            <Share2 className="h-4 w-4" />
+                          )}
                         </button>
                       </div>
                     ))}

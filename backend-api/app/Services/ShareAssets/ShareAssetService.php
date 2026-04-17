@@ -23,6 +23,7 @@ class ShareAssetService
 
     public function __construct(
         private readonly ShareCopyGenerator $copyGenerator,
+        private readonly ?ShareOgImageGenerator $ogImageGenerator = null,
     ) {}
 
     /**
@@ -56,6 +57,26 @@ class ShareAssetService
         if ((bool) config('share_assets.cache_ready', true)) {
             $existing = ShareAsset::findReady($surface, $subjectId, $revision);
             if ($existing) {
+                if (trim((string) $existing->resolveOgImageUrl()) === '') {
+                    $generatedUrl = $this->ensureOgImage(
+                        surface: $surface,
+                        subjectId: $subjectId,
+                        revision: $revision,
+                        sourceData: $sourceData,
+                        shareTitle: (string) ($existing->share_title ?? ''),
+                        shareDescription: (string) ($existing->share_description ?? ''),
+                        shareEyebrow: (string) ($existing->share_eyebrow ?? ''),
+                        currentImageUrl: null,
+                    );
+                    if (is_string($generatedUrl) && trim($generatedUrl) !== '') {
+                        $existing->forceFill([
+                            'generated_image_url' => $generatedUrl,
+                            'final_og_image_url' => $generatedUrl,
+                        ])->save();
+                        $existing->refresh();
+                    }
+                }
+
                 return $this->formatResult($existing, fromCache: true);
             }
         }
@@ -88,6 +109,16 @@ class ShareAssetService
 
             // 4. Generate copy (AI or fallback)
             $copy = $this->copyGenerator->generate($surface, $sourceData);
+            $finalOgImageUrl = $this->ensureOgImage(
+                surface: $surface,
+                subjectId: $subjectId,
+                revision: $revision,
+                sourceData: $sourceData,
+                shareTitle: (string) ($copy['title'] ?? ''),
+                shareDescription: (string) ($copy['description'] ?? ''),
+                shareEyebrow: (string) ($copy['eyebrow'] ?? ''),
+                currentImageUrl: $sourceImageUrl,
+            );
 
             // 5. Persist final ready asset
             $asset = ShareAsset::query()->updateOrCreate(
@@ -106,7 +137,8 @@ class ShareAssetService
                     'share_description'  => $copy['description'],
                     'share_eyebrow'      => $copy['eyebrow'],
                     'source_image_url'   => $sourceImageUrl,
-                    'final_og_image_url' => $sourceImageUrl,
+                    'generated_image_url' => ($finalOgImageUrl && $sourceImageUrl !== $finalOgImageUrl) ? $finalOgImageUrl : null,
+                    'final_og_image_url' => $finalOgImageUrl,
                     'og_style'           => $this->resolveOgStyle($surface, $sourceData),
                     'error_message'      => null,
                     'failure_count'      => 0,
@@ -255,5 +287,41 @@ class ShareAssetService
                 'eyebrow'     => 'The Chosen Talks',
             ],
         };
+    }
+
+    /**
+     * @param  array<string, mixed>  $sourceData
+     */
+    private function ensureOgImage(
+        string $surface,
+        string $subjectId,
+        string $revision,
+        array $sourceData,
+        string $shareTitle,
+        string $shareDescription,
+        string $shareEyebrow,
+        ?string $currentImageUrl
+    ): ?string {
+        $generator = $this->ogImageGenerator ?? app(ShareOgImageGenerator::class);
+        $finalUrl = $generator->generateIfMissing(
+            surface: $surface,
+            subjectId: $subjectId,
+            revision: $revision,
+            sourceData: $sourceData,
+            shareCopy: [
+                'title' => $shareTitle,
+                'description' => $shareDescription,
+                'eyebrow' => $shareEyebrow,
+            ],
+            existingImageUrl: $currentImageUrl
+        );
+
+        $finalUrl = trim((string) ($finalUrl ?? ''));
+        if ($finalUrl !== '') {
+            return $finalUrl;
+        }
+
+        $fallback = trim((string) ($currentImageUrl ?? ''));
+        return $fallback !== '' ? $fallback : null;
     }
 }

@@ -21,6 +21,8 @@ export type ShareAssetResult = {
   shareUrl: string;
 };
 
+export type ShareSurface = 'community' | 'renungan' | 'versehub';
+
 type PrepareApiResponse = {
   data?: {
     status?: string;
@@ -122,4 +124,47 @@ export async function prepareRenunganShareAsset(token: string): Promise<ShareAss
   } catch {
     return null;
   }
+}
+
+/**
+ * Ensures a share asset is ready by polling the prepare endpoint.
+ */
+export async function ensureShareAssetReady(
+  surface: ShareSurface,
+  subjectId: string,
+  config: {
+    maxRetries?: number;
+    delayMs?: number;
+    lang?: string;
+  } = {}
+): Promise<ShareAssetResult | null> {
+  const { maxRetries = 5, delayMs = 1500, lang = 'id' } = config;
+  let attempts = 0;
+
+  while (attempts < maxRetries) {
+    let result: ShareAssetResult | null = null;
+
+    if (surface === 'community') {
+      result = await prepareCommunityShareAsset(subjectId);
+    } else if (surface === 'renungan') {
+      result = await prepareRenunganShareAsset(subjectId);
+    } else if (surface === 'versehub') {
+      result = await prepareVersehubShareAsset(lang, subjectId);
+    }
+
+    if (result && result.status === 'ready') {
+      return result;
+    }
+
+    if (result && result.status === 'failed') {
+      return result; // Don't retry on hard failure
+    }
+
+    attempts++;
+    if (attempts < maxRetries) {
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+
+  return null;
 }

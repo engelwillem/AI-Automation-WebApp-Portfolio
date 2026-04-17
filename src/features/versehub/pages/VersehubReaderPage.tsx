@@ -139,7 +139,9 @@ export function VersehubReaderPage({
     handleReflectionComplete,
     handleSaveChapterReflection,
     handleShare,
+    handleShareWhatsApp,
     handleShareInsight,
+    isSharing,
   } = useVersehubReaderActions({
     bookmarked,
     chapterCompletionReflection,
@@ -350,6 +352,8 @@ export function VersehubReaderPage({
                 onLike={() => void handleLike((href) => router.push(href))}
                 onOpenImage={() => setOgOpen(true)}
                 onShare={() => void handleShare()}
+                onShareWhatsApp={() => void handleShareWhatsApp()}
+                isSharing={isSharing}
                 verseData={verseData}
               />
             </div>

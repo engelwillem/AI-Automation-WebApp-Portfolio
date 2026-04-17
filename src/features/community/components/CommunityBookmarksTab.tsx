@@ -30,6 +30,7 @@ type CommunityBookmarksTabProps = {
   onEditBookmarkCategory: (post: CommunityPost) => void | Promise<void>;
   onDelete: (postId: string) => void | Promise<void>;
   resolveAuthorAvatar: (post: CommunityPost) => string | null;
+  shareBusyPostId?: string | null;
 };
 
 export function CommunityBookmarksTab({
@@ -57,6 +58,7 @@ export function CommunityBookmarksTab({
   onEditBookmarkCategory,
   onDelete,
   resolveAuthorAvatar,
+  shareBusyPostId,
 }: CommunityBookmarksTabProps) {
   return (
     <div className={cn("space-y-6", className)}>
@@ -151,6 +153,7 @@ export function CommunityBookmarksTab({
             onEditPreview={() => onEditPreview(post)}
             onEditBookmarkCategory={() => onEditBookmarkCategory(post)}
             onDelete={() => onDelete(post.id)}
+            shareBusy={shareBusyPostId === post.id}
           />
         ))
       ) : (

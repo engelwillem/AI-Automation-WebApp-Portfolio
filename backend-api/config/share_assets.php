@@ -15,6 +15,12 @@ return [
         'image_enabled' => (bool) env('SHARE_ASSETS_AI_IMAGE_ENABLED', false),
     ],
 
+    'image' => [
+        'model' => env('SHARE_ASSETS_AI_IMAGE_MODEL', 'gpt-image-1'),
+        'size' => env('SHARE_ASSETS_AI_IMAGE_SIZE', '1536x1024'),
+        'quality' => env('SHARE_ASSETS_AI_IMAGE_QUALITY', 'medium'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Versioning

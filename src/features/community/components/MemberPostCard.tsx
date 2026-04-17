@@ -65,6 +65,7 @@ type MemberPostCardProps = {
   onToggleFollowAuthor?: () => void;
   onMessageAuthor?: () => void;
   followBusy?: boolean;
+  shareBusy?: boolean;
 };
 
 export function MemberPostCard({
@@ -109,6 +110,7 @@ export function MemberPostCard({
   onToggleFollowAuthor,
   onMessageAuthor,
   followBusy = false,
+  shareBusy = false,
 }: MemberPostCardProps) {
   const postTimeLabel = useMemo(() => {
     if (!createdAt) return "Baru saja";
@@ -179,6 +181,7 @@ export function MemberPostCard({
       onOpenComments={onOpenComments}
       onShare={onShare}
       onBookmark={onBookmark}
+      shareBusy={shareBusy}
     />
   );
   const headerMenu = (

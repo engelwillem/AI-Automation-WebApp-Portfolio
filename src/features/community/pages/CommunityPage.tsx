@@ -18,7 +18,7 @@ import { CommunityService } from "@/services/community.service";
 import { useAuthSession } from "@/auth/use-auth-session";
 import { subscribeDataMutation } from "@/lib/mutation-sync";
 import { buildWhatsAppShareUrl, copyToClipboard, getCommunityShareUrl } from "@/lib/share";
-import { prepareCommunityShareAsset } from "@/lib/share-assets";
+import { ensureShareAssetReady, prepareCommunityShareAsset } from "@/lib/share-assets";
 import { fetchWithAppAuth } from "@/lib/app-auth-fetch";
 import { type CommunityComposerType } from "../categories";
 import { CommentsSheet } from "../components/CommentsSheet";
@@ -82,6 +82,7 @@ export function CommunityPage() {
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [followBusyAuthorId, setFollowBusyAuthorId] = useState<string | null>(null);
   const [repostBusyPostId, setRepostBusyPostId] = useState<string | null>(null);
+  const [shareBusyPostId, setShareBusyPostId] = useState<string | null>(null);
   const [, setTimelineNowMs] = useState(() => Date.now());
   const [lastPostedId, setLastPostedId] = useState<string | null>(null);
   const [authGateOpen, setAuthGateOpen] = useState(false);
@@ -785,41 +786,46 @@ export function CommunityPage() {
   };
 
   const handleShare = async (postId: string, text?: string | null) => {
+    if (shareBusyPostId) return;
+
     const shortText = text ? `${text.substring(0, 100)}...` : "Bagikan pos inspirasi ini.";
 
-    // Prepare share asset first → get versioned URL (no bypass)
-    // 1.5s timeout so UX stays responsive; fallback to unversioned URL
-    let shareUrl = getCommunityShareUrl(postId);
+    setShareBusyPostId(postId);
     try {
-      const preparePromise = prepareCommunityShareAsset(postId);
-      const timeoutPromise = new Promise<null>((resolve) => window.setTimeout(() => resolve(null), 1500));
-      const result = await Promise.race([preparePromise, timeoutPromise]);
-      if (result?.shareUrl) {
-        shareUrl = result.shareUrl;
+      // Prepare share asset → wait for AI if needed
+      let shareUrl = getCommunityShareUrl(postId);
+      const prepared = await ensureShareAssetReady("community", postId);
+      if (prepared?.shareUrl) {
+        shareUrl = prepared.shareUrl;
       }
-    } catch {
-      // non-fatal: use unversioned fallback
-    }
 
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: "TheChosenTalks Community",
-          text: shortText,
-          url: shareUrl,
-        });
-      } catch (err: unknown) {
-        if (err instanceof Error && err.name !== "AbortError") {
-          console.error("Error sharing:", err);
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "TheChosenTalks Community",
+            text: shortText,
+            url: shareUrl,
+          });
+        } catch (err: unknown) {
+          if (err instanceof Error && err.name !== "AbortError") {
+            console.error("Error sharing:", err);
+          }
+        }
+      } else {
+        const copied = await copyToClipboard(shareUrl);
+        if (copied) {
+          showToast("Tautan disalin ke papan klip!", "success");
+        } else {
+          window.open(buildWhatsAppShareUrl(`${shortText} ${shareUrl}`), "_blank", "noopener,noreferrer");
         }
       }
-    } else {
-      const copied = await copyToClipboard(shareUrl);
-      if (copied) {
-        showToast("Tautan disalin ke papan klip!", "success");
-      } else {
-        window.open(buildWhatsAppShareUrl(`${shortText} ${shareUrl}`), "_blank", "noopener,noreferrer");
-      }
+    } catch (error) {
+       console.error("[community] share prepare failed", error);
+       // Basic fallback
+       const shareUrl = getCommunityShareUrl(postId);
+       window.open(buildWhatsAppShareUrl(`${shortText} ${shareUrl}`), "_blank", "noopener,noreferrer");
+    } finally {
+      setShareBusyPostId(null);
     }
   };
 
@@ -1175,6 +1181,7 @@ export function CommunityPage() {
                         onEditBookmarkCategory={() => void handleEditBookmarkCategory(post)}
                         onDelete={() => handleDeletePost(post.id)}
                         isNewlyPosted={lastPostedId === post.id}
+                        shareBusy={shareBusyPostId === post.id}
                       />
                     </div>
                   ))}
@@ -1206,6 +1213,7 @@ export function CommunityPage() {
               onBookmark={toggleBookmark}
               onRepost={handleRepostFromArchive}
               onShare={handleShare}
+              shareBusyPostId={shareBusyPostId}
             />
           </TabsContent>
 
@@ -1235,6 +1243,7 @@ export function CommunityPage() {
               onEditBookmarkCategory={handleEditBookmarkCategory}
               onDelete={handleDeletePost}
               resolveAuthorAvatar={resolveAuthorAvatar}
+              shareBusyPostId={shareBusyPostId}
             />
           </TabsContent>
         </Tabs>

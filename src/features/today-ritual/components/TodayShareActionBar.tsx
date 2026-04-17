@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Bookmark, Check, Copy } from "lucide-react";
-import { motion } from "framer-motion";
+import { Bookmark, Check, Copy, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { AppIcon } from "@/features/community/components/AppIcon";
 import {
@@ -11,6 +11,7 @@ import {
   copyToClipboard,
   getCanonicalUrl,
 } from "@/lib/share";
+import { ensureShareAssetReady, type ShareSurface } from "@/lib/share-assets";
 
 type TodayShareActionBarProps = {
   sharePath?: string;
@@ -19,6 +20,7 @@ type TodayShareActionBarProps = {
   isRestoring?: boolean;
   resolveSharePath?: () => Promise<string | null>;
   onBookmark?: () => Promise<boolean> | boolean;
+  surface?: ShareSurface;
 };
 
 function WhatsAppIcon({ className }: { className?: string }) {
@@ -39,11 +41,13 @@ export default function TodayShareActionBar({
   isRestoring = false,
   resolveSharePath,
   onBookmark,
+  surface = "renungan",
 }: TodayShareActionBarProps) {
   const router = useRouter();
   const [copied, setCopied] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [resolvedSharePath, setResolvedSharePath] = useState<string | null>(null);
   const shareUrl = useMemo(() => getCanonicalUrl(resolvedSharePath || sharePath), [resolvedSharePath, sharePath]);
 
@@ -69,9 +73,33 @@ export default function TodayShareActionBar({
 
   const onShareWhatsApp = () => {
     void (async () => {
-      const nextShareUrl = await resolveShareUrl();
-      const waUrl = buildWhatsAppShareUrl(`${shareText} ${nextShareUrl}`);
-      window.open(waUrl, "_blank", "noopener,noreferrer");
+      setIsGenerating(true);
+      try {
+        const nextShareUrl = await resolveShareUrl();
+        
+        // Attempt to extract subjectId for AI preparation
+        const pathSegments = nextShareUrl.split("/").filter(Boolean);
+        const subjectId = pathSegments.pop();
+
+        if (subjectId && surface) {
+          try {
+            const prepared = await ensureShareAssetReady(surface, subjectId);
+            if (prepared?.shareUrl) {
+              const waUrl = buildWhatsAppShareUrl(`${shareText} ${prepared.shareUrl}`);
+              window.open(waUrl, "_blank", "noopener,noreferrer");
+              return;
+            }
+          } catch (err) {
+            console.warn("[share] AI preparation failed, falling back to basic URL", err);
+          }
+        }
+
+        // Fallback to basic URL
+        const waUrl = buildWhatsAppShareUrl(`${shareText} ${nextShareUrl}`);
+        window.open(waUrl, "_blank", "noopener,noreferrer");
+      } finally {
+        setIsGenerating(false);
+      }
     })();
   };
 
@@ -143,14 +171,36 @@ export default function TodayShareActionBar({
           whileTap={{ scale: 0.95 }}
           type="button"
           onClick={() => guardMemberAction(onShareWhatsApp)}
-          disabled={isRestoring}
-          aria-label="Bagikan renungan ke WhatsApp"
+          disabled={isRestoring || isGenerating}
+          aria-label={isGenerating ? "Menyiapkan kartu bagikan..." : "Bagikan renungan ke WhatsApp"}
           className={cn(
-            "tct-pressable inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#eafaf0] text-[#25D366] transition-colors duration-200 hover:bg-[#dcf8e6] hover:text-[#1fa855]",
-            isRestoring ? "opacity-60" : ""
+            "tct-pressable relative inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#eafaf0] text-[#25D366] transition-colors duration-200 hover:bg-[#dcf8e6] hover:text-[#1fa855]",
+            (isRestoring || isGenerating) ? "opacity-60" : ""
           )}
         >
-          <WhatsAppIcon className="h-[18px] w-[18px]" />
+          <AnimatePresence mode="wait" initial={false}>
+            {isGenerating ? (
+              <motion.div
+                key="loader"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Loader2 className="h-[18px] w-[18px] animate-spin text-[#1fa855]" />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="wa-icon"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.2 }}
+              >
+                <WhatsAppIcon className="h-[18px] w-[18px]" />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.button>
       </div>
     </div>

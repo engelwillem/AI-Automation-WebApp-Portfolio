@@ -55,6 +55,7 @@ type CommunityArchiveTabProps = {
   onBookmark: (postId: string) => void;
   onRepost: (post: CommunityPost) => void | Promise<void>;
   onShare: (postId: string, text?: string | null) => void | Promise<void>;
+  shareBusyPostId?: string | null;
 };
 
 export function CommunityArchiveTab({
@@ -69,6 +70,7 @@ export function CommunityArchiveTab({
   onBookmark,
   onRepost,
   onShare,
+  shareBusyPostId,
 }: CommunityArchiveTabProps) {
   const [archiveCategory, setArchiveCategory] = useState<ArchiveCategory>("all");
   const [archiveSearchQuery, setArchiveSearchQuery] = useState("");
@@ -595,6 +597,7 @@ export function CommunityArchiveTab({
                       onRepost={() => onRepost(post)}
                       reposting={repostBusyPostId === post.id}
                       onShare={() => onShare(post.id, post.text)}
+                      shareBusy={shareBusyPostId === post.id}
                     />
                   </div>
                 ))}

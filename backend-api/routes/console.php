@@ -27,3 +27,11 @@ Schedule::command('app:bridge-daily-content')
 Schedule::command('app:generate-pulse')
     ->twiceDaily(9, 18)
     ->withoutOverlapping();
+
+Schedule::command('app:warm-versehub-share-assets --lang=id --include-config-list=1 --limit=160')
+    ->dailyAt('00:25')
+    ->withoutOverlapping();
+
+Schedule::command('app:repair-missing-share-og --limit=500')
+    ->dailyAt('00:35')
+    ->withoutOverlapping();

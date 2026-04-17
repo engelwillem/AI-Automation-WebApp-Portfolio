@@ -2,8 +2,8 @@
 
 import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { fetchWithAppAuth } from "@/lib/app-auth-fetch";
-import { getVerseShareUrl } from "@/lib/share";
-import { prepareVersehubShareAsset } from "@/lib/share-assets";
+import { buildWhatsAppShareUrl, getVerseShareUrl } from "@/lib/share";
+import { ensureShareAssetReady } from "@/lib/share-assets";
 import { trackVersehubEvent } from "@/features/versehub/analytics";
 import type { VerseData } from "@/features/versehub/types";
 
@@ -74,6 +74,8 @@ export function useVersehubReaderActions({
   verseData,
   verseSegments,
 }: UseVersehubReaderActionsArgs) {
+  const [isSharing, setIsSharing] = useState(false);
+
   useEffect(() => {
     setReflectionDrafts({});
     setCompletedReflections({});
@@ -270,18 +272,19 @@ export function useVersehubReaderActions({
   };
 
   const handleShare = async () => {
-    if (!verseData || !initialVerseRef) return;
+    if (!verseData || !initialVerseRef || isSharing) return;
     let shareUrl = getVerseShareUrl(lang, initialVerseRef);
 
+    setIsSharing(true);
     try {
-      const preparePromise = prepareVersehubShareAsset(lang, initialVerseRef);
-      const timeoutPromise = new Promise<null>((resolve) => window.setTimeout(() => resolve(null), 1500));
-      const prepared = await Promise.race([preparePromise, timeoutPromise]);
+      const prepared = await ensureShareAssetReady("versehub", initialVerseRef, { lang });
       if (prepared?.shareUrl) {
         shareUrl = prepared.shareUrl;
       }
     } catch {
       // non-fatal
+    } finally {
+      setIsSharing(false);
     }
 
     const shareData = {
@@ -302,6 +305,27 @@ export function useVersehubReaderActions({
     }
   };
 
+  const handleShareWhatsApp = async () => {
+    if (!verseData || !initialVerseRef || isSharing) return;
+    let shareUrl = getVerseShareUrl(lang, initialVerseRef);
+
+    setIsSharing(true);
+    try {
+      const prepared = await ensureShareAssetReady("versehub", initialVerseRef, { lang });
+      if (prepared?.shareUrl) {
+        shareUrl = prepared.shareUrl;
+      }
+    } catch {
+      // non-fatal
+    } finally {
+      setIsSharing(false);
+    }
+
+    const shareText = `${verseData.reference}\n\n"${verseData.text}"\n\nBuka di VerseHub: ${shareUrl}`;
+    const waUrl = buildWhatsAppShareUrl(shareText);
+    window.open(waUrl, "_blank", "noopener,noreferrer");
+  };
+
   return {
     handleBookmark,
     handleLike,
@@ -310,6 +334,8 @@ export function useVersehubReaderActions({
     handleReflectionComplete,
     handleSaveChapterReflection,
     handleShare,
+    handleShareWhatsApp,
     handleShareInsight,
+    isSharing,
   };
 }

@@ -154,6 +154,10 @@ class VerseHubController extends Controller
         $validated = $request->validate([
             'question' => ['required', 'string', 'min:3', 'max:400'],
             'mode' => ['nullable', 'string', 'in:explain_simply,practical_meaning,prayer_from_verse,related_verses,tradition_context_note'],
+            'context' => ['nullable', 'array'],
+            'context.mood' => ['nullable', 'string', 'max:60'],
+            'context.intent' => ['nullable', 'string', 'max:120'],
+            'context.user_reflection' => ['nullable', 'string', 'max:1200'],
         ]);
 
         $normalized = $this->normalizeRef($lang, $ref);
@@ -192,6 +196,9 @@ class VerseHubController extends Controller
             'chapter' => (int) $m[2],
             'verse' => (int) $m[3],
             'lang' => $lang,
+            'mood' => is_array($validated['context'] ?? null) ? (string) ($validated['context']['mood'] ?? '') : '',
+            'intent' => is_array($validated['context'] ?? null) ? (string) ($validated['context']['intent'] ?? '') : '',
+            'user_reflection' => is_array($validated['context'] ?? null) ? (string) ($validated['context']['user_reflection'] ?? '') : '',
         ];
 
         $result = $mentor->ask(

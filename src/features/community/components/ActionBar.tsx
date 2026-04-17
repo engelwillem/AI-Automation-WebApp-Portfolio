@@ -19,6 +19,7 @@ type ActionBarProps = {
     className?: string;
     splitSave?: boolean;
     ariaLabelContext?: 'default' | 'archive';
+    shareBusy?: boolean;
 };
 
 export function ActionBar({
@@ -35,6 +36,7 @@ export function ActionBar({
     className,
     splitSave = false,
     ariaLabelContext = 'default',
+    shareBusy = false,
 }: ActionBarProps) {
     // In Next.js decoupled hybrid, we handle auth check at the page level or within the action handler
     const runMemberAction = (action: () => void | Promise<void>) => {
@@ -45,6 +47,7 @@ export function ActionBar({
     const commentActionLabel = ariaLabelContext === 'archive' ? 'Komentari arsip' : 'Comment';
     const shareActionLabel = ariaLabelContext === 'archive' ? 'Bagikan arsip' : 'Share';
     const bookmarkActionLabel = ariaLabelContext === 'archive' ? 'Simpan arsip' : 'Bookmark';
+    const finalShareActionLabel = shareBusy ? 'Menyiapkan...' : shareActionLabel;
 
     return (
         <div className={cn('flex items-center gap-2 text-sm', splitSave ? 'w-full' : '', className)}>
@@ -83,11 +86,24 @@ export function ActionBar({
             <motion.button
                 whileTap={{ scale: 0.95 }}
                 type="button"
-                className="tct-pressable flex h-9 w-9 items-center justify-center rounded-full bg-surface-muted/70 text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
-                aria-label={shareActionLabel}
+                disabled={shareBusy}
+                className={cn(
+                    "tct-pressable flex h-9 w-9 items-center justify-center rounded-full bg-surface-muted/70 text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground",
+                    shareBusy ? "opacity-50" : ""
+                )}
+                aria-label={finalShareActionLabel}
                 onClick={() => runMemberAction(onShare)}
             >
-                <AppIcon icon={Share2} variant="action" className="opacity-70" />
+                {shareBusy ? (
+                    <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    >
+                        <Share2 className="h-4 w-4 opacity-70" />
+                    </motion.div>
+                ) : (
+                    <AppIcon icon={Share2} variant="action" className="opacity-70" />
+                )}
             </motion.button>
 
             <motion.button
