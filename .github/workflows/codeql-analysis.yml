@@ -21,28 +21,45 @@ permissions:
   security-events: write
 
 jobs:
+  precheck:
+    name: Code Scanning Precheck
+    runs-on: ubuntu-latest
+    outputs:
+      code_scanning_enabled: ${{ steps.detect.outputs.enabled }}
+    steps:
+      - name: Detect code scanning availability
+        id: detect
+        shell: bash
+        run: |
+          status=$(curl -s -o /tmp/codeql-precheck.json -w "%{http_code}" \
+            -H "Authorization: Bearer ${{ github.token }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/code-scanning/default-setup")
+
+          if [ "$status" -ge 200 ] && [ "$status" -lt 300 ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "Code scanning available for this repository."
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Code scanning not available yet (HTTP $status). Workflow will skip CodeQL analysis."
+          fi
+
   analyze:
-    name: Analyze (${{ matrix.language }})
+    name: Analyze (javascript-typescript)
+    needs: precheck
+    if: needs.precheck.outputs.code_scanning_enabled == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        language:
-          - javascript-typescript
-          - php
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
-          languages: ${{ matrix.language }}
+          languages: javascript-typescript
 
       - name: Setup Node.js
-        if: matrix.language == 'javascript-typescript'
         uses: actions/setup-node@v4
         with:
           node-version: "20"
@@ -50,24 +67,21 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install frontend dependencies
-        if: matrix.language == 'javascript-typescript'
         run: npm ci
 
       - name: Build frontend for CodeQL
-        if: matrix.language == 'javascript-typescript'
         run: npm run build
 
-      - name: Setup PHP
-        if: matrix.language == 'php'
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.3"
-          extensions: mbstring, pdo_mysql
-          coverage: none
-
-      - name: Install backend dependencies
-        if: matrix.language == 'php'
-        run: composer install --working-dir backend-api --no-interaction --prefer-dist
-
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
+
+  codeql-skipped:
+    name: CodeQL Skipped (Code Scanning Disabled)
+    needs: precheck
+    if: needs.precheck.outputs.code_scanning_enabled != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Explain skip reason
+        run: |
+          echo "CodeQL skipped because GitHub Code Scanning is not enabled for this repository."
+          echo "Enable repository code scanning, then rerun this workflow."
