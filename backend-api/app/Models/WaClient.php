@@ -17,6 +17,9 @@ class WaClient extends Model
         'status',
         'timezone',
         'default_timezone',
+        'package',
+        'daily_limit',
+        'monthly_limit',
         'secret_key',
     ];
 
