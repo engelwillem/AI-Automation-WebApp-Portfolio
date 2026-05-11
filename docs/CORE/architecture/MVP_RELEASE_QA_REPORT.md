@@ -163,3 +163,21 @@ Remaining risks:
 - Confirm the platform preset for this Next.js app and its `output: 'standalone'` setting.
 - Confirm cPanel PHP and Composer versions before production deployment.
 - Confirm migration safety before running `php artisan migrate --force`.
+
+## Seneco Application Polish
+
+Applied updates:
+- Added financial advisory client onboarding blueprint to `/aios`.
+- Added financial advice guardrails to `/aios`.
+- Added "Most Complex Workflow Built" to `/portfolio/ai-client-onboarding`.
+- Added security and compliance notes to `/portfolio/ai-client-onboarding`.
+- Added most complex workflow and integration flow sections to `/readme`.
+- Added most complex workflow and financial advisory guardrails to `PORTFOLIO_README.md`.
+
+Smoke test focus:
+1. Open `/aios` and confirm the workflow blueprint and guardrails render above dashboard metrics.
+2. Open `/portfolio/ai-client-onboarding` and confirm the complex workflow and compliance notes render.
+3. Open `/readme` and confirm the most complex workflow and integration flow sections render.
+
+Application-ready summary:
+The portfolio now presents a financial advisory AI automation workflow that maps lead intake to advisor handoff, AI summary generation, CRM/calendar/email adapters, retry visibility, dashboard metrics, and compliance-aware human approval.

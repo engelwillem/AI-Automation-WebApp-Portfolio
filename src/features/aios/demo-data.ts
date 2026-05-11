@@ -18,6 +18,18 @@ export type AiosOperationalLog = {
   message: string;
 };
 
+export type AiosWorkflowBlueprintStep = {
+  trigger: string;
+  system: string;
+  automation: string;
+  output: string;
+};
+
+export type AiosComplianceGuardrail = {
+  title: string;
+  description: string;
+};
+
 export type AiosDemoRun = {
   id: string;
   clientName: string;
@@ -87,6 +99,52 @@ export const integrationHealthLabels: Record<AiosIntegrationHealth, string> = {
   failed: "Failed",
   mocked: "Mocked",
 };
+
+export const senecoWorkflowBlueprint: AiosWorkflowBlueprintStep[] = [
+  {
+    trigger: "Lead form or consultation booking",
+    system: "Website form, CRM, or booking tool",
+    automation: "Validate required fields, normalize contact data, create onboarding run, and assign an advisor queue item.",
+    output: "Clean lead record with an auditable automation run ID.",
+  },
+  {
+    trigger: "Fact-find and document intake",
+    system: "Secure form, document storage, CRM notes",
+    automation: "Extract structured facts, identify missing documents, and prepare a compliance-safe advisor checklist.",
+    output: "Missing information checklist and document request task.",
+  },
+  {
+    trigger: "AI preparation stage",
+    system: "Server-side AI workflow",
+    automation: "Generate a client profile summary, planning considerations, risk framing, and non-final follow-up draft.",
+    output: "Advisor prep pack for human review before any client-facing advice.",
+  },
+  {
+    trigger: "Advisor handoff",
+    system: "CRM, calendar, email, dashboard",
+    automation: "Create CRM task, schedule meeting action, draft email, log stage events, and update leadership metrics.",
+    output: "Visible run status, retry state, integration health, and advisor-ready next action.",
+  },
+];
+
+export const financialAdvisoryGuardrails: AiosComplianceGuardrail[] = [
+  {
+    title: "Human advisor approval",
+    description: "AI creates preparation material and draft communications only; regulated financial advice requires licensed human review.",
+  },
+  {
+    title: "Server-side secret handling",
+    description: "API keys, AI provider credentials, CRM tokens, and database passwords stay server-side and are never exposed as public frontend variables.",
+  },
+  {
+    title: "Privacy-safe observability",
+    description: "Dashboards show workflow state, failure reasons, and retry health without exposing sensitive client documents or private financial details.",
+  },
+  {
+    title: "Audit-ready execution logs",
+    description: "Every automation stage records status, timestamp, retry count, and integration outcome for operational review and incident response.",
+  },
+];
 
 const demoWorkflowStages = [
   { id: "lead_intake", label: "Lead intake" },

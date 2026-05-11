@@ -52,6 +52,20 @@ const valueItems = [
   'Leadership visibility',
 ] as const;
 
+const complexWorkflowPoints = [
+  'Trigger-driven lead intake from a form, booking tool, or CRM webhook',
+  'AI-generated advisor prep pack with client summary, planning considerations, and missing information checklist',
+  'CRM task creation, calendar action, email draft, queue status, retry handling, and event logs',
+  'Dashboard visibility for leadership: completed runs, failed automations, retry count, duration, and integration health',
+] as const;
+
+const complianceItems = [
+  'AI supports advisor preparation; it does not issue regulated financial advice',
+  'Human advisor approval is required before client-facing advice or recommendations',
+  'Secrets and integration credentials stay server-side',
+  'Operational dashboards avoid exposing sensitive client documents or private financial data',
+] as const;
+
 export default function AiClientOnboardingCaseStudyPage() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#070B14] px-6 py-12 text-slate-100 selection:bg-cyan-200/20 md:px-8 md:py-16">
@@ -115,6 +129,22 @@ export default function AiClientOnboardingCaseStudyPage() {
           </ol>
         </section>
 
+        <section className="rounded-2xl border border-cyan-400/25 bg-cyan-300/10 p-6 md:p-8">
+          <h2 className="mb-3 text-xl font-semibold text-slate-100">Most Complex Workflow Built</h2>
+          <p className="text-[15px] leading-relaxed text-slate-300">
+            The core system is an AI-assisted client onboarding and advisor handoff workflow for a financial
+            advisory business. It converts a new lead into a structured, auditable automation run with AI summary,
+            advisor task, CRM/calendar actions, follow-up draft, failure visibility, and KPI reporting.
+          </p>
+          <ul className="mt-4 grid gap-2 text-sm text-slate-200 md:grid-cols-2">
+            {complexWorkflowPoints.map((item) => (
+              <li key={item} className="rounded-lg border border-cyan-400/20 bg-slate-950/50 px-3 py-2">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </section>
+
         <section className="rounded-2xl border border-slate-800/90 bg-slate-900/65 p-6 md:p-8">
           <h2 className="mb-4 text-xl font-semibold text-slate-100">Technical Architecture</h2>
           <ul className="grid gap-2 text-sm text-slate-300 md:grid-cols-2">
@@ -141,6 +171,17 @@ export default function AiClientOnboardingCaseStudyPage() {
           <h2 className="mb-4 text-xl font-semibold text-slate-100">Business Value</h2>
           <ul className="grid gap-2 text-sm text-slate-300 md:grid-cols-2">
             {valueItems.map((item) => (
+              <li key={item} className="rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="rounded-2xl border border-slate-800/90 bg-slate-900/65 p-6 md:p-8">
+          <h2 className="mb-4 text-xl font-semibold text-slate-100">Security and Compliance Notes</h2>
+          <ul className="grid gap-2 text-sm text-slate-300 md:grid-cols-2">
+            {complianceItems.map((item) => (
               <li key={item} className="rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2">
                 {item}
               </li>

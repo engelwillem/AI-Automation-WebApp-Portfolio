@@ -112,6 +112,22 @@ const recruiterSignals = [
   'Scalable backend workflows',
 ] as const;
 
+const mostComplexWorkflow = [
+  'Lead intake creates an auditable automation run instead of a loose spreadsheet row.',
+  'AI generates an advisor prep pack: profile summary, planning considerations, missing information checklist, and follow-up draft.',
+  'CRM, calendar, email, and dashboard updates are treated as separate integration stages with retry and failure visibility.',
+  'The dashboard gives leadership operational visibility without exposing private client documents.',
+] as const;
+
+const integrationFlow = [
+  'Lead Form / CRM Webhook',
+  'Next.js API Boundary',
+  'Laravel Automation Orchestrator',
+  'Queue Job + AI Summary',
+  'CRM / Calendar / Email Adapters',
+  'Logs + KPI Dashboard',
+] as const;
+
 export default function ReadmePage() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#070B14] px-6 py-12 text-slate-100 selection:bg-cyan-200/20 md:px-8 md:py-16">
@@ -238,6 +254,38 @@ export default function ReadmePage() {
                 </div>
                 {index < architectureFlow.length - 1 ? (
                   <span className="text-cyan-300/80 md:mt-2 md:block md:text-center">↓</span>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-cyan-400/25 bg-cyan-300/10 p-6 md:p-8">
+          <h2 className="mb-4 text-xl font-semibold text-slate-100">Most Complex Workflow</h2>
+          <p className="text-sm leading-relaxed text-slate-300">
+            AI-assisted client onboarding and advisor handoff for a financial advisory team. The workflow is designed
+            to show business process mapping, AI orchestration, API integration thinking, queue-aware execution,
+            retry handling, and executive dashboard visibility.
+          </p>
+          <ul className="mt-4 grid gap-2 text-sm text-slate-200 md:grid-cols-2">
+            {mostComplexWorkflow.map((item) => (
+              <li key={item} className="rounded-lg border border-cyan-400/20 bg-slate-900/70 px-3 py-2">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="rounded-2xl border border-slate-800/90 bg-slate-900/65 p-6 md:p-8">
+          <h2 className="mb-4 text-xl font-semibold text-slate-100">Integration Flow</h2>
+          <div className="grid gap-3 md:grid-cols-6">
+            {integrationFlow.map((item, index) => (
+              <div key={item} className="flex items-center gap-3 md:block">
+                <div className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-3 text-sm text-slate-200 md:min-h-20">
+                  {item}
+                </div>
+                {index < integrationFlow.length - 1 ? (
+                  <span className="text-cyan-300/80 md:mt-2 md:block md:text-center">→</span>
                 ) : null}
               </div>
             ))}

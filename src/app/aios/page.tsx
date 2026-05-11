@@ -6,7 +6,9 @@ import {
   aiosDemoRuns,
   demoKpiDetail,
   demoSummary,
+  financialAdvisoryGuardrails,
   integrationHealthLabels,
+  senecoWorkflowBlueprint,
   statusLabels,
   type AiosIntegrationHealth,
   type AiosKpiDetailResponse,
@@ -205,6 +207,42 @@ export default function AiosDashboardPage() {
 
         {visibleSummary && visibleDetail ? (
           <>
+            <section className="mt-8 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+              <div className="rounded-lg border border-slate-200 bg-white p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Workflow Proof</p>
+                <h2 className="mt-2 text-lg font-bold">Financial Advisory Client Onboarding Blueprint</h2>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                  This demo models the kind of AI automation system a wealth advisory team needs: lead intake,
+                  fact-find preparation, AI-assisted advisor handoff, CRM/calendar actions, retry handling, and
+                  leadership visibility.
+                </p>
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                  {senecoWorkflowBlueprint.map((step, index) => (
+                    <article key={step.trigger} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                      <p className="text-xs font-semibold text-slate-500">Step {index + 1}</p>
+                      <h3 className="mt-1 text-sm font-bold text-slate-900">{step.trigger}</h3>
+                      <p className="mt-2 text-xs text-slate-500">System: {step.system}</p>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-700">{step.automation}</p>
+                      <p className="mt-2 text-xs font-semibold text-slate-600">Output: {step.output}</p>
+                    </article>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-slate-200 bg-white p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Compliance-Aware AI</p>
+                <h2 className="mt-2 text-lg font-bold">Financial Advice Guardrails</h2>
+                <div className="mt-4 space-y-3">
+                  {financialAdvisoryGuardrails.map((item) => (
+                    <article key={item.title} className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                      <h3 className="text-sm font-semibold text-slate-900">{item.title}</h3>
+                      <p className="mt-1 text-xs leading-relaxed text-slate-600">{item.description}</p>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </section>
+
             <section className="mt-8 grid gap-4 md:grid-cols-3 xl:grid-cols-6">
               <div className="rounded-lg border border-slate-200 bg-white p-4">
                 <p className="text-xs text-slate-500">Total Runs</p>

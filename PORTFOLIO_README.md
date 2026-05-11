@@ -108,6 +108,25 @@ The `/aios` demo now includes realistic financial advisory automation runs with 
 
 The demo data is intentionally portfolio-safe: it uses fictional client records and mocked integration labels while preserving the shape of a production automation workflow.
 
+## Most Complex Workflow Built
+The strongest workflow in this portfolio is an AI-assisted client onboarding and advisor handoff system for a financial advisory business.
+
+Flow:
+Lead Form / CRM Webhook -> Next.js API Boundary -> Laravel Automation Orchestrator -> Queue Job + AI Summary -> CRM / Calendar / Email Adapters -> Logs + KPI Dashboard.
+
+What it demonstrates:
+- Trigger-based workflow design similar to Zapier, Make, or n8n architecture
+- AI-generated advisor prep pack with client summary, planning considerations, missing information checklist, and follow-up draft
+- CRM task creation, calendar action, email workflow, event logging, retry handling, and dashboard metrics
+- Operational visibility for leadership across completed runs, failed stages, retry counts, execution duration, and integration health
+- Compliance-aware design where AI supports preparation but does not provide regulated financial advice
+
+Financial advisory guardrails:
+- Human advisor approval is required before any client-facing financial advice
+- API keys and integration credentials stay server-side
+- Dashboards avoid exposing private client documents or sensitive financial data
+- Automation logs focus on stage status, retry health, and operational diagnostics
+
 ## MVP Demo Readiness
 The MVP interview demo is prepared for Tencent Edge Pages frontend deployment and cPanel Laravel backend deployment.
 

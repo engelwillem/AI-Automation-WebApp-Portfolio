@@ -386,6 +386,33 @@ Frontend post-deploy smoke routes:
 - `/renungan`
 - `/versehub`
 
+## Seneco-Targeted Workflow Proof Polish
+
+The portfolio was sharpened for an AI Automation Specialist role in a financial advisory / wealth management context.
+
+What changed:
+- `/aios` now shows a financial advisory client onboarding blueprint with trigger, system, automation, and output for each stage.
+- `/aios` now includes financial advice guardrails covering human advisor approval, server-side credential handling, privacy-safe observability, and audit-ready execution logs.
+- `/portfolio/ai-client-onboarding` now includes a direct "Most Complex Workflow Built" section for the application requirement.
+- `/portfolio/ai-client-onboarding` now includes security and compliance notes specific to financial advisory automation.
+- `/readme` now includes a most complex workflow explanation and an integration flow diagram-style section.
+- `PORTFOLIO_README.md` now includes the most complex workflow, integration flow, and financial advisory guardrails.
+
+Why it matters:
+Seneco Wealth Australia is likely looking for operational AI infrastructure across lead intake, advisor handoff, CRM/calendar/email workflows, dashboards, retries, and compliance-aware documentation. This polish makes the portfolio read less like a generic website and more like a working AI automation operations prototype for financial advisory onboarding.
+
+Affected files:
+- `src/features/aios/demo-data.ts`
+- `src/app/aios/page.tsx`
+- `src/app/portfolio/ai-client-onboarding/page.tsx`
+- `src/app/readme/page.tsx`
+- `PORTFOLIO_README.md`
+- `docs/CORE/architecture/AI_AUTOMATION_PORTFOLIO_ARCHITECTURE.md`
+- `docs/CORE/architecture/MVP_RELEASE_QA_REPORT.md`
+
+Application-ready talking point:
+"The most complex workflow I built is an AI-assisted client onboarding and advisor handoff system for a financial advisory business. It converts a lead or CRM webhook into an auditable automation run, generates an advisor prep pack, creates CRM/calendar/email actions, tracks failures and retries, and exposes KPI visibility for leadership while keeping regulated advice under human advisor approval."
+
 ## 9. Work Log
 2026-05-11:
 - STEP 8: Added root `PORTFOLIO_README.md`
@@ -428,6 +455,12 @@ Frontend post-deploy smoke routes:
 - Why it matters: makes the MVP portfolio publishable without local Codex/OpenAI/agent metadata or secrets and gives clear post-push deployment checks
 - Affected files: `.gitignore`, `.codex/config.toml`, `docs/CORE/architecture/AI_AUTOMATION_PORTFOLIO_ARCHITECTURE.md`, `docs/CORE/architecture/MVP_RELEASE_QA_REPORT.md`
 - Validation notes: TypeScript, Next.js production build, and Laravel route listing passed before commit
+
+2026-05-11:
+- Seneco-Targeted Workflow Proof Polish: Added financial advisory onboarding blueprint, most complex workflow explanation, integration flow, and compliance guardrails
+- Why it matters: directly supports the Seneco Wealth Australia application requirement for examples of automation systems and a short explanation of the most complex workflow built
+- Affected files: `src/features/aios/demo-data.ts`, `src/app/aios/page.tsx`, `src/app/portfolio/ai-client-onboarding/page.tsx`, `src/app/readme/page.tsx`, `PORTFOLIO_README.md`, `docs/CORE/architecture/AI_AUTOMATION_PORTFOLIO_ARCHITECTURE.md`, `docs/CORE/architecture/MVP_RELEASE_QA_REPORT.md`
+- Validation notes: TypeScript validation was run after this polish
 
 ## 10. Next Recommended Work
 1. Add architecture diagrams/screenshots to `/readme` and case studies
