@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+vendor/
 backend-api/vendor/
 backend-api/node_modules/
 backend-api/.composer-cache/
@@ -27,6 +28,7 @@ backend-api/.phpunit.result.cache
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
 backend-api/.env
 backend-api/.env.docker
 backend-api/.env.testing
@@ -40,8 +42,12 @@ auth.json
 
 # Logs and temporary debug artifacts
 *.log
+*.codex.log
+codex-*.log
 *.tmp
 tmp/
+temp/
+logs/
 test-results/
 .tmp-*
 tmp-*
@@ -75,6 +81,7 @@ compose-resolved.yml
 *.tar.gz
 *.vsix
 deliverables/
+archives/
 deliverable-*.zip
 TCT--Hybrid--Monorepo.zip
 
@@ -90,6 +97,12 @@ backend-api/storage/framework/cache/
 backend-api/storage/framework/views/
 backend-api/storage/logs/
 .codex/
+codex/
+.openai/
+openai/
+agent-scratch/
+scratchpad/
+.local-ai/
 
 # Tooling and editor state
 .vscode/

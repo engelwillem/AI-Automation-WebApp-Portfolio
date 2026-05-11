@@ -13,6 +13,7 @@ import {
   isAuthSurfacePath,
   isLandingPath,
   isTodayRitualPath,
+  isTctAppNavigationPath,
   isVersehubPath,
   isSanctuaryPath,
   requiresAppSession,
@@ -140,7 +141,9 @@ function ShellFrame({
   pathname: string;
   router: ReturnType<typeof useRouter>;
 }) {
-  const navItems = activeNavId ? getUiNavItems(isAuthenticated) : [];
+  const showTctNavigation = isTctAppNavigationPath(pathname);
+  const scopedActiveNavId = showTctNavigation ? activeNavId : null;
+  const navItems = scopedActiveNavId ? getUiNavItems(isAuthenticated) : [];
   const isTodayRitual = isTodayRitualPath(pathname);
   const isSanctuary = isSanctuaryPath(pathname);
   const isLanding = isLandingPath(pathname);
@@ -162,10 +165,10 @@ function ShellFrame({
       <SanctuaryShell>
         <div className="relative z-10 mx-auto w-full max-w-7xl px-0 md:px-6 lg:px-8">
           <div className="flex items-start gap-6 lg:gap-8">
-            {activeNavId && (
+            {scopedActiveNavId && (
               <div className="sticky top-6 hidden h-fit align-start md:flex md:w-[248px] md:flex-col md:gap-4 md:pt-6">
                 <DesktopSidebarNav
-                  activeId={activeNavId}
+                  activeId={scopedActiveNavId}
                   navItems={navItems}
                   isAuthenticated={isAuthenticated}
                   userName={identity.name}
@@ -185,7 +188,7 @@ function ShellFrame({
           </div>
         </div>
 
-        {activeNavId && (
+        {scopedActiveNavId && (
           <div
             className="pointer-events-none inset-x-0 z-[100] flex justify-center md:hidden"
             style={{
@@ -198,7 +201,7 @@ function ShellFrame({
             <div className="pointer-events-auto">
               <FloatingBottomNav
                 items={navItems}
-                activeId={activeNavId}
+                activeId={scopedActiveNavId}
                 onChange={(id) => {
                   const targetItem = navItems.find((item) => item.id === id);
                   if (targetItem) {
@@ -223,10 +226,10 @@ function ShellFrame({
         )}
       >
         <div className="flex items-start gap-8">
-          {!isLanding && !isAuthSurface && !isTodayRitual && activeNavId && (
+          {!isLanding && !isAuthSurface && !isTodayRitual && scopedActiveNavId && (
             <div className="sticky top-8 hidden h-fit align-start md:flex md:w-72 md:flex-col md:gap-4">
               <DesktopSidebarNav
-                activeId={activeNavId}
+                activeId={scopedActiveNavId}
                 navItems={navItems}
                 isAuthenticated={isAuthenticated}
                 userName={identity.name}
@@ -285,7 +288,7 @@ function ShellFrame({
         </div>
       </div>
 
-      {!isLanding && !isAuthSurface && !isTodayRitual && activeNavId && (
+      {!isLanding && !isAuthSurface && !isTodayRitual && scopedActiveNavId && (
         <div
           className={cn(
             "inset-x-0 z-50 flex justify-center transition-all duration-200 md:hidden",
@@ -302,7 +305,7 @@ function ShellFrame({
         >
           <FloatingBottomNav
             items={navItems}
-            activeId={activeNavId}
+            activeId={scopedActiveNavId}
             onChange={(id) => {
               const targetItem = navItems.find((item) => item.id === id);
               if (targetItem) {

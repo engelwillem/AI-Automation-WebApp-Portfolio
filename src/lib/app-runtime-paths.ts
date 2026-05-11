@@ -18,6 +18,21 @@ export function isSanctuaryPath(pathname: string): boolean {
   return isTodayRitualPath(pathname) || isVersehubPath(pathname);
 }
 
+const TCT_APP_NAVIGATION_PREFIXES = [
+  "/community",
+  "/reflections",
+  "/renungan",
+  "/today",
+  "/versehub",
+  "/profile",
+  "/inbox",
+  "/channels",
+] as const;
+
+export function isTctAppNavigationPath(pathname: string): boolean {
+  return TCT_APP_NAVIGATION_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+}
+
 export function requiresAppSession(pathname: string): boolean {
   if (isLandingPath(pathname)) return false;
   if (isAuthSurfacePath(pathname)) return false;
