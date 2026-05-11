@@ -65,7 +65,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.5.2",
-    "firebase": "^11.9.1",
+    "firebase": "^12.13.0",
     "framer-motion": "^12.4.7",
     "genkit": "^1.16.1",
     "lucide-react": "^0.475.0",
