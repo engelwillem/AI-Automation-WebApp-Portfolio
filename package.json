@@ -89,7 +89,7 @@
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "jsdom": "^29.0.1",
-    "postcss": "^8.5.1",
+    "postcss": "^8.5.14",
     "typescript": "5.9.3",
     "vitest": "^4.1.0"
   }
