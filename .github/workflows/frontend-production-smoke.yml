@@ -35,7 +35,12 @@ jobs:
       - name: Run production smoke checks
         shell: pwsh
         run: |
-          ./scripts/smoke-production.ps1 -BaseUrl "${{ steps.vars.outputs.base_url }}" -OutFile "production-smoke-report.md" -TimeoutSec 20
+          $scriptPath = Join-Path "${{ github.workspace }}" "scripts/smoke-production.ps1"
+          if (-not (Test-Path $scriptPath)) {
+            "Smoke script not found: $scriptPath" | Out-File -FilePath "production-smoke-report.md" -Encoding utf8
+            throw "Missing smoke script at $scriptPath"
+          }
+          & $scriptPath -BaseUrl "${{ steps.vars.outputs.base_url }}" -OutFile "production-smoke-report.md" -TimeoutSec 20
 
       - name: Upload smoke report
         uses: actions/upload-artifact@v4

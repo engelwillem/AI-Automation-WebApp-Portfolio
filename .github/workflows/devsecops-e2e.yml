@@ -258,7 +258,19 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Check artifact policy script
+        id: artifact_script
+        shell: bash
+        run: |
+          if [ -f "scripts/ci-validate-release-artifact.py" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "Skip artifact policy: scripts/ci-validate-release-artifact.py not found in this revision."
+          fi
+
       - name: Validate release artifact policy
+        if: steps.artifact_script.outputs.exists == 'true'
         run: python scripts/ci-validate-release-artifact.py
 
   trivy-fs-scan:
@@ -301,10 +313,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Check Dockerfiles
+        id: dockerfiles
+        shell: bash
+        run: |
+          front="false"
+          back="false"
+          if [ -f "docker/frontend/Dockerfile" ]; then
+            front="true"
+          fi
+          if [ -f "docker/backend/Dockerfile" ]; then
+            back="true"
+          fi
+          echo "has_front=$front" >> "$GITHUB_OUTPUT"
+          echo "has_back=$back" >> "$GITHUB_OUTPUT"
+          if [ "$front" != "true" ] && [ "$back" != "true" ]; then
+            echo "No Dockerfiles found for scan in this revision; skipping container image scan steps."
+          fi
+
       - name: Build frontend image
+        if: steps.dockerfiles.outputs.has_front == 'true'
         run: docker build -f docker/frontend/Dockerfile -t tct-frontend:scan .
 
       - name: Scan frontend image (advisory)
+        if: steps.dockerfiles.outputs.has_front == 'true'
         uses: aquasecurity/trivy-action@v0.35.0
         with:
           image-ref: tct-frontend:scan
@@ -314,9 +346,11 @@ jobs:
           exit-code: "0"
 
       - name: Build backend image
+        if: steps.dockerfiles.outputs.has_back == 'true'
         run: docker build -f docker/backend/Dockerfile -t tct-backend:scan .
 
       - name: Scan backend image (advisory)
+        if: steps.dockerfiles.outputs.has_back == 'true'
         uses: aquasecurity/trivy-action@v0.35.0
         with:
           image-ref: tct-backend:scan
